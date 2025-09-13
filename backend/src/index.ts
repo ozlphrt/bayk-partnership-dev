@@ -41,22 +41,17 @@ app.get('/health', (req, res) => {
   });
 });
 
-// API routes (to be implemented)
-app.use('/api/auth', (req, res) => {
-  res.json({ message: 'Auth routes - Coming soon' });
-});
+// Import routes
+import authRoutes from './routes/auth';
+import memberRoutes from './routes/members';
+import partnerRoutes from './routes/partners';
+import adminRoutes from './routes/admin';
 
-app.use('/api/members', (req, res) => {
-  res.json({ message: 'Member routes - Coming soon' });
-});
-
-app.use('/api/partners', (req, res) => {
-  res.json({ message: 'Partner routes - Coming soon' });
-});
-
-app.use('/api/admin', (req, res) => {
-  res.json({ message: 'Admin routes - Coming soon' });
-});
+// API routes
+app.use('/api/auth', authRoutes);
+app.use('/api/members', memberRoutes);
+app.use('/api/partners', partnerRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Socket.io connection handling
 io.on('connection', (socket) => {
@@ -67,22 +62,12 @@ io.on('connection', (socket) => {
   });
 });
 
-// Error handling middleware
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  logger.error('Unhandled error:', err);
-  res.status(500).json({
-    error: 'Internal server error',
-    message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong'
-  });
-});
+// Import error handling middleware
+import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 
-// 404 handler
-app.use('*', (req, res) => {
-  res.status(404).json({
-    error: 'Route not found',
-    path: req.originalUrl
-  });
-});
+// Error handling middleware
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 // Start server
 server.listen(PORT, () => {
