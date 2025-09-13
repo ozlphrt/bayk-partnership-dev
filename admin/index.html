@@ -320,6 +320,25 @@
             padding: 20px;
             box-shadow: 8px 8px 20px var(--shadow-dark), -8px -8px 20px var(--shadow-light);
             margin-bottom: 24px;
+            max-height: 300px;
+            overflow: hidden;
+        }
+
+        .chart-container canvas {
+            max-height: 200px !important;
+            height: 200px !important;
+        }
+
+        /* Mobile chart optimizations */
+        @media (max-width: 767px) {
+            .chart-container {
+                padding: 16px;
+                max-height: 250px;
+            }
+            .chart-container canvas {
+                max-height: 160px !important;
+                height: 160px !important;
+            }
         }
 
         .chart-title {
@@ -565,6 +584,7 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    aspectRatio: window.innerWidth < 768 ? 2.5 : 3,
                     plugins: {
                         legend: {
                             display: false
@@ -575,11 +595,21 @@
                             beginAtZero: true,
                             grid: {
                                 color: '#e2e8f0'
+                            },
+                            ticks: {
+                                font: {
+                                    size: window.innerWidth < 768 ? 10 : 12
+                                }
                             }
                         },
                         x: {
                             grid: {
                                 color: '#e2e8f0'
+                            },
+                            ticks: {
+                                font: {
+                                    size: window.innerWidth < 768 ? 10 : 12
+                                }
                             }
                         }
                     }
