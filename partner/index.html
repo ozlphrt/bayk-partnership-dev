@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partner Dashboard - Sailing Club Partnership</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="../index.html" class="navbar-brand">
+                <span class="sailing-icon">⛵</span>
+                Sailing Club Partnership
+            </a>
+            <ul class="navbar-nav">
+                <li><a href="index.html" class="active">Dashboard</a></li>
+                <li><a href="scanner.html">QR Scanner</a></li>
+                <li><a href="analytics.html">Analytics</a></li>
+                <li><a href="#" onclick="logout()">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container" style="padding: 2rem 0;">
+        <!-- Welcome Section -->
+        <section class="card">
+            <h1>Welcome, Waterfront Bistro!</h1>
+            <p style="color: var(--text-light); font-size: 1.1rem;">
+                Ready to serve sailing club members with exclusive discounts?
+            </p>
+        </section>
+
+        <!-- Quick Stats -->
+        <section class="grid grid-4" style="margin: 2rem 0;">
+            <div class="metric-card">
+                <div class="metric-value">45</div>
+                <div class="metric-label">Total Transactions</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">$2,100</div>
+                <div class="metric-label">Revenue Impact</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">$340</div>
+                <div class="metric-label">Discounts Provided</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">$1,760</div>
+                <div class="metric-label">Net Revenue</div>
+            </div>
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="grid grid-2" style="margin: 2rem 0;">
+            <div class="card text-center">
+                <div class="sailing-icon" style="font-size: 3rem; margin-bottom: 1rem;">📱</div>
+                <h3>Scan QR Code</h3>
+                <p>Validate member discount codes and process transactions</p>
+                <a href="scanner.html" class="btn btn-primary" style="margin-top: 1rem;">Open Scanner</a>
+            </div>
+            <div class="card text-center">
+                <div class="sailing-icon" style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
+                <h3>View Analytics</h3>
+                <p>Track your business performance and ROI</p>
+                <a href="analytics.html" class="btn btn-secondary" style="margin-top: 1rem;">View Analytics</a>
+            </div>
+        </section>
+
+        <!-- Recent Transactions -->
+        <section class="card">
+            <div class="card-header">
+                <h2>Recent Transactions</h2>
+            </div>
+            <div class="recent-transactions">
+                <div class="transaction-item" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid #e5e7eb;">
+                    <div>
+                        <h4>Sarah Marina</h4>
+                        <p style="color: var(--text-light); font-size: 0.9rem;">15% off all meals</p>
+                        <p style="color: var(--text-light); font-size: 0.8rem;">Sep 13, 6:30 PM</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="color: var(--secondary-green); font-weight: 600;">$45.00</div>
+                        <div style="color: var(--text-light); font-size: 0.9rem;">-$6.75 discount</div>
+                    </div>
+                </div>
+                <div class="transaction-item" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid #e5e7eb;">
+                    <div>
+                        <h4>Captain Mike</h4>
+                        <p style="color: var(--text-light); font-size: 0.9rem;">15% off all meals</p>
+                        <p style="color: var(--text-light); font-size: 0.8rem;">Sep 11, 8:00 PM</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="color: var(--secondary-green); font-weight: 600;">$60.00</div>
+                        <div style="color: var(--text-light); font-size: 0.9rem;">-$9.00 discount</div>
+                    </div>
+                </div>
+                <div class="transaction-item" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem;">
+                    <div>
+                        <h4>Lisa Ocean</h4>
+                        <p style="color: var(--text-light); font-size: 0.9rem;">Happy Hour Special</p>
+                        <p style="color: var(--text-light); font-size: 0.8rem;">Sep 12, 5:30 PM</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="color: var(--secondary-green); font-weight: 600;">$20.00</div>
+                        <div style="color: var(--text-light); font-size: 0.9rem;">-$10.00 discount</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Current Offers -->
+        <section class="card">
+            <div class="card-header">
+                <h2>Your Active Offers</h2>
+            </div>
+            <div class="grid grid-2">
+                <div class="offer-card">
+                    <div class="offer-title">15% off all meals</div>
+                    <div class="offer-discount">Most Popular</div>
+                    <div class="offer-description">Valid for lunch and dinner. Cannot be combined with other offers.</div>
+                    <div style="margin: 1rem 0; font-size: 0.9rem; color: var(--text-light);">
+                        <strong>Used:</strong> 32 times this month
+                    </div>
+                </div>
+                <div class="offer-card">
+                    <div class="offer-title">Happy Hour Special</div>
+                    <div class="offer-discount">50% off appetizers</div>
+                    <div class="offer-description">Valid 4-6 PM only. Dine-in only.</div>
+                    <div style="margin: 1rem 0; font-size: 0.9rem; color: var(--text-light);">
+                        <strong>Used:</strong> 13 times this month
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Instructions -->
+        <section class="card">
+            <div class="card-header">
+                <h2>How to Process Member Discounts</h2>
+            </div>
+            <div class="instructions">
+                <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+                    <div style="background-color: var(--primary-blue); color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; margin-right: 1rem; font-weight: bold;">1</div>
+                    <p>Member shows you their QR code on their phone</p>
+                </div>
+                <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+                    <div style="background-color: var(--primary-blue); color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; margin-right: 1rem; font-weight: bold;">2</div>
+                    <p>Open the QR Scanner and scan their code</p>
+                </div>
+                <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+                    <div style="background-color: var(--primary-blue); color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; margin-right: 1rem; font-weight: bold;">3</div>
+                    <p>Enter the transaction amount and apply the discount</p>
+                </div>
+                <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+                    <div style="background-color: var(--primary-blue); color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; margin-right: 1rem; font-weight: bold;">4</div>
+                    <p>Complete the transaction and both parties get confirmation</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer style="background-color: var(--primary-blue); color: var(--white); padding: 2rem 0; margin-top: 4rem;">
+        <div class="container text-center">
+            <p>&copy; 2025 Sailing Club Partnership Platform. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Logout functionality
+        function logout() {
+            localStorage.removeItem('selectedRole');
+            window.location.href = '../index.html';
+        }
+
+        // Load partner data
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in as partner
+            const currentRole = localStorage.getItem('selectedRole');
+            if (currentRole !== 'partner') {
+                window.location.href = '../index.html';
+                return;
+            }
+
+            loadPartnerData();
+        });
+
+        async function loadPartnerData() {
+            try {
+                const response = await fetch('../assets/data/users.json');
+                const data = await response.json();
+                
+                // Find Waterfront Bistro (demo partner)
+                const partner = data.partners.find(p => p.id === 'p001');
+                if (partner) {
+                    // Update welcome message
+                    document.querySelector('h1').textContent = `Welcome, ${partner.business_name}!`;
+                    
+                    // Update metrics
+                    document.querySelectorAll('.metric-value')[0].textContent = partner.total_transactions;
+                    document.querySelectorAll('.metric-value')[1].textContent = `$${partner.revenue_impact}`;
+                    document.querySelectorAll('.metric-value')[2].textContent = `$${partner.discounts_provided}`;
+                    document.querySelectorAll('.metric-value')[3].textContent = `$${partner.revenue_impact - partner.discounts_provided}`;
+                }
+            } catch (error) {
+                console.error('Error loading partner data:', error);
+            }
+        }
+    </script>
+</body>
+</html>
