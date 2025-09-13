@@ -4,69 +4,421 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Browse Offers - BAYK Partnership</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛵</text></svg>">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <link rel="stylesheet" href="../assets/css/styles.css">
+    <meta name="version" content="v4-20241220-midnight-ocean">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --secondary: #1e40af;
+            --accent: #3b82f6;
+            --background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #1e40af 100%);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --text-muted: rgba(255, 255, 255, 0.6);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-weight: 400;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(30, 58, 138, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(30, 64, 175, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(59, 130, 246, 0.2) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            font-size: 16px;
+        }
+
+        .nav {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            color: var(--text-primary);
+        }
+
+        /* Main Content */
+        .main {
+            padding: 40px 0;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            font-size: 16px;
+        }
+
+        /* Glass Cards */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+        }
+
+        /* Category Filters */
+        .category-filters {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        .category-btn {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            border-radius: 12px;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .category-btn:hover,
+        .category-btn.active {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+            color: var(--text-primary);
+        }
+
+        /* Offers Grid */
+        .offers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .offer-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .offer-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+        }
+
+        .offer-card:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .offer-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .offer-discount {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+
+        .offer-partner {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .offer-description {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .offer-terms {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px;
+            margin: 16px 0;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .offer-valid {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .glass-button {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .glass-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--glass-border);
+            padding: 48px 0;
+            text-align: center;
+            margin-top: 80px;
+        }
+
+        .footer-text {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 16px;
+            }
+
+            .page-title {
+                font-size: 28px;
+            }
+
+            .offers-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .offer-card {
+                padding: 20px;
+                /* Mobile: More opaque background for better visibility */
+                background: rgba(30, 58, 138, 0.85) !important;
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.3);
+            }
+
+            .category-filters {
+                gap: 8px;
+            }
+
+            .category-btn {
+                padding: 6px 12px;
+                font-size: 13px;
+                /* Mobile: More opaque button background */
+                background: rgba(59, 130, 246, 0.9) !important;
+                border: 1px solid rgba(255, 255, 255, 0.4);
+            }
+
+            .category-btn:hover,
+            .category-btn.active {
+                background: rgba(59, 130, 246, 1) !important;
+            }
+
+            /* Mobile: Stronger background gradient */
+            body::before {
+                background: 
+                    radial-gradient(circle at 20% 80%, rgba(30, 58, 138, 0.7) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(30, 64, 175, 0.7) 0%, transparent 50%),
+                    radial-gradient(circle at 40% 40%, rgba(59, 130, 246, 0.5) 0%, transparent 50%);
+            }
+
+            /* Mobile: Header with stronger background */
+            .header {
+                background: rgba(30, 58, 138, 0.9) !important;
+                backdrop-filter: blur(15px);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            }
+
+            /* Mobile: Footer with stronger background */
+            .footer {
+                background: rgba(30, 58, 138, 0.9) !important;
+                backdrop-filter: blur(15px);
+                border-top: 1px solid rgba(255, 255, 255, 0.3);
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
+    <!-- Header -->
+    <header class="header">
         <div class="container">
-            <a href="../index.html" class="navbar-brand">
-                <svg width="24" height="24" viewBox="0 0 100 100" class="bayk-logo-small">
-                    <rect x="10" y="10" width="80" height="80" fill="none" stroke="currentColor" stroke-width="3"/>
-                    <path d="M15 75 Q50 65 85 75 L85 85 L15 85 Z" fill="#0047AB"/>
-                    <path d="M50 15 L50 70 L35 70 Z" fill="#FF8C00"/>
-                    <path d="M35 70 Q50 75 65 70 L65 75 L35 75 Z" fill="currentColor"/>
-                </svg>
-                BAYK Partnership
-            </a>
-            <ul class="navbar-nav">
-                <li><a href="index.html">Dashboard</a></li>
-                <li><a href="offers.html" class="active">Browse Offers</a></li>
-                <li><a href="savings.html">My Savings</a></li>
-                <li><a href="#" onclick="logout()">Logout</a></li>
-            </ul>
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">⛵</div>
+                    BAYK Partnership
+                </div>
+                <nav>
+                    <ul class="nav">
+                        <li><a href="index.html">Dashboard</a></li>
+                        <li><a href="offers.html" class="active">Browse Offers</a></li>
+                        <li><a href="savings.html">My Savings</a></li>
+                        <li><a href="#" onclick="logout()">Logout</a></li>
+                    </ul>
+                </nav>
+            </div>
         </div>
-    </nav>
+    </header>
 
     <!-- Main Content -->
-    <main class="container" style="padding: 2rem 0;">
-        <!-- Page Header -->
-        <section class="card">
-            <h1 style="color: var(--text-dark);">Browse Partner Offers</h1>
-            <p style="color: var(--text-light); font-size: 1.1rem;">
-                Discover exclusive discounts from local businesses
-            </p>
-        </section>
-
-        <!-- Category Filter -->
-        <section class="card">
-            <h3 style="color: var(--text-dark);">Filter by Category</h3>
-            <div class="category-filters" style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;">
-                <button class="btn btn-outline category-btn active" data-category="all">All Offers</button>
-                <button class="btn btn-outline category-btn" data-category="restaurant">Restaurants</button>
-                <button class="btn btn-outline category-btn" data-category="hotel">Hotels</button>
-                <button class="btn btn-outline category-btn" data-category="marina_services">Marina Services</button>
-                <button class="btn btn-outline category-btn" data-category="marine_supplies">Marine Supplies</button>
-                <button class="btn btn-outline category-btn" data-category="retail">Retail</button>
+    <main class="main">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="glass-card">
+                <h1 class="page-title">Browse Partner Offers</h1>
+                <p class="page-subtitle">Discover exclusive discounts from local businesses</p>
             </div>
-        </section>
 
-        <!-- Offers Grid -->
-        <section id="offers-container">
-            <!-- Offers will be loaded dynamically -->
-        </section>
+            <!-- Category Filter -->
+            <div class="glass-card">
+                <h3 style="color: var(--text-primary); margin-bottom: 16px;">Filter by Category</h3>
+                <div class="category-filters">
+                    <button class="category-btn active" data-category="all">All Offers</button>
+                    <button class="category-btn" data-category="restaurant">Restaurants</button>
+                    <button class="category-btn" data-category="hotel">Hotels</button>
+                    <button class="category-btn" data-category="marina_services">Marina Services</button>
+                    <button class="category-btn" data-category="marine_supplies">Marine Supplies</button>
+                    <button class="category-btn" data-category="retail">Retail</button>
+                </div>
+            </div>
+
+            <!-- Offers Grid -->
+            <div id="offers-container">
+                <!-- Offers will be loaded dynamically -->
+            </div>
+        </div>
     </main>
 
     <!-- Footer -->
-    <footer style="background-color: var(--primary-blue); color: var(--white); padding: 2rem 0; margin-top: 4rem;">
-        <div class="container text-center">
-            <p>&copy; 2025 Sailing Club Partnership Platform. All rights reserved.</p>
+    <footer class="footer">
+        <div class="container">
+            <p class="footer-text">&copy; 2025 BAYK Partnership Platform. All rights reserved.</p>
         </div>
     </footer>
 
@@ -97,8 +449,8 @@
             try {
                 // Load offers and partners data
                 const [offersResponse, partnersResponse] = await Promise.all([
-                    fetch('../assets/data/offers.json'),
-                    fetch('../assets/data/users.json')
+                    fetch('../assets/data/offers.json?v=' + Date.now()),
+                    fetch('../assets/data/users.json?v=' + Date.now())
                 ]);
 
                 const offersData = await offersResponse.json();
@@ -118,12 +470,12 @@
             container.innerHTML = '';
 
             if (offers.length === 0) {
-                container.innerHTML = '<div class="card text-center"><p>No offers found for this category.</p></div>';
+                container.innerHTML = '<div class="glass-card text-center"><p>No offers found for this category.</p></div>';
                 return;
             }
 
             const offersGrid = document.createElement('div');
-            offersGrid.className = 'grid grid-3';
+            offersGrid.className = 'offers-grid';
 
             offers.forEach(offer => {
                 const partner = allPartners.find(p => p.id === offer.partner_id);
@@ -156,13 +508,13 @@
                 <div class="offer-discount">${discountDisplay}</div>
                 <div class="offer-partner">${partner.business_name}</div>
                 <div class="offer-description">${offer.description}</div>
-                <div style="margin: 1rem 0; padding: 0.75rem; background-color: #f3f4f6; border-radius: 0.5rem; font-size: 0.9rem;">
+                <div class="offer-terms">
                     <strong>Terms:</strong> ${offer.terms}
                 </div>
-                <div style="margin: 1rem 0; font-size: 0.9rem; color: var(--text-light);">
+                <div class="offer-valid">
                     <strong>Valid until:</strong> ${new Date(offer.valid_until).toLocaleDateString()}
                 </div>
-                <button class="btn btn-primary" onclick="generateQRCode('${offer.id}')" style="width: 100%;">
+                <button class="glass-button" onclick="generateQRCode('${offer.id}')">
                     Generate QR Code
                 </button>
             `;
