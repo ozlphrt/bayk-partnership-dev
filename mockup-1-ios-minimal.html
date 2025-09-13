@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BAYK Partnership - iOS Style Mockup 1: Minimal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #1d1d1f;
+        }
+        
+        .container {
+            max-width: 375px;
+            margin: 0 auto;
+            background: #ffffff;
+            min-height: 100vh;
+            position: relative;
+            box-shadow: 0 0 30px rgba(0,0,0,0.1);
+        }
+        
+        .status-bar {
+            height: 44px;
+            background: #000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0047AB 0%, #33A02C 100%);
+            padding: 60px 20px 40px;
+            text-align: center;
+            color: white;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 20px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .logo svg {
+            width: 50px;
+            height: 50px;
+        }
+        
+        .club-name {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .club-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+        
+        .content {
+            padding: 30px 20px;
+        }
+        
+        .role-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+            border: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+        }
+        
+        .role-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+        
+        .role-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+        
+        .member-icon { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .partner-icon { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .admin-icon { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+        
+        .role-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1d1d1f;
+        }
+        
+        .role-description {
+            font-size: 14px;
+            color: #86868b;
+            line-height: 1.4;
+            margin-bottom: 16px;
+        }
+        
+        .role-button {
+            background: #007AFF;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .role-button:hover {
+            background: #0056CC;
+            transform: scale(1.02);
+        }
+        
+        .stats {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .stats-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #1d1d1f;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0047AB;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #86868b;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="status-bar">
+            <span>9:41</span>
+            <span>BAYK</span>
+            <span>100%</span>
+        </div>
+        
+        <div class="header">
+            <div class="logo">
+                <svg viewBox="0 0 100 100">
+                    <rect x="10" y="10" width="80" height="80" fill="none" stroke="#0047AB" stroke-width="3"/>
+                    <path d="M15 75 Q50 65 85 75 L85 85 L15 85 Z" fill="#0047AB"/>
+                    <path d="M50 15 L50 70 L35 70 Z" fill="#FF8C00"/>
+                    <path d="M35 70 Q50 75 65 70 L65 75 L35 75 Z" fill="#33A02C"/>
+                </svg>
+            </div>
+            <div class="club-name">BAYK</div>
+            <div class="club-subtitle">BODRUM AÇIKDENİZ YELKEN SPOR KULÜBÜ</div>
+        </div>
+        
+        <div class="content">
+            <div class="role-card">
+                <div class="role-icon member-icon">👤</div>
+                <div class="role-title">Club Member</div>
+                <div class="role-description">Browse exclusive offers, generate PIN codes, and track your savings</div>
+                <button class="role-button">Enter as Member</button>
+            </div>
+            
+            <div class="role-card">
+                <div class="role-icon partner-icon">🏪</div>
+                <div class="role-title">Business Partner</div>
+                <div class="role-description">Scan PIN codes, process transactions, and view analytics</div>
+                <button class="role-button">Enter as Partner</button>
+            </div>
+            
+            <div class="role-card">
+                <div class="role-icon admin-icon">⚙️</div>
+                <div class="role-title">Administrator</div>
+                <div class="role-description">Monitor platform activity, manage partners and members</div>
+                <button class="role-button">Enter as Admin</button>
+            </div>
+            
+            <div class="stats">
+                <div class="stats-title">Platform Impact</div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">234</div>
+                        <div class="stat-label">Transactions</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">$3,420</div>
+                        <div class="stat-label">Savings</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">89%</div>
+                        <div class="stat-label">Participation</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">10</div>
+                        <div class="stat-label">Partners</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

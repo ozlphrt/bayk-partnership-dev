@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BAYK Partnership - iOS Style Mockup 4: Dark Mode</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+            background: #000000;
+            min-height: 100vh;
+            color: #ffffff;
+        }
+        
+        .container {
+            max-width: 375px;
+            margin: 0 auto;
+            background: #000000;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        .status-bar {
+            height: 44px;
+            background: #000000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            padding: 60px 20px 40px;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, #0047AB20, #33A02C20, #FF8C0020);
+            animation: gradientShift 8s ease-in-out infinite;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+        
+        .logo {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            border: 2px solid #333;
+            border-radius: 25px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 
+                0 0 30px rgba(0, 71, 171, 0.3),
+                0 0 60px rgba(51, 160, 44, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .logo svg {
+            width: 60px;
+            height: 60px;
+        }
+        
+        .club-name {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .club-subtitle {
+            font-size: 14px;
+            color: #888;
+            font-weight: 400;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .content {
+            padding: 30px 20px;
+            background: #000000;
+        }
+        
+        .role-card {
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            border: 1px solid #333;
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 16px;
+            box-shadow: 
+                0 8px 32px rgba(0,0,0,0.5),
+                0 0 0 1px rgba(255,255,255,0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .role-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .role-card:hover::before {
+            left: 100%;
+        }
+        
+        .role-card:hover {
+            transform: translateY(-4px);
+            border-color: #444;
+            box-shadow: 
+                0 12px 40px rgba(0,0,0,0.6),
+                0 0 0 1px rgba(255,255,255,0.1);
+        }
+        
+        .role-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #333, #444);
+            border: 1px solid #555;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+        }
+        
+        .role-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: white;
+        }
+        
+        .role-description {
+            font-size: 14px;
+            color: #888;
+            line-height: 1.4;
+            margin-bottom: 20px;
+        }
+        
+        .role-button {
+            background: linear-gradient(135deg, #0047AB, #0056CC);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 16px rgba(0, 71, 171, 0.3);
+        }
+        
+        .role-button:hover {
+            background: linear-gradient(135deg, #0056CC, #0066DD);
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px rgba(0, 71, 171, 0.4);
+        }
+        
+        .role-button:active {
+            transform: scale(0.98);
+        }
+        
+        .stats {
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            border: 1px solid #333;
+            border-radius: 20px;
+            padding: 24px;
+            margin-top: 20px;
+            box-shadow: 
+                0 8px 32px rgba(0,0,0,0.5),
+                0 0 0 1px rgba(255,255,255,0.05);
+        }
+        
+        .stats-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: white;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            background: linear-gradient(135deg, #333, #444);
+            border: 1px solid #555;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #33A02C;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #888;
+            font-weight: 500;
+        }
+        
+        .glow-effect {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(0, 71, 171, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: pulse 4s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="glow-effect"></div>
+    
+    <div class="container">
+        <div class="status-bar">
+            <span>9:41</span>
+            <span>BAYK</span>
+            <span>100%</span>
+        </div>
+        
+        <div class="header">
+            <div class="logo">
+                <svg viewBox="0 0 100 100">
+                    <rect x="10" y="10" width="80" height="80" fill="none" stroke="#33A02C" stroke-width="3"/>
+                    <path d="M15 75 Q50 65 85 75 L85 85 L15 85 Z" fill="#0047AB"/>
+                    <path d="M50 15 L50 70 L35 70 Z" fill="#FF8C00"/>
+                    <path d="M35 70 Q50 75 65 70 L65 75 L35 75 Z" fill="#33A02C"/>
+                </svg>
+            </div>
+            <div class="club-name">BAYK</div>
+            <div class="club-subtitle">BODRUM AÇIKDENİZ YELKEN SPOR KULÜBÜ</div>
+        </div>
+        
+        <div class="content">
+            <div class="role-card">
+                <div class="role-icon">👤</div>
+                <div class="role-title">Club Member</div>
+                <div class="role-description">Browse exclusive offers, generate PIN codes, and track your savings</div>
+                <button class="role-button">Enter as Member</button>
+            </div>
+            
+            <div class="role-card">
+                <div class="role-icon">🏪</div>
+                <div class="role-title">Business Partner</div>
+                <div class="role-description">Scan PIN codes, process transactions, and view analytics</div>
+                <button class="role-button">Enter as Partner</button>
+            </div>
+            
+            <div class="role-card">
+                <div class="role-icon">⚙️</div>
+                <div class="role-title">Administrator</div>
+                <div class="role-description">Monitor platform activity, manage partners and members</div>
+                <button class="role-button">Enter as Admin</button>
+            </div>
+            
+            <div class="stats">
+                <div class="stats-title">Platform Impact</div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">234</div>
+                        <div class="stat-label">Transactions</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">$3,420</div>
+                        <div class="stat-label">Savings</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">89%</div>
+                        <div class="stat-label">Participation</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">10</div>
+                        <div class="stat-label">Partners</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
