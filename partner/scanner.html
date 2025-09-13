@@ -297,7 +297,16 @@
                     });
                     
                     // Try to find a matching key (case insensitive or partial match)
-                    const matchingKey = allKeys.find(key => key.toLowerCase().includes(qrObject.token.toLowerCase()));
+                    console.log('Searching for token:', qrObject.token);
+                    const matchingKey = allKeys.find(key => {
+                        console.log('Checking key:', key, 'against token:', qrObject.token);
+                        return key.toLowerCase().includes(qrObject.token.toLowerCase()) || 
+                               key.includes(qrObject.token) ||
+                               qrObject.token.includes(key.replace('activeQR_', ''));
+                    });
+                    
+                    console.log('Matching key found:', matchingKey);
+                    
                     if (matchingKey) {
                         console.log('Found matching key:', matchingKey);
                         const matchingQR = localStorage.getItem(matchingKey);
@@ -328,6 +337,48 @@
                             processTransaction(qrObject, qrInfo);
                             return;
                         }
+                    }
+                    
+                    // If no matching key found, try to find by memberId and offerId
+                    console.log('No matching key found, trying to find by memberId and offerId');
+                    const memberOfferMatch = allKeys.find(key => {
+                        const data = localStorage.getItem(key);
+                        if (data) {
+                            try {
+                                const parsed = JSON.parse(data);
+                                return parsed.memberId === qrObject.memberId && parsed.offerId === qrObject.offerId;
+                            } catch (e) {
+                                return false;
+                            }
+                        }
+                        return false;
+                    });
+                    
+                    if (memberOfferMatch) {
+                        console.log('Found match by memberId and offerId:', memberOfferMatch);
+                        const matchingQR = localStorage.getItem(memberOfferMatch);
+                        const qrInfo = JSON.parse(matchingQR);
+                        
+                        // Check if QR code has expired
+                        if (Date.now() > qrInfo.expires) {
+                            showValidationResult('QR Code Expired', 'This QR code has expired. Please ask the member to generate a new one.', 'error');
+                            localStorage.removeItem(memberOfferMatch);
+                            return;
+                        }
+                        
+                        // Check if QR code has already been used
+                        if (qrInfo.used) {
+                            showValidationResult('QR Code Already Used', 'This QR code has already been used. Each code can only be used once.', 'error');
+                            return;
+                        }
+                        
+                        // Mark QR code as used
+                        qrInfo.used = true;
+                        localStorage.setItem(memberOfferMatch, JSON.stringify(qrInfo));
+                        
+                        // Process the transaction
+                        processTransaction(qrObject, qrInfo);
+                        return;
                     }
                     
                     showValidationResult('QR Code Invalid', 'This QR code has expired or is invalid.', 'error');
