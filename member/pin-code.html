@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PIN Code - BAYK Partnership</title>
+    <title>Redirecting to QR Code - BAYK Partnership</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛵</text></svg>">
     <link rel="stylesheet" href="../assets/css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,305 +18,70 @@
                 <svg width="24" height="24" viewBox="0 0 100 100" class="bayk-logo-small">
                     <rect x="10" y="10" width="80" height="80" fill="none" stroke="currentColor" stroke-width="3"/>
                     <path d="M15 75 Q50 65 85 75 L85 85 L15 85 Z" fill="#0047AB"/>
-                    <path d="M50 15 L50 70 L35 70 Z" fill="#FF8C00"/>
-                    <path d="M35 70 Q50 75 65 70 L65 75 L35 75 Z" fill="currentColor"/>
+                    <path d="M20 70 Q50 60 80 70" stroke="#0047AB" stroke-width="2" fill="none"/>
+                    <circle cx="30" cy="50" r="3" fill="#0047AB"/>
+                    <circle cx="70" cy="50" r="3" fill="#0047AB"/>
                 </svg>
                 BAYK Partnership
             </a>
             <ul class="navbar-nav">
                 <li><a href="index.html">Dashboard</a></li>
-                <li><a href="offers.html">Browse Offers</a></li>
-                <li><a href="savings.html">My Savings</a></li>
+                <li><a href="offers.html">Offers</a></li>
+                <li><a href="savings.html">Savings</a></li>
                 <li><a href="#" onclick="logout()">Logout</a></li>
             </ul>
         </div>
     </nav>
 
     <!-- Main Content -->
-    <main class="container" style="padding: 2rem 0;">
-        <!-- PIN Code Display -->
-        <section class="qr-container">
-            <h2>Your Discount PIN Code</h2>
-            <div id="pin-code" class="qr-code">
-                <div id="loading-indicator" style="text-align: center; padding: 2rem;">
-                    <div class="loading" style="margin: 0 auto 1rem;"></div>
-                    <p style="color: var(--text-light);">Generating your discount PIN...</p>
-                </div>
-            </div>
-            <div id="pin-timer" class="qr-timer" style="display: none;">5:00</div>
-            <p style="color: var(--text-light); margin: 1rem 0;">
-                Tell this PIN to the partner business to redeem your discount
+    <main class="container" style="padding: 2rem 0; text-align: center;">
+        <div class="card" style="max-width: 500px; margin: 0 auto;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">⏳</div>
+            <h1 style="color: var(--text-dark); margin-bottom: 1rem;">Redirecting to QR Code...</h1>
+            <p style="color: var(--text-light); margin-bottom: 2rem;">
+                The PIN code system has been replaced with QR codes. 
+                You will be redirected automatically.
             </p>
-        </section>
-
-        <!-- Offer Details -->
-        <section class="card">
-            <div class="card-header">
-                <h3>Offer Details</h3>
+            <div style="background: var(--background-light); border-radius: 12px; padding: 16px; margin-bottom: 2rem; box-shadow: inset 4px 4px 10px var(--shadow-dark), inset -4px -4px 10px var(--shadow-light);">
+                <p style="color: var(--text-dark); font-size: 0.9rem; margin: 0;">
+                    If you are not redirected automatically, 
+                    <a href="qr-code.html" style="color: var(--primary-color); text-decoration: underline;">click here</a>.
+                </p>
             </div>
-            <div id="offer-details">
-                <!-- Offer details will be loaded here -->
-            </div>
-        </section>
-
-        <!-- Instructions -->
-        <section class="card">
-            <div class="card-header">
-                <h3>How to Use</h3>
-            </div>
-            <div class="instructions">
-                <div style="display: flex; align-items: center; margin-bottom: 1rem;">
-                    <div style="background-color: var(--primary-blue); color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; margin-right: 1rem; font-weight: bold;">1</div>
-                    <p>Tell the partner business staff your 4-digit PIN code</p>
-                </div>
-                <div style="display: flex; align-items: center; margin-bottom: 1rem;">
-                    <div style="background-color: var(--primary-blue); color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; margin-right: 1rem; font-weight: bold;">2</div>
-                    <p>They will enter the PIN to validate your discount</p>
-                </div>
-                <div style="display: flex; align-items: center; margin-bottom: 1rem;">
-                    <div style="background-color: var(--primary-blue); color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; margin-right: 1rem; font-weight: bold;">3</div>
-                    <p>Enjoy your savings and complete your purchase</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Security Notice -->
-        <section class="alert alert-info">
-            <strong>Security Notice:</strong> This PIN code is unique and expires in 5 minutes. It cannot be reused or shared. If the code expires, simply generate a new one.
-        </section>
-
-        <!-- Actions -->
-        <section class="text-center" style="margin: 2rem 0;">
-            <button class="btn btn-primary" onclick="generateNewPIN()" style="margin-right: 1rem;">
-                Generate New PIN
-            </button>
-            <a href="offers.html" class="btn btn-outline">
-                Back to Offers
-            </a>
-        </section>
+            <button onclick="redirectToQR()" class="btn btn-primary">Go to QR Code</button>
+        </div>
     </main>
 
     <!-- Footer -->
-    <footer style="background-color: var(--primary-blue); color: var(--white); padding: 2rem 0; margin-top: 4rem;">
-        <div class="container text-center">
-            <p>&copy; 2025 Sailing Club Partnership Platform. All rights reserved.</p>
+    <footer style="background: var(--background-light); color: var(--text-light); text-align: center; padding: 2rem 0; margin-top: 3rem; box-shadow: 0 -4px 20px var(--shadow-dark);">
+        <div class="container">
+            <p>&copy; 2025 BAYK Partnership Platform. All rights reserved.</p>
+            <p style="font-size: 0.9rem; margin-top: 0.5rem;">Bodrum Açıkdeniz Yelken Spor Kulübü - Connecting sailors with local businesses</p>
         </div>
     </footer>
 
     <script>
-        let pinTimer;
-        let timeLeft = 300; // 5 minutes in seconds
-        let currentOffer = null;
-        let currentPartner = null;
-
-        // Logout functionality
+        // Get the selected offer from localStorage
+        const selectedOffer = localStorage.getItem('selectedOffer') || 'demo-offer';
+        
+        // Redirect to QR code page with offer ID
+        function redirectToQR() {
+            window.location.href = 'qr-code.html?offerId=' + selectedOffer;
+        }
+        
+        // Auto-redirect after 2 seconds
+        setTimeout(() => {
+            redirectToQR();
+        }, 2000);
+        
         function logout() {
-            localStorage.removeItem('selectedRole');
+            // Clear any stored data
+            localStorage.removeItem('selectedOffer');
+            localStorage.removeItem('activeQR_');
+            
+            // Redirect to main page
             window.location.href = '../index.html';
         }
-
-        // Initialize page
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check if user is logged in as member
-            const currentRole = localStorage.getItem('selectedRole');
-            if (currentRole !== 'member') {
-                window.location.href = '../index.html';
-                return;
-            }
-
-            // Check if offer is selected
-            const selectedOfferId = localStorage.getItem('selectedOffer');
-            if (!selectedOfferId) {
-                window.location.href = 'offers.html';
-                return;
-            }
-
-            // Load offer data and generate PIN
-            loadOfferData(selectedOfferId);
-        });
-
-        async function loadOfferData(offerId) {
-            try {
-                // Load offers and partners data
-                const [offersResponse, partnersResponse] = await Promise.all([
-                    fetch('../assets/data/offers.json'),
-                    fetch('../assets/data/users.json')
-                ]);
-
-                const offersData = await offersResponse.json();
-                const usersData = await partnersResponse.json();
-
-                // Find the selected offer and partner
-                currentOffer = offersData.offers.find(o => o.id === offerId);
-                currentPartner = usersData.partners.find(p => p.id === currentOffer.partner_id);
-
-                if (!currentOffer || !currentPartner) {
-                    alert('Offer not found. Please try again.');
-                    window.location.href = 'offers.html';
-                    return;
-                }
-
-                displayOfferDetails();
-                generatePIN();
-                startTimer();
-            } catch (error) {
-                console.error('Error loading offer data:', error);
-                alert('Error loading offer. Please try again.');
-            }
-        }
-
-        function displayOfferDetails() {
-            const detailsContainer = document.getElementById('offer-details');
-            
-            // Format discount display
-            let discountDisplay = '';
-            if (currentOffer.discount_type === 'percentage') {
-                discountDisplay = `${currentOffer.discount_value}% off`;
-            } else if (currentOffer.discount_type === 'fixed') {
-                discountDisplay = `$${currentOffer.discount_value} off`;
-            } else if (currentOffer.discount_type === 'bogo') {
-                discountDisplay = 'Buy One, Get One';
-            }
-
-            detailsContainer.innerHTML = `
-                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
-                    <div>
-                        <h4>${currentOffer.title}</h4>
-                        <p style="color: var(--text-light);">${currentPartner.business_name}</p>
-                    </div>
-                    <div style="text-align: right;">
-                        <div style="font-size: 1.5rem; font-weight: 700; color: var(--secondary-green);">${discountDisplay}</div>
-                    </div>
-                </div>
-                <p style="margin-bottom: 1rem;">${currentOffer.description}</p>
-                <div style="background-color: #f3f4f6; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
-                    <strong>Terms & Conditions:</strong><br>
-                    ${currentOffer.terms}
-                </div>
-                <div style="display: flex; justify-content: space-between; color: var(--text-light); font-size: 0.9rem;">
-                    <span><strong>Valid until:</strong> ${new Date(currentOffer.valid_until).toLocaleDateString()}</span>
-                    <span><strong>Business:</strong> ${currentPartner.business_name}</span>
-                </div>
-            `;
-        }
-
-        function generatePIN() {
-            // Generate 4-digit PIN
-            const pin = Math.floor(1000 + Math.random() * 9000).toString();
-            
-            const pinData = {
-                pin: pin,
-                member_id: 'm001', // Zafer Gunel's ID
-                offer_id: currentOffer.id,
-                timestamp: new Date().toISOString(),
-                expires_at: new Date(Date.now() + 5 * 60 * 1000).toISOString() // 5 minutes from now
-            };
-
-            // Store PIN data for validation (use a more specific key)
-            localStorage.setItem('activePIN_' + pin, JSON.stringify(pinData));
-            localStorage.setItem('currentPINData', JSON.stringify(pinData));
-
-            // Display PIN
-            const pinCodeElement = document.getElementById('pin-code');
-            
-            // Clear loading indicator and show timer
-            pinCodeElement.innerHTML = '';
-            document.getElementById('pin-timer').style.display = 'block';
-            
-            // Create PIN display
-            pinCodeElement.innerHTML = `
-                <div style="border: 2px solid var(--primary-blue); border-radius: 0.5rem; padding: 2rem; background-color: white; text-align: center; max-width: 300px; margin: 0 auto;">
-                    <div style="font-size: 1.2rem; font-weight: 600; color: var(--primary-blue); margin-bottom: 1rem;">
-                        ⛵ DISCOUNT PIN
-                    </div>
-                    <div style="font-family: monospace; font-size: 3rem; font-weight: 700; color: var(--secondary-green); margin-bottom: 1rem; letter-spacing: 0.5rem;">
-                        ${pin}
-                    </div>
-                    <div style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 1rem;">
-                        Tell this PIN to the partner
-                    </div>
-                    <div style="font-size: 0.8rem; color: var(--text-light); background-color: #fef3c7; padding: 0.5rem; border-radius: 0.25rem;">
-                        💡 Partner will enter this PIN in their system
-                    </div>
-                </div>
-            `;
-            
-            console.log('PIN generated successfully:', pin);
-        }
-
-        function startTimer() {
-            pinTimer = setInterval(function() {
-                timeLeft--;
-                updateTimerDisplay();
-
-                if (timeLeft <= 0) {
-                    clearInterval(pinTimer);
-                    handlePINExpiry();
-                }
-            }, 1000);
-        }
-
-        function updateTimerDisplay() {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            const timerElement = document.getElementById('pin-timer');
-            timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-
-            // Change color as time runs out
-            if (timeLeft <= 60) {
-                timerElement.style.color = 'var(--accent-red)';
-            } else if (timeLeft <= 120) {
-                timerElement.style.color = '#f59e0b';
-            }
-        }
-
-        function handlePINExpiry() {
-            document.getElementById('pin-timer').textContent = 'EXPIRED';
-            document.getElementById('pin-timer').style.color = 'var(--accent-red)';
-            
-            // Disable PIN code
-            const pinCodeElement = document.getElementById('pin-code');
-            pinCodeElement.style.opacity = '0.5';
-            pinCodeElement.style.filter = 'grayscale(100%)';
-
-            // Show expiry message
-            const expiryAlert = document.createElement('div');
-            expiryAlert.className = 'alert alert-error';
-            expiryAlert.innerHTML = '<strong>PIN Code Expired:</strong> This code is no longer valid. Please generate a new one.';
-            document.querySelector('.qr-container').appendChild(expiryAlert);
-        }
-
-        function generateNewPIN() {
-            // Clear existing timer
-            if (pinTimer) {
-                clearInterval(pinTimer);
-            }
-
-            // Reset timer
-            timeLeft = 300;
-            
-            // Remove expiry alert if exists
-            const existingAlert = document.querySelector('.alert-error');
-            if (existingAlert) {
-                existingAlert.remove();
-            }
-
-            // Reset PIN code display
-            const pinCodeElement = document.getElementById('pin-code');
-            pinCodeElement.style.opacity = '1';
-            pinCodeElement.style.filter = 'none';
-
-            // Generate new PIN and start timer
-            generatePIN();
-            startTimer();
-        }
-
-        // Clean up timer when page is unloaded
-        window.addEventListener('beforeunload', function() {
-            if (pinTimer) {
-                clearInterval(pinTimer);
-            }
-        });
     </script>
 </body>
 </html>
