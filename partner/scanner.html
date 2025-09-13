@@ -10,7 +10,20 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- QR Scanner Libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js?v=2"></script>
+    <script>
+        // Fallback for jsQR if primary CDN fails
+        if (typeof jsQR === 'undefined') {
+            console.log('Primary jsQR CDN failed, trying fallback...');
+            const script = document.createElement('script');
+            script.src = 'https://unpkg.com/jsqr@1.4.0/dist/jsQR.js?v=2';
+            script.onerror = function() {
+                console.error('All jsQR CDNs failed to load');
+                showError('QR scanning library failed to load. Please use manual entry.');
+            };
+            document.head.appendChild(script);
+        }
+    </script>
 </head>
 <body>
     <!-- Navigation -->
@@ -131,6 +144,9 @@
             video = document.getElementById('qr-video');
             canvas = document.getElementById('qr-canvas');
             context = canvas.getContext('2d');
+            
+            // Debug: Check if jsQR is loaded
+            console.log('jsQR available:', typeof jsQR !== 'undefined');
             console.log('QR Scanner initialized successfully');
         }
 
