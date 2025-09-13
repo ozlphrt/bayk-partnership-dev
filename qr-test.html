@@ -170,9 +170,8 @@
             'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js',
             'https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js',
             'https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js',
-            'https://cdn.skypack.dev/qrcode@1.5.3',
-            'https://esm.sh/qrcode@1.5.3',
-            'https://jspm.dev/qrcode@1.5.3'
+            'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.js',
+            'https://unpkg.com/qrcode@1.5.3/build/qrcode.js'
         ];
         
         let qrCodeLoaded = false;
@@ -188,15 +187,33 @@
             const script = document.createElement('script');
             script.src = qrCodeCDNs[currentCDN];
             script.onload = function() {
-                console.log('QR Code library loaded successfully from CDN', currentCDN + 1);
-                qrCodeLoaded = true;
-                showStatus('QR Code library loaded successfully!', 'success');
+                // Check if QRCode is actually available and working
+                setTimeout(() => {
+                    if (typeof QRCode !== 'undefined' && typeof QRCode.toCanvas === 'function') {
+                        console.log('QR Code library loaded successfully from CDN', currentCDN + 1);
+                        qrCodeLoaded = true;
+                        showStatus('QR Code library loaded successfully!', 'success');
+                    } else {
+                        console.log('CDN', currentCDN + 1, 'loaded but QRCode not available, trying next...');
+                        currentCDN++;
+                        loadQRCodeLibrary();
+                    }
+                }, 100);
             };
+            
+            // Handle ES module syntax errors
             script.onerror = function() {
                 console.log('CDN', currentCDN + 1, 'failed, trying next...');
                 currentCDN++;
                 loadQRCodeLibrary();
             };
+            
+            // Add error event listener for syntax errors
+            script.addEventListener('error', function(e) {
+                console.log('CDN', currentCDN + 1, 'syntax error, trying next...');
+                currentCDN++;
+                loadQRCodeLibrary();
+            });
             document.head.appendChild(script);
         }
         
