@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BAYK Partnership - iOS Style Mockup 8: Neumorphism Cool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+            background: #e8f0f5;
+            min-height: 100vh;
+            color: #2c3e50;
+        }
+        
+        .container {
+            max-width: 375px;
+            margin: 0 auto;
+            background: #e8f0f5;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        .status-bar {
+            height: 44px;
+            background: #e8f0f5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            color: #2c3e50;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .header {
+            background: #e8f0f5;
+            padding: 60px 20px 40px;
+            text-align: center;
+            color: #2c3e50;
+        }
+        
+        .logo {
+            width: 100px;
+            height: 100px;
+            background: #e8f0f5;
+            border-radius: 25px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 
+                20px 20px 60px #c7d6e0,
+                -20px -20px 60px #ffffff;
+        }
+        
+        .logo svg {
+            width: 60px;
+            height: 60px;
+        }
+        
+        .club-name {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+        
+        .club-subtitle {
+            font-size: 14px;
+            color: #5d6d7e;
+            font-weight: 400;
+        }
+        
+        .content {
+            padding: 30px 20px;
+        }
+        
+        .role-card {
+            background: #e8f0f5;
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 
+                20px 20px 60px #c7d6e0,
+                -20px -20px 60px #ffffff;
+            transition: all 0.3s ease;
+        }
+        
+        .role-card:hover {
+            box-shadow: 
+                25px 25px 70px #c7d6e0,
+                -25px -25px 70px #ffffff;
+            transform: translateY(-2px);
+        }
+        
+        .role-card:active {
+            box-shadow: 
+                inset 20px 20px 60px #c7d6e0,
+                inset -20px -20px 60px #ffffff;
+        }
+        
+        .role-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 16px;
+            background: #e8f0f5;
+            box-shadow: 
+                8px 8px 20px #c7d6e0,
+                -8px -8px 20px #ffffff;
+        }
+        
+        .role-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+        
+        .role-description {
+            font-size: 14px;
+            color: #5d6d7e;
+            line-height: 1.4;
+            margin-bottom: 20px;
+        }
+        
+        .role-button {
+            background: #e8f0f5;
+            color: #2c3e50;
+            border: none;
+            border-radius: 16px;
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 
+                8px 8px 20px #c7d6e0,
+                -8px -8px 20px #ffffff;
+        }
+        
+        .role-button:hover {
+            box-shadow: 
+                12px 12px 25px #c7d6e0,
+                -12px -12px 25px #ffffff;
+            transform: scale(1.02);
+        }
+        
+        .role-button:active {
+            box-shadow: 
+                inset 8px 8px 20px #c7d6e0,
+                inset -8px -8px 20px #ffffff;
+        }
+        
+        .stats {
+            background: #e8f0f5;
+            border-radius: 20px;
+            padding: 24px;
+            margin-top: 20px;
+            box-shadow: 
+                20px 20px 60px #c7d6e0,
+                -20px -20px 60px #ffffff;
+        }
+        
+        .stats-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            background: #e8f0f5;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 
+                8px 8px 20px #c7d6e0,
+                -8px -8px 20px #ffffff;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2980b9;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #5d6d7e;
+            font-weight: 500;
+        }
+        
+        .accent-line {
+            height: 4px;
+            background: linear-gradient(90deg, #2980b9, #3498db, #5dade2);
+            border-radius: 2px;
+            margin: 20px 0;
+            box-shadow: 
+                2px 2px 8px #c7d6e0,
+                -2px -2px 8px #ffffff;
+        }
+        
+        .cool-glow {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(52, 152, 219, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: coolPulse 8s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        @keyframes coolPulse {
+            0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.3); }
+        }
+        
+        .floating-bubbles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(52, 152, 219, 0.1);
+            animation: bubbleFloat 12s linear infinite;
+        }
+        
+        .bubble:nth-child(1) {
+            width: 20px;
+            height: 20px;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .bubble:nth-child(2) {
+            width: 30px;
+            height: 30px;
+            left: 30%;
+            animation-delay: 3s;
+        }
+        
+        .bubble:nth-child(3) {
+            width: 25px;
+            height: 25px;
+            left: 50%;
+            animation-delay: 6s;
+        }
+        
+        .bubble:nth-child(4) {
+            width: 35px;
+            height: 35px;
+            left: 70%;
+            animation-delay: 9s;
+        }
+        
+        .bubble:nth-child(5) {
+            width: 15px;
+            height: 15px;
+            left: 90%;
+            animation-delay: 1.5s;
+        }
+        
+        @keyframes bubbleFloat {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) scale(1);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cool-glow"></div>
+    <div class="floating-bubbles">
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+    </div>
+    
+    <div class="container">
+        <div class="status-bar">
+            <span>9:41</span>
+            <span>BAYK</span>
+            <span>100%</span>
+        </div>
+        
+        <div class="header">
+            <div class="logo">
+                <svg viewBox="0 0 100 100">
+                    <rect x="10" y="10" width="80" height="80" fill="none" stroke="#2980b9" stroke-width="3"/>
+                    <path d="M15 75 Q50 65 85 75 L85 85 L15 85 Z" fill="#2980b9"/>
+                    <path d="M50 15 L50 70 L35 70 Z" fill="#3498db"/>
+                    <path d="M35 70 Q50 75 65 70 L65 75 L35 75 Z" fill="#5dade2"/>
+                </svg>
+            </div>
+            <div class="club-name">BAYK</div>
+            <div class="club-subtitle">BODRUM AÇIKDENİZ YELKEN SPOR KULÜBÜ</div>
+        </div>
+        
+        <div class="content">
+            <div class="role-card">
+                <div class="role-icon">👤</div>
+                <div class="role-title">Club Member</div>
+                <div class="role-description">Browse exclusive offers, generate PIN codes, and track your savings</div>
+                <button class="role-button">Enter as Member</button>
+            </div>
+            
+            <div class="role-card">
+                <div class="role-icon">🏪</div>
+                <div class="role-title">Business Partner</div>
+                <div class="role-description">Scan PIN codes, process transactions, and view analytics</div>
+                <button class="role-button">Enter as Partner</button>
+            </div>
+            
+            <div class="role-card">
+                <div class="role-icon">⚙️</div>
+                <div class="role-title">Administrator</div>
+                <div class="role-description">Monitor platform activity, manage partners and members</div>
+                <button class="role-button">Enter as Admin</button>
+            </div>
+            
+            <div class="accent-line"></div>
+            
+            <div class="stats">
+                <div class="stats-title">Platform Impact</div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">234</div>
+                        <div class="stat-label">Transactions</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">$3,420</div>
+                        <div class="stat-label">Savings</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">89%</div>
+                        <div class="stat-label">Participation</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">10</div>
+                        <div class="stat-label">Partners</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

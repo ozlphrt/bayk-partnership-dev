@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BAYK Partnership - iOS Style Mockup 6: Neumorphism Warm</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+            background: #f5f3f0;
+            min-height: 100vh;
+            color: #2c2c2c;
+        }
+        
+        .container {
+            max-width: 375px;
+            margin: 0 auto;
+            background: #f5f3f0;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        .status-bar {
+            height: 44px;
+            background: #f5f3f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            color: #2c2c2c;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .header {
+            background: #f5f3f0;
+            padding: 60px 20px 40px;
+            text-align: center;
+            color: #2c2c2c;
+        }
+        
+        .logo {
+            width: 100px;
+            height: 100px;
+            background: #f5f3f0;
+            border-radius: 25px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 
+                20px 20px 60px #d4d1cc,
+                -20px -20px 60px #ffffff;
+        }
+        
+        .logo svg {
+            width: 60px;
+            height: 60px;
+        }
+        
+        .club-name {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #2c2c2c;
+        }
+        
+        .club-subtitle {
+            font-size: 14px;
+            color: #8b7355;
+            font-weight: 400;
+        }
+        
+        .content {
+            padding: 30px 20px;
+        }
+        
+        .role-card {
+            background: #f5f3f0;
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 
+                20px 20px 60px #d4d1cc,
+                -20px -20px 60px #ffffff;
+            transition: all 0.3s ease;
+        }
+        
+        .role-card:hover {
+            box-shadow: 
+                25px 25px 70px #d4d1cc,
+                -25px -25px 70px #ffffff;
+            transform: translateY(-2px);
+        }
+        
+        .role-card:active {
+            box-shadow: 
+                inset 20px 20px 60px #d4d1cc,
+                inset -20px -20px 60px #ffffff;
+        }
+        
+        .role-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 16px;
+            background: #f5f3f0;
+            box-shadow: 
+                8px 8px 20px #d4d1cc,
+                -8px -8px 20px #ffffff;
+        }
+        
+        .role-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2c2c2c;
+        }
+        
+        .role-description {
+            font-size: 14px;
+            color: #8b7355;
+            line-height: 1.4;
+            margin-bottom: 20px;
+        }
+        
+        .role-button {
+            background: #f5f3f0;
+            color: #2c2c2c;
+            border: none;
+            border-radius: 16px;
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 
+                8px 8px 20px #d4d1cc,
+                -8px -8px 20px #ffffff;
+        }
+        
+        .role-button:hover {
+            box-shadow: 
+                12px 12px 25px #d4d1cc,
+                -12px -12px 25px #ffffff;
+            transform: scale(1.02);
+        }
+        
+        .role-button:active {
+            box-shadow: 
+                inset 8px 8px 20px #d4d1cc,
+                inset -8px -8px 20px #ffffff;
+        }
+        
+        .stats {
+            background: #f5f3f0;
+            border-radius: 20px;
+            padding: 24px;
+            margin-top: 20px;
+            box-shadow: 
+                20px 20px 60px #d4d1cc,
+                -20px -20px 60px #ffffff;
+        }
+        
+        .stats-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #2c2c2c;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            background: #f5f3f0;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 
+                8px 8px 20px #d4d1cc,
+                -8px -8px 20px #ffffff;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #8b4513;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #8b7355;
+            font-weight: 500;
+        }
+        
+        .accent-line {
+            height: 4px;
+            background: linear-gradient(90deg, #8b4513, #d2691e, #cd853f);
+            border-radius: 2px;
+            margin: 20px 0;
+            box-shadow: 
+                2px 2px 8px #d4d1cc,
+                -2px -2px 8px #ffffff;
+        }
+        
+        .warm-glow {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(210, 105, 30, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: warmPulse 6s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        @keyframes warmPulse {
+            0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.2); }
+        }
+    </style>
+</head>
+<body>
+    <div class="warm-glow"></div>
+    
+    <div class="container">
+        <div class="status-bar">
+            <span>9:41</span>
+            <span>BAYK</span>
+            <span>100%</span>
+        </div>
+        
+        <div class="header">
+            <div class="logo">
+                <svg viewBox="0 0 100 100">
+                    <rect x="10" y="10" width="80" height="80" fill="none" stroke="#8b4513" stroke-width="3"/>
+                    <path d="M15 75 Q50 65 85 75 L85 85 L15 85 Z" fill="#8b4513"/>
+                    <path d="M50 15 L50 70 L35 70 Z" fill="#d2691e"/>
+                    <path d="M35 70 Q50 75 65 70 L65 75 L35 75 Z" fill="#cd853f"/>
+                </svg>
+            </div>
+            <div class="club-name">BAYK</div>
+            <div class="club-subtitle">BODRUM AÇIKDENİZ YELKEN SPOR KULÜBÜ</div>
+        </div>
+        
+        <div class="content">
+            <div class="role-card">
+                <div class="role-icon">👤</div>
+                <div class="role-title">Club Member</div>
+                <div class="role-description">Browse exclusive offers, generate PIN codes, and track your savings</div>
+                <button class="role-button">Enter as Member</button>
+            </div>
+            
+            <div class="role-card">
+                <div class="role-icon">🏪</div>
+                <div class="role-title">Business Partner</div>
+                <div class="role-description">Scan PIN codes, process transactions, and view analytics</div>
+                <button class="role-button">Enter as Partner</button>
+            </div>
+            
+            <div class="role-card">
+                <div class="role-icon">⚙️</div>
+                <div class="role-title">Administrator</div>
+                <div class="role-description">Monitor platform activity, manage partners and members</div>
+                <button class="role-button">Enter as Admin</button>
+            </div>
+            
+            <div class="accent-line"></div>
+            
+            <div class="stats">
+                <div class="stats-title">Platform Impact</div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">234</div>
+                        <div class="stat-label">Transactions</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">$3,420</div>
+                        <div class="stat-label">Savings</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">89%</div>
+                        <div class="stat-label">Participation</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">10</div>
+                        <div class="stat-label">Partners</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
