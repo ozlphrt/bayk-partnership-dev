@@ -20,40 +20,57 @@
             return typeof QRCode !== 'undefined' && QRCode.toCanvas;
         }
         
-        // Function to load QR library with fallbacks
+        // Alternative QR generation using Google Charts API
+        function generateQRWithGoogleCharts(qrData) {
+            const qrCodeElement = document.getElementById('qr-code');
+            const qrText = JSON.stringify(qrData);
+            const qrUrl = `https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=${encodeURIComponent(qrText)}`;
+            
+            qrCodeElement.innerHTML = `
+                <img src="${qrUrl}" alt="QR Code" style="border: 2px solid var(--primary-blue); border-radius: 0.5rem; max-width: 200px; height: auto;">
+            `;
+            
+            console.log('QR code generated using Google Charts API');
+        }
+        
+        // Function to load QR library with multiple fallbacks
         function loadQRLibrary() {
             console.log('Loading QR Code library...');
             
-            // Try primary CDN
-            const script1 = document.createElement('script');
-            script1.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js';
-            script1.onload = function() {
-                console.log('Primary QR library loaded successfully');
-                window.QRCodeLoaded = true;
-                window.QRCodeLoading = false;
-            };
-            script1.onerror = function() {
-                console.log('Primary QR library failed, trying backup...');
-                loadBackupQRLibrary();
-            };
-            document.head.appendChild(script1);
-        }
-        
-        // Function to load backup QR library
-        function loadBackupQRLibrary() {
-            const script2 = document.createElement('script');
-            script2.src = 'https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js';
-            script2.onload = function() {
-                console.log('Backup QR library loaded successfully');
-                window.QRCodeLoaded = true;
-                window.QRCodeLoading = false;
-            };
-            script2.onerror = function() {
-                console.log('All QR libraries failed, using fallback method');
-                window.QRCodeFallback = true;
-                window.QRCodeLoading = false;
-            };
-            document.head.appendChild(script2);
+            // Try multiple CDN sources
+            const cdnSources = [
+                'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js',
+                'https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js',
+                'https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js',
+                'https://cdn.skypack.dev/qrcode@1.5.3/build/qrcode.min.js'
+            ];
+            
+            let currentIndex = 0;
+            
+            function tryNextCDN() {
+                if (currentIndex >= cdnSources.length) {
+                    console.log('All CDN sources failed, using fallback method');
+                    window.QRCodeFallback = true;
+                    window.QRCodeLoading = false;
+                    return;
+                }
+                
+                const script = document.createElement('script');
+                script.src = cdnSources[currentIndex];
+                script.onload = function() {
+                    console.log(`QR library loaded successfully from CDN ${currentIndex + 1}`);
+                    window.QRCodeLoaded = true;
+                    window.QRCodeLoading = false;
+                };
+                script.onerror = function() {
+                    console.log(`CDN ${currentIndex + 1} failed, trying next...`);
+                    currentIndex++;
+                    tryNextCDN();
+                };
+                document.head.appendChild(script);
+            }
+            
+            tryNextCDN();
         }
         
         // Start loading QR library
@@ -324,27 +341,34 @@
             qrCodeElement.innerHTML = '';
             document.getElementById('qr-timer').style.display = 'block';
             
-            // Create a canvas element for the QR code
-            const canvas = document.createElement('canvas');
-            qrCodeElement.appendChild(canvas);
-            
-            QRCode.toCanvas(canvas, JSON.stringify(qrData), {
-                width: 200,
-                height: 200,
-                color: {
-                    dark: '#1e40af',
-                    light: '#ffffff'
-                },
-                margin: 2
-            }, function (error) {
-                if (error) {
-                    console.error('QR Code generation error:', error);
-                    // Fallback: create a simple text representation
-                    createFallbackQR(qrCodeElement, qrData);
-                } else {
-                    console.log('QR Code generated successfully');
-                }
-            });
+            // Try QRCode library first
+            if (checkQRCodeAvailable()) {
+                // Create a canvas element for the QR code
+                const canvas = document.createElement('canvas');
+                qrCodeElement.appendChild(canvas);
+                
+                QRCode.toCanvas(canvas, JSON.stringify(qrData), {
+                    width: 200,
+                    height: 200,
+                    color: {
+                        dark: '#1e40af',
+                        light: '#ffffff'
+                    },
+                    margin: 2
+                }, function (error) {
+                    if (error) {
+                        console.error('QRCode library error:', error);
+                        // Try Google Charts API as fallback
+                        generateQRWithGoogleCharts(qrData);
+                    } else {
+                        console.log('QR Code generated successfully with QRCode library');
+                    }
+                });
+            } else {
+                console.log('QRCode library not available, trying Google Charts API');
+                // Try Google Charts API
+                generateQRWithGoogleCharts(qrData);
+            }
         }
 
         function generateUniqueToken() {
@@ -370,8 +394,9 @@
             qrCodeElement.innerHTML = '';
             document.getElementById('qr-timer').style.display = 'block';
             
-            // Create fallback QR display
-            createFallbackQR(qrCodeElement, qrData);
+            // Try Google Charts API first, then fallback to text
+            console.log('Using fallback QR generation - trying Google Charts API');
+            generateQRWithGoogleCharts(qrData);
         }
 
         function createFallbackQR(element, qrData) {
