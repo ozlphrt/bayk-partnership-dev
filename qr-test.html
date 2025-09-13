@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Test - BAYK Partnership</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+            background: #e0e5ec;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            background: #e0e5ec;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 20px 20px 60px #bebebe, -20px -20px 60px #ffffff;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #1d1d1f;
+            margin-bottom: 20px;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            color: #6b7280;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 12px;
+            background: #e0e5ec;
+            color: #1d1d1f;
+            font-size: 16px;
+            box-shadow: inset 8px 8px 20px #bebebe, inset -8px -8px 20px #ffffff;
+            box-sizing: border-box;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .btn {
+            background: #e0e5ec;
+            color: #0047AB;
+            border: none;
+            border-radius: 16px;
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 8px 8px 20px #bebebe, -8px -8px 20px #ffffff;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        
+        .btn:hover {
+            box-shadow: 4px 4px 10px #bebebe, -4px -4px 10px #ffffff;
+        }
+        
+        .btn:active {
+            box-shadow: inset 4px 4px 10px #bebebe, inset -4px -4px 10px #ffffff;
+        }
+        
+        .qr-container {
+            margin: 20px 0;
+            padding: 20px;
+            background: #e0e5ec;
+            border-radius: 16px;
+            box-shadow: inset 8px 8px 20px #bebebe, inset -8px -8px 20px #ffffff;
+        }
+        
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .status.info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        #qr-display {
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .test-data {
+            background: #e0e5ec;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+            box-shadow: inset 4px 4px 10px #bebebe, inset -4px -4px 10px #ffffff;
+            font-family: monospace;
+            font-size: 12px;
+            color: #6b7280;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 QR Code Test</h1>
+        <p style="color: #6b7280; margin-bottom: 30px;">Test QR code generation and scanning functionality</p>
+        
+        <div class="input-group">
+            <label for="qr-text">QR Code Content:</label>
+            <textarea id="qr-text" placeholder="Enter text to encode in QR code...">{"memberId":"m001","offerId":"demo-offer","timestamp":1694567890123,"token":"abc123xyz"}</textarea>
+        </div>
+        
+        <button class="btn" onclick="generateQR()">Generate QR Code</button>
+        <button class="btn" onclick="generateTestData()">Generate Test Data</button>
+        <button class="btn" onclick="clearQR()">Clear</button>
+        
+        <div id="status" class="status" style="display: none;"></div>
+        
+        <div class="qr-container">
+            <h3 style="color: #1d1d1f; margin-bottom: 15px;">QR Code Display</h3>
+            <div id="qr-display">
+                <p style="color: #6b7280;">Click "Generate QR Code" to create a QR code</p>
+            </div>
+        </div>
+        
+        <div class="test-data" id="test-data" style="display: none;">
+            <strong>Test Data:</strong><br>
+            <span id="test-content"></span>
+        </div>
+    </div>
+
+    <!-- QR Code Generation Library with fallbacks -->
+    <script>
+        // QR Code library loading with multiple fallbacks
+        const qrCodeCDNs = [
+            'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js',
+            'https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js',
+            'https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js',
+            'https://cdn.skypack.dev/qrcode@1.5.3',
+            'https://esm.sh/qrcode@1.5.3',
+            'https://jspm.dev/qrcode@1.5.3'
+        ];
+        
+        let qrCodeLoaded = false;
+        let currentCDN = 0;
+        
+        function loadQRCodeLibrary() {
+            if (currentCDN >= qrCodeCDNs.length) {
+                console.error('All QR Code CDNs failed to load, using local fallback');
+                loadLocalQRCodeFallback();
+                return;
+            }
+            
+            const script = document.createElement('script');
+            script.src = qrCodeCDNs[currentCDN];
+            script.onload = function() {
+                console.log('QR Code library loaded successfully from CDN', currentCDN + 1);
+                qrCodeLoaded = true;
+                showStatus('QR Code library loaded successfully!', 'success');
+            };
+            script.onerror = function() {
+                console.log('CDN', currentCDN + 1, 'failed, trying next...');
+                currentCDN++;
+                loadQRCodeLibrary();
+            };
+            document.head.appendChild(script);
+        }
+        
+        function loadLocalQRCodeFallback() {
+            // Create a minimal QRCode implementation using Google Charts API
+            window.QRCode = {
+                toCanvas: function(canvas, text, options, callback) {
+                    try {
+                        const encodedText = encodeURIComponent(text);
+                        const size = options.width || 200;
+                        const googleChartsURL = `https://chart.googleapis.com/chart?chs=${size}x${size}&cht=qr&chl=${encodedText}`;
+                        
+                        const img = new Image();
+                        img.crossOrigin = 'anonymous';
+                        img.onload = function() {
+                            const ctx = canvas.getContext('2d');
+                            canvas.width = size;
+                            canvas.height = size;
+                            ctx.drawImage(img, 0, 0, size, size);
+                            if (callback) callback(null);
+                        };
+                        img.onerror = function() {
+                            if (callback) callback(new Error('Failed to load QR code image'));
+                        };
+                        img.src = googleChartsURL;
+                    } catch (error) {
+                        if (callback) callback(error);
+                    }
+                }
+            };
+            qrCodeLoaded = true;
+            console.log('Local QR Code fallback loaded');
+            showStatus('Local QR Code fallback loaded', 'info');
+        }
+        
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+            statusDiv.style.display = 'block';
+            
+            // Hide status after 3 seconds
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+            }, 3000);
+        }
+        
+        function generateQR() {
+            const qrText = document.getElementById('qr-text').value.trim();
+            
+            if (!qrText) {
+                showStatus('Please enter text to encode', 'error');
+                return;
+            }
+            
+            const qrDisplay = document.getElementById('qr-display');
+            qrDisplay.innerHTML = '<p style="color: #6b7280;">Generating QR code...</p>';
+            
+            // Wait for QR code library to load
+            waitForQRCodeLibrary().then(() => {
+                createQRCode(qrText);
+            }).catch(() => {
+                showQRFallback(qrDisplay, qrText);
+            });
+        }
+        
+        function waitForQRCodeLibrary() {
+            return new Promise((resolve, reject) => {
+                const maxWaitTime = 10000; // 10 seconds
+                const checkInterval = 100; // Check every 100ms
+                let waitTime = 0;
+                
+                const checkLibrary = () => {
+                    if (qrCodeLoaded && typeof QRCode !== 'undefined') {
+                        resolve();
+                    } else if (waitTime >= maxWaitTime) {
+                        reject(new Error('QR Code library loading timeout'));
+                    } else {
+                        waitTime += checkInterval;
+                        setTimeout(checkLibrary, checkInterval);
+                    }
+                };
+                
+                checkLibrary();
+            });
+        }
+        
+        function createQRCode(text) {
+            const qrDisplay = document.getElementById('qr-display');
+            
+            // Clear previous QR code
+            qrDisplay.innerHTML = '';
+            
+            // Create canvas for QR code
+            const canvas = document.createElement('canvas');
+            qrDisplay.appendChild(canvas);
+            
+            // Check if QRCode library is available
+            if (typeof QRCode === 'undefined') {
+                console.error('QRCode library not available');
+                showQRFallback(qrDisplay, text);
+                return;
+            }
+            
+            // Generate QR code using qrcode.js
+            QRCode.toCanvas(canvas, text, {
+                width: 200,
+                height: 200,
+                color: {
+                    dark: '#0047AB',  // BAYK Blue
+                    light: '#FFFFFF'
+                },
+                margin: 2,
+                errorCorrectionLevel: 'M'
+            }, function (error) {
+                if (error) {
+                    console.error('QR Code generation failed:', error);
+                    showQRFallback(qrDisplay, text);
+                } else {
+                    console.log('QR Code generated successfully');
+                    showStatus('QR Code generated successfully!', 'success');
+                }
+            });
+        }
+        
+        function showQRFallback(container, qrString) {
+            // Try Google Charts API as visual fallback first
+            tryGoogleChartsFallback(container, qrString).catch(() => {
+                // If Google Charts also fails, show text fallback
+                container.innerHTML = `
+                    <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <h4 style="color: #1d1d1f; margin-bottom: 15px;">QR Code (Text Format)</h4>
+                        <div style="background: #f3f4f6; padding: 15px; border-radius: 8px; font-family: monospace; word-break: break-all; color: #1d1d1f; font-size: 12px;">
+                            ${qrString}
+                        </div>
+                        <p style="color: #6b7280; font-size: 14px; margin-top: 15px;">
+                            Show this text for manual validation
+                        </p>
+                    </div>
+                `;
+                showStatus('Using text fallback - QR library failed', 'error');
+            });
+        }
+        
+        function tryGoogleChartsFallback(container, qrString) {
+            return new Promise((resolve, reject) => {
+                // Encode the QR string for URL
+                const encodedString = encodeURIComponent(qrString);
+                const googleChartsURL = `https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=${encodedString}`;
+                
+                // Create image element
+                const img = document.createElement('img');
+                img.src = googleChartsURL;
+                img.style.borderRadius = '8px';
+                img.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+                
+                img.onload = function() {
+                    container.innerHTML = `
+                        <div style="text-align: center;">
+                            <h4 style="color: #1d1d1f; margin-bottom: 15px;">QR Code (Google Charts)</h4>
+                            ${img.outerHTML}
+                            <p style="color: #6b7280; font-size: 14px; margin-top: 15px;">
+                                Generated using Google Charts API
+                            </p>
+                        </div>
+                    `;
+                    showStatus('QR Code generated using Google Charts API', 'info');
+                    resolve();
+                };
+                
+                img.onerror = function() {
+                    reject(new Error('Google Charts API failed'));
+                };
+                
+                // Set timeout for Google Charts request
+                setTimeout(() => {
+                    reject(new Error('Google Charts API timeout'));
+                }, 5000);
+            });
+        }
+        
+        function generateTestData() {
+            const testData = {
+                memberId: 'm001',
+                offerId: 'demo-offer-' + Math.random().toString(36).substr(2, 5),
+                timestamp: Date.now(),
+                token: Math.random().toString(36).substr(2, 9),
+                partnerId: 'p001',
+                discount: 15,
+                amount: 45.00
+            };
+            
+            const jsonString = JSON.stringify(testData, null, 2);
+            document.getElementById('qr-text').value = JSON.stringify(testData);
+            document.getElementById('test-content').textContent = jsonString;
+            document.getElementById('test-data').style.display = 'block';
+            
+            showStatus('Test data generated!', 'success');
+        }
+        
+        function clearQR() {
+            document.getElementById('qr-display').innerHTML = '<p style="color: #6b7280;">Click "Generate QR Code" to create a QR code</p>';
+            document.getElementById('qr-text').value = '';
+            document.getElementById('test-data').style.display = 'none';
+            document.getElementById('status').style.display = 'none';
+        }
+        
+        // Start loading the library when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadQRCodeLibrary();
+            showStatus('Loading QR Code library...', 'info');
+        });
+    </script>
+</body>
+</html>
