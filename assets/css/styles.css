@@ -1,5 +1,5 @@
-/* Sailing Club Partnership App - Main Stylesheet */
-/* Based on TECHNICAL_SPECIFICATIONS.md color scheme and design requirements */
+/* BAYK Partnership App - Main Stylesheet */
+/* Based on BAYK color scheme: Green (#33A02C), Blue (#0047AB), Orange (#FF8C00) */
 
 /* CSS Reset and Base Styles */
 * {
@@ -8,16 +8,42 @@
     box-sizing: border-box;
 }
 
-/* Color Variables - From TECHNICAL_SPECIFICATIONS.md */
+/* Color Variables - BAYK Brand Colors */
 :root {
-    --primary-blue: #1e40af;      /* Sailing Blue */
-    --secondary-green: #059669;   /* Ocean Green */
+    --primary-blue: #0047AB;      /* BAYK Blue */
+    --secondary-green: #33A02C;   /* BAYK Green */
+    --accent-orange: #FF8C00;     /* BAYK Orange */
     --accent-red: #dc2626;        /* Alert Red */
     --neutral-gray: #6b7280;      /* Gray */
     --background-light: #f9fafb;  /* Light Gray */
     --white: #ffffff;
     --text-dark: #1f2937;
     --text-light: #6b7280;
+}
+
+/* BAYK Logo Styling */
+.bayk-logo {
+    display: block;
+    margin: 0 auto;
+}
+
+.bayk-logo-small {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 0.5rem;
+}
+
+.club-name h1 {
+    color: var(--primary-blue);
+    font-weight: 700;
+    margin: 0;
+}
+
+.club-full-name {
+    color: var(--primary-blue);
+    font-size: 0.9rem;
+    font-weight: 400;
+    margin: 0.5rem 0 0 0;
 }
 
 /* Typography - From TECHNICAL_SPECIFICATIONS.md */
