@@ -51,17 +51,19 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             margin-bottom: 2rem;
         }
+
         .chart-container canvas {
-            max-height: 250px !important;
-            height: 250px !important;
-        }
-        #volumeChart {
             max-height: 200px !important;
             height: 200px !important;
         }
+        #volumeChart {
+            max-height: 150px !important;
+            height: 150px !important;
+        }
         .chart-container:has(#volumeChart) {
-            max-height: 300px;
+            max-height: 220px;
             overflow: hidden;
+            padding: 1rem 1.5rem;
         }
 
         /* Mobile optimizations */
@@ -71,15 +73,15 @@
                 margin-bottom: 1.5rem;
             }
             .chart-container canvas {
-                max-height: 200px !important;
-                height: 200px !important;
+                max-height: 160px !important;
+                height: 160px !important;
             }
             #volumeChart {
-                max-height: 180px !important;
-                height: 180px !important;
+                max-height: 140px !important;
+                height: 140px !important;
             }
             .chart-container:has(#volumeChart) {
-                max-height: 250px;
+                max-height: 200px;
             }
         }
         .analytics-grid {
@@ -349,7 +351,7 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    aspectRatio: window.innerWidth < 768 ? 2 : 3,
+                    aspectRatio: window.innerWidth < 768 ? 2.5 : 4,
                     plugins: {
                         legend: {
                             labels: {
