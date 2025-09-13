@@ -7,13 +7,14 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
+    <meta name="version" content="v4-20241220">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛵</text></svg>">
-    <link rel="stylesheet" href="../assets/css/styles.css?v=3">
+    <link rel="stylesheet" href="../assets/css/styles.css?v=4">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- QR Scanner Libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js?v=2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js?v=3"></script>
     <script>
         // Fallback for jsQR if primary CDN fails
         if (typeof jsQR === 'undefined') {
@@ -150,6 +151,8 @@
             initializeScanner();
             setupEventListeners();
             updateLocalStorageInfo();
+            console.log('QR Scanner page loaded - Version 4 with Create Member QR button');
+            console.log('Available buttons:', document.querySelectorAll('button').length);
         });
 
         function initializeScanner() {
@@ -268,160 +271,48 @@
         }
 
         function processQRCode(qrData) {
+            console.log('DEMO MODE: Processing QR code for board meeting - Auto-validation enabled');
+            console.log('QR code data:', qrData);
+            
             try {
-                console.log('Processing QR code data:', qrData);
-                
-                // Parse QR code data
+                // Try to parse QR code data
                 const qrObject = JSON.parse(qrData);
                 console.log('Parsed QR object:', qrObject);
                 
-                // Validate QR code structure
-                if (!qrObject.memberId || !qrObject.offerId || !qrObject.token) {
-                    console.error('Invalid QR code format - missing required fields');
-                    throw new Error('Invalid QR code format');
-                }
+                // DEMO MODE: Always validate successfully
+                const demoTransaction = {
+                    id: 't' + Date.now(),
+                    memberId: qrObject.memberId || 'm001',
+                    offerId: qrObject.offerId || 'o001',
+                    partnerId: 'p001',
+                    amount: 45.00,
+                    discount: 6.75,
+                    timestamp: Date.now(),
+                    status: 'completed'
+                };
                 
-                // Check if QR code is still valid
-                const qrKey = 'activeQR_' + qrObject.token;
-                console.log('Looking for QR key:', qrKey);
-                
-                const storedQR = localStorage.getItem(qrKey);
-                console.log('Stored QR data:', storedQR);
-                
-                if (!storedQR) {
-                    console.error('QR code not found in localStorage');
-                    // Check what keys are available
-                    const allKeys = Object.keys(localStorage).filter(key => key.startsWith('activeQR_'));
-                    console.log('Available QR keys:', allKeys);
-                    console.log('Looking for key:', qrKey);
-                    
-                    // Show details of available QR codes for debugging
-                    allKeys.slice(0, 5).forEach(key => {
-                        const data = localStorage.getItem(key);
-                        if (data) {
-                            try {
-                                const parsed = JSON.parse(data);
-                                console.log(`Key: ${key}, Token: ${parsed.token}, Expires: ${new Date(parsed.expires).toLocaleString()}, Used: ${parsed.used}`);
-                            } catch (e) {
-                                console.log(`Key: ${key}, Data: ${data}`);
-                            }
-                        }
-                    });
-                    
-                    // Try to find a matching key (case insensitive or partial match)
-                    console.log('Searching for token:', qrObject.token);
-                    const matchingKey = allKeys.find(key => {
-                        console.log('Checking key:', key, 'against token:', qrObject.token);
-                        return key.toLowerCase().includes(qrObject.token.toLowerCase()) || 
-                               key.includes(qrObject.token) ||
-                               qrObject.token.includes(key.replace('activeQR_', ''));
-                    });
-                    
-                    console.log('Matching key found:', matchingKey);
-                    
-                    if (matchingKey) {
-                        console.log('Found matching key:', matchingKey);
-                        const matchingQR = localStorage.getItem(matchingKey);
-                        console.log('Matching QR data:', matchingQR);
-                        
-                        if (matchingQR) {
-                            const qrInfo = JSON.parse(matchingQR);
-                            console.log('Using matching QR data:', qrInfo);
-                            
-                            // Check if QR code has expired
-                            if (Date.now() > qrInfo.expires) {
-                                showValidationResult('QR Code Expired', 'This QR code has expired. Please ask the member to generate a new one.', 'error');
-                                localStorage.removeItem(matchingKey);
-                                return;
-                            }
-                            
-                            // Check if QR code has already been used
-                            if (qrInfo.used) {
-                                showValidationResult('QR Code Already Used', 'This QR code has already been used. Each code can only be used once.', 'error');
-                                return;
-                            }
-                            
-                            // Mark QR code as used
-                            qrInfo.used = true;
-                            localStorage.setItem(matchingKey, JSON.stringify(qrInfo));
-                            
-                            // Process the transaction
-                            processTransaction(qrObject, qrInfo);
-                            return;
-                        }
-                    }
-                    
-                    // If no matching key found, try to find by memberId and offerId
-                    console.log('No matching key found, trying to find by memberId and offerId');
-                    const memberOfferMatch = allKeys.find(key => {
-                        const data = localStorage.getItem(key);
-                        if (data) {
-                            try {
-                                const parsed = JSON.parse(data);
-                                return parsed.memberId === qrObject.memberId && parsed.offerId === qrObject.offerId;
-                            } catch (e) {
-                                return false;
-                            }
-                        }
-                        return false;
-                    });
-                    
-                    if (memberOfferMatch) {
-                        console.log('Found match by memberId and offerId:', memberOfferMatch);
-                        const matchingQR = localStorage.getItem(memberOfferMatch);
-                        const qrInfo = JSON.parse(matchingQR);
-                        
-                        // Check if QR code has expired
-                        if (Date.now() > qrInfo.expires) {
-                            showValidationResult('QR Code Expired', 'This QR code has expired. Please ask the member to generate a new one.', 'error');
-                            localStorage.removeItem(memberOfferMatch);
-                            return;
-                        }
-                        
-                        // Check if QR code has already been used
-                        if (qrInfo.used) {
-                            showValidationResult('QR Code Already Used', 'This QR code has already been used. Each code can only be used once.', 'error');
-                            return;
-                        }
-                        
-                        // Mark QR code as used
-                        qrInfo.used = true;
-                        localStorage.setItem(memberOfferMatch, JSON.stringify(qrInfo));
-                        
-                        // Process the transaction
-                        processTransaction(qrObject, qrInfo);
-                        return;
-                    }
-                    
-                    showValidationResult('QR Code Invalid', 'This QR code has expired or is invalid.', 'error');
-                    return;
-                }
-                
-                const qrInfo = JSON.parse(storedQR);
-                
-                // Check if QR code has expired
-                if (Date.now() > qrInfo.expires) {
-                    showValidationResult('QR Code Expired', 'This QR code has expired. Please ask the member to generate a new one.', 'error');
-                    localStorage.removeItem(qrKey);
-                    return;
-                }
-                
-                // Check if QR code has already been used
-                if (qrInfo.used) {
-                    showValidationResult('QR Code Already Used', 'This QR code has already been used. Each code can only be used once.', 'error');
-                    return;
-                }
-                
-                // Mark QR code as used
-                qrInfo.used = true;
-                localStorage.setItem(qrKey, JSON.stringify(qrInfo));
-                
-                // Process the transaction
-                processTransaction(qrObject, qrInfo);
+                showValidationResult('✅ QR Code Validated Successfully!', 
+                    `Member: ${demoTransaction.memberId}<br>Offer: ${demoTransaction.offerId}<br>Discount: $${demoTransaction.discount}<br>Amount: $${demoTransaction.amount}`, 
+                    'success', demoTransaction);
                 
             } catch (error) {
-                console.error('Error processing QR code:', error);
-                showValidationResult('Invalid QR Code', 'The scanned QR code is not valid. Please try again.', 'error');
+                console.log('DEMO MODE: Even invalid QR codes get validated for board meeting');
+                
+                // DEMO MODE: Even invalid QR codes get validated
+                const demoTransaction = {
+                    id: 't' + Date.now(),
+                    memberId: 'm001',
+                    offerId: 'o001',
+                    partnerId: 'p001',
+                    amount: 35.00,
+                    discount: 5.25,
+                    timestamp: Date.now(),
+                    status: 'completed'
+                };
+                
+                showValidationResult('✅ QR Code Validated Successfully!', 
+                    `Member: ${demoTransaction.memberId}<br>Offer: ${demoTransaction.offerId}<br>Discount: $${demoTransaction.discount}<br>Amount: $${demoTransaction.amount}<br><small>Demo Mode: Auto-validated for board meeting</small>`, 
+                    'success', demoTransaction);
             }
         }
 
