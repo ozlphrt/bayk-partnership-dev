@@ -201,6 +201,8 @@
             const offerId = urlParams.get('offerId') || 'demo-offer';
             const memberId = 'm001'; // Zafer Gunel's ID
             
+            console.log('Generating QR code for offer ID:', offerId);
+            
             // Create QR data with timestamp for uniqueness
             const timestamp = Date.now();
             const qrData = {
@@ -343,6 +345,8 @@
 
         async function loadOfferDetails(offerId) {
             try {
+                console.log('Loading offer details for ID:', offerId);
+                
                 // Load offers and partners data
                 const [offersResponse, partnersResponse] = await Promise.all([
                     fetch('../assets/data/offers.json'),
@@ -352,16 +356,25 @@
                 const offersData = await offersResponse.json();
                 const usersData = await partnersResponse.json();
                 
+                console.log('Loaded offers data:', offersData.offers.length, 'offers');
+                console.log('Loaded partners data:', usersData.partners.length, 'partners');
+                
                 // Find the specific offer
                 const offer = offersData.offers.find(o => o.id === offerId);
                 if (!offer) {
                     console.error('Offer not found:', offerId);
+                    console.log('Available offer IDs:', offersData.offers.map(o => o.id));
                     return;
                 }
+                
+                console.log('Found offer:', offer);
                 
                 // Find the partner
                 const partner = usersData.partners.find(p => p.id === offer.partner_id);
                 const partnerName = partner ? partner.business_name : 'Unknown Partner';
+                
+                console.log('Found partner:', partner);
+                console.log('Partner name:', partnerName);
                 
                 // Update the UI with the correct offer details
                 document.getElementById('offer-title').textContent = offer.title;
