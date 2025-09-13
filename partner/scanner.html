@@ -107,9 +107,10 @@
                 <div style="background: white; padding: 12px; border-radius: 8px; font-family: monospace; font-size: 12px; color: var(--text-dark); word-break: break-all; margin-bottom: 12px;">
                     {"memberId":"m001","offerId":"o001","timestamp":1694567890123,"token":"demo123"}
                 </div>
-                <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
                     <button onclick="fillDemoData()" class="btn btn-outline" style="font-size: 14px;">Use Demo Data</button>
                     <button onclick="createTestQR()" class="btn btn-outline" style="font-size: 14px;">Create Test QR</button>
+                    <button onclick="createMemberStyleQR()" class="btn btn-outline" style="font-size: 14px;">Create Member QR</button>
                     <button onclick="clearAllQR()" class="btn btn-outline" style="font-size: 14px;">Clear All QR</button>
                 </div>
                 <div id="localStorage-info" style="background: #f0f0f0; padding: 8px; border-radius: 4px; font-size: 11px; color: #666;">
@@ -500,7 +501,7 @@
             
             document.getElementById('manual-qr-data').value = testData;
             
-            // Store test QR data for validation
+            // Store test QR data for validation (exactly like member side does)
             const qrObject = JSON.parse(testData);
             const qrKey = 'activeQR_' + qrObject.token;
             const qrData = {
@@ -516,6 +517,32 @@
             updateLocalStorageInfo();
         }
 
+        function createMemberStyleQR() {
+            // Create QR code exactly like member side does
+            const timestamp = Date.now();
+            const token = Math.random().toString(36).substr(2, 9); // Same as generateToken()
+            const qrData = {
+                memberId: 'm001',
+                offerId: 'o001',
+                timestamp: timestamp,
+                token: token
+            };
+            
+            const qrString = JSON.stringify(qrData);
+            document.getElementById('manual-qr-data').value = qrString;
+            
+            // Store exactly like member side
+            localStorage.setItem('activeQR_' + qrData.token, JSON.stringify({
+                ...qrData,
+                expires: timestamp + 300000, // 5 minutes from now
+                used: false
+            }));
+            
+            console.log('Member-style QR data stored:', 'activeQR_' + qrData.token, qrData);
+            updateScanStatus('Member-style QR data created. Click "Validate QR Code" to test.', 'info');
+            updateLocalStorageInfo();
+        }
+
         function clearAllQR() {
             const allKeys = Object.keys(localStorage).filter(key => key.startsWith('activeQR_'));
             allKeys.forEach(key => localStorage.removeItem(key));
@@ -527,7 +554,28 @@
         function updateLocalStorageInfo() {
             const allKeys = Object.keys(localStorage).filter(key => key.startsWith('activeQR_'));
             const info = document.getElementById('localStorage-info');
-            info.innerHTML = `QR codes in localStorage: ${allKeys.length}<br>Keys: ${allKeys.slice(0, 3).join(', ')}${allKeys.length > 3 ? '...' : ''}`;
+            
+            // Show detailed localStorage info
+            let infoText = `QR codes in localStorage: ${allKeys.length}<br>`;
+            if (allKeys.length > 0) {
+                infoText += `Keys: ${allKeys.slice(0, 3).join(', ')}${allKeys.length > 3 ? '...' : ''}<br>`;
+                
+                // Show details of first QR code
+                const firstKey = allKeys[0];
+                const firstData = localStorage.getItem(firstKey);
+                if (firstData) {
+                    try {
+                        const parsed = JSON.parse(firstData);
+                        infoText += `Sample: ${parsed.memberId} - ${parsed.offerId} - ${parsed.token}`;
+                    } catch (e) {
+                        infoText += `Sample: ${firstData.substring(0, 50)}...`;
+                    }
+                }
+            } else {
+                infoText += 'No QR codes found. Generate one from member side first.';
+            }
+            
+            info.innerHTML = infoText;
         }
 
         function showValidationResult(title, message, type, transaction = null) {
