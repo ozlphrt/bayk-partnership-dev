@@ -8,20 +8,56 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- QR Code Library - Multiple CDN sources for reliability -->
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js" onerror="loadBackupQR()"></script>
+    <!-- QR Code Library - Robust loading with multiple fallbacks -->
     <script>
-        // Backup QR library loader
-        function loadBackupQR() {
-            console.log('Primary QR library failed, loading backup...');
-            const script = document.createElement('script');
-            script.src = 'https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js';
-            script.onerror = function() {
-                console.log('Backup QR library also failed, using fallback method');
-                window.QRCodeFallback = true;
-            };
-            document.head.appendChild(script);
+        // QR Library loading state
+        window.QRCodeLoading = true;
+        window.QRCodeLoaded = false;
+        window.QRCodeFallback = false;
+        
+        // Function to check if QRCode is available
+        function checkQRCodeAvailable() {
+            return typeof QRCode !== 'undefined' && QRCode.toCanvas;
         }
+        
+        // Function to load QR library with fallbacks
+        function loadQRLibrary() {
+            console.log('Loading QR Code library...');
+            
+            // Try primary CDN
+            const script1 = document.createElement('script');
+            script1.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js';
+            script1.onload = function() {
+                console.log('Primary QR library loaded successfully');
+                window.QRCodeLoaded = true;
+                window.QRCodeLoading = false;
+            };
+            script1.onerror = function() {
+                console.log('Primary QR library failed, trying backup...');
+                loadBackupQRLibrary();
+            };
+            document.head.appendChild(script1);
+        }
+        
+        // Function to load backup QR library
+        function loadBackupQRLibrary() {
+            const script2 = document.createElement('script');
+            script2.src = 'https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js';
+            script2.onload = function() {
+                console.log('Backup QR library loaded successfully');
+                window.QRCodeLoaded = true;
+                window.QRCodeLoading = false;
+            };
+            script2.onerror = function() {
+                console.log('All QR libraries failed, using fallback method');
+                window.QRCodeFallback = true;
+                window.QRCodeLoading = false;
+            };
+            document.head.appendChild(script2);
+        }
+        
+        // Start loading QR library
+        loadQRLibrary();
     </script>
 </head>
 <body>
@@ -46,8 +82,13 @@
         <!-- QR Code Display -->
         <section class="qr-container">
             <h2>Your Discount QR Code</h2>
-            <div id="qr-code" class="qr-code"></div>
-            <div id="qr-timer" class="qr-timer">5:00</div>
+            <div id="qr-code" class="qr-code">
+                <div id="loading-indicator" style="text-align: center; padding: 2rem;">
+                    <div class="loading" style="margin: 0 auto 1rem;"></div>
+                    <p style="color: var(--text-light);">Loading QR code generator...</p>
+                </div>
+            </div>
+            <div id="qr-timer" class="qr-timer" style="display: none;">5:00</div>
             <p style="color: var(--text-light); margin: 1rem 0;">
                 Show this code to the partner business to redeem your discount
             </p>
@@ -135,25 +176,37 @@
                 return;
             }
 
-            // Check if QRCode library is loaded or if we should use fallback
-            if (typeof QRCode === 'undefined' && !window.QRCodeFallback) {
-                // Wait a bit for the library to load
-                setTimeout(() => {
-                    if (typeof QRCode === 'undefined') {
-                        console.log('QRCode library not available, using fallback method');
-                        loadOfferDataWithFallback(selectedOfferId);
-                    } else {
-                        loadOfferData(selectedOfferId);
-                    }
-                }, 1000);
-                return;
-            } else if (window.QRCodeFallback) {
-                loadOfferDataWithFallback(selectedOfferId);
-                return;
-            }
-
-            loadOfferData(selectedOfferId);
+            // Wait for QR library to load or fail
+            waitForQRLibrary(selectedOfferId);
         });
+
+        // Function to wait for QR library loading
+        function waitForQRLibrary(offerId) {
+            const checkInterval = setInterval(() => {
+                if (!window.QRCodeLoading) {
+                    clearInterval(checkInterval);
+                    
+                    if (window.QRCodeLoaded && checkQRCodeAvailable()) {
+                        console.log('QR library loaded successfully, using QR generation');
+                        loadOfferData(offerId);
+                    } else {
+                        console.log('QR library failed to load, using fallback method');
+                        loadOfferDataWithFallback(offerId);
+                    }
+                }
+            }, 100);
+            
+            // Timeout after 5 seconds
+            setTimeout(() => {
+                clearInterval(checkInterval);
+                if (window.QRCodeLoading) {
+                    console.log('QR library loading timeout, using fallback method');
+                    window.QRCodeLoading = false;
+                    window.QRCodeFallback = true;
+                    loadOfferDataWithFallback(offerId);
+                }
+            }, 5000);
+        }
 
         async function loadOfferDataWithFallback(offerId) {
             try {
@@ -267,8 +320,9 @@
             // Generate QR code
             const qrCodeElement = document.getElementById('qr-code');
             
-            // Clear any existing content
+            // Clear loading indicator and show timer
             qrCodeElement.innerHTML = '';
+            document.getElementById('qr-timer').style.display = 'block';
             
             // Create a canvas element for the QR code
             const canvas = document.createElement('canvas');
@@ -311,8 +365,12 @@
             // Store QR data for validation
             localStorage.setItem('currentQRData', JSON.stringify(qrData));
 
-            // Create fallback QR display
+            // Clear loading indicator and show timer
             const qrCodeElement = document.getElementById('qr-code');
+            qrCodeElement.innerHTML = '';
+            document.getElementById('qr-timer').style.display = 'block';
+            
+            // Create fallback QR display
             createFallbackQR(qrCodeElement, qrData);
         }
 
