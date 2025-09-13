@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PIN Code Scanner - BAYK Partnership</title>
+    <title>QR Code Scanner - BAYK Partnership</title>
     <link rel="stylesheet" href="../assets/css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- QR Code Scanner Library -->
-    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qr-scanner@1.4.2/qr-scanner.umd.min.js"></script>
 </head>
 <body>
     <!-- Navigation -->
@@ -43,553 +43,338 @@
             </p>
         </section>
 
-        <!-- Camera Section -->
+        <!-- QR Scanner Section -->
         <section class="card">
             <div class="scanner-container" style="text-align: center;">
-                <div id="camera-container" style="position: relative; display: inline-block;">
-                    <video id="video" width="400" height="300" style="border-radius: 0.5rem; background-color: #f3f4f6;"></video>
-                    <canvas id="canvas" style="display: none;"></canvas>
-                    <div id="scanner-overlay" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 200px; border: 3px solid var(--primary-blue); border-radius: 0.5rem; pointer-events: none;">
-                        <div style="position: absolute; top: -3px; left: -3px; width: 20px; height: 20px; border-top: 3px solid var(--secondary-green); border-left: 3px solid var(--secondary-green;"></div>
-                        <div style="position: absolute; top: -3px; right: -3px; width: 20px; height: 20px; border-top: 3px solid var(--secondary-green); border-right: 3px solid var(--secondary-green;"></div>
-                        <div style="position: absolute; bottom: -3px; left: -3px; width: 20px; height: 20px; border-bottom: 3px solid var(--secondary-green); border-left: 3px solid var(--secondary-green;"></div>
-                        <div style="position: absolute; bottom: -3px; right: -3px; width: 20px; height: 20px; border-bottom: 3px solid var(--secondary-green); border-right: 3px solid var(--secondary-green;"></div>
-                    </div>
+                <div id="qr-reader" style="width: 100%; max-width: 400px; margin: 0 auto;"></div>
+                <div style="margin-top: 1rem;">
+                    <button id="start-scanner" class="btn btn-primary">Start QR Scanner</button>
+                    <button id="stop-scanner" class="btn btn-secondary" style="display: none;">Stop Scanner</button>
                 </div>
-                
-                <div style="margin: 2rem 0;">
-                    <button id="start-camera" class="btn btn-primary" style="margin-right: 1rem;">
-                        Start Camera
-                    </button>
-                    <button id="stop-camera" class="btn btn-outline" style="display: none;">
-                        Stop Camera
-                    </button>
-                </div>
-                
-                <div id="scan-status" style="margin: 1rem 0; font-weight: 600;">
-                    Camera not started
-                </div>
+                <div id="scan-status" style="margin-top: 1rem; padding: 1rem; border-radius: 0.5rem; display: none;"></div>
             </div>
         </section>
 
-        <!-- PIN Entry Section -->
+        <!-- Manual Entry Section -->
         <section class="card">
-            <h3>Enter Member PIN Code</h3>
+            <h3 style="color: var(--text-dark);">Manual QR Code Entry</h3>
             <p style="color: var(--text-light); margin-bottom: 1rem;">
-                Ask the member for their 4-digit discount PIN code
+                If scanning fails, ask the member for their QR code data
             </p>
             <div class="form-group">
-                <label class="form-label">4-Digit PIN Code</label>
-                <input type="text" id="manual-code" class="form-input" placeholder="Enter 4-digit PIN (e.g., 1234)" maxlength="4" pattern="[0-9]{4}">
+                <label class="form-label">QR Code Data</label>
+                <textarea id="manual-qr-data" class="form-input" placeholder="Paste QR code data here..." rows="3"></textarea>
             </div>
-            <button id="validate-manual" class="btn btn-secondary">Validate PIN</button>
-            <div style="background-color: #fef3c7; padding: 0.75rem; border-radius: 0.25rem; margin-top: 1rem; font-size: 0.9rem;">
-                <strong>Demo Note:</strong> Use PIN <strong>1234</strong> for testing purposes
-            </div>
+            <button id="validate-manual" class="btn btn-secondary">Validate QR Code</button>
         </section>
 
         <!-- Validation Results -->
         <section id="validation-results" class="card" style="display: none;">
             <div class="card-header">
-                <h3>PIN Code Validation</h3>
+                <h3 style="color: var(--text-dark);">QR Code Validation</h3>
             </div>
             <div id="validation-content">
                 <!-- Validation results will be displayed here -->
             </div>
         </section>
-
-        <!-- Transaction Processing -->
-        <section id="transaction-section" class="card" style="display: none;">
-            <div class="card-header">
-                <h3>Process Transaction</h3>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Original Transaction Amount</label>
-                <input type="number" id="transaction-amount" class="form-input" placeholder="0.00" step="0.01" min="0">
-            </div>
-            <div id="discount-calculation" style="display: none;">
-                <div style="background-color: #f3f4f6; padding: 1rem; border-radius: 0.5rem; margin: 1rem 0;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                        <span>Original Amount:</span>
-                        <span id="original-amount">$0.00</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                        <span>Discount:</span>
-                        <span id="discount-amount" style="color: var(--secondary-green);">-$0.00</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; font-weight: 600; font-size: 1.1rem; border-top: 1px solid #d1d5db; padding-top: 0.5rem;">
-                        <span>Final Amount:</span>
-                        <span id="final-amount">$0.00</span>
-                    </div>
-                </div>
-            </div>
-            <button id="process-transaction" class="btn btn-primary" style="width: 100%;">Process Transaction</button>
-        </section>
-
-        <!-- Transaction Confirmation -->
-        <section id="confirmation-section" class="card" style="display: none;">
-            <div class="card-header">
-                <h3>Transaction Complete</h3>
-            </div>
-            <div id="confirmation-content">
-                <!-- Transaction confirmation will be displayed here -->
-            </div>
-            <button id="new-transaction" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Process New Transaction</button>
-        </section>
     </main>
 
     <!-- Footer -->
-    <footer style="background-color: var(--primary-blue); color: var(--white); padding: 2rem 0; margin-top: 4rem;">
-        <div class="container text-center">
-            <p>&copy; 2025 Sailing Club Partnership Platform. All rights reserved.</p>
+    <footer style="background: var(--background-light); color: var(--text-light); text-align: center; padding: 2rem 0; margin-top: 3rem; box-shadow: 0 -4px 20px var(--shadow-dark);">
+        <div class="container">
+            <p>&copy; 2025 BAYK Partnership Platform. All rights reserved.</p>
+            <p style="font-size: 0.9rem; margin-top: 0.5rem;">Bodrum Açıkdeniz Yelken Spor Kulübü - Connecting sailors with local businesses</p>
         </div>
     </footer>
 
     <script>
-        let video, canvas, context;
-        let scanning = false;
-        let currentQRData = null;
-        let currentOffer = null;
-        let currentMember = null;
+        let qrScanner = null;
+        let isScanning = false;
 
-        // Logout functionality
-        function logout() {
-            localStorage.removeItem('selectedRole');
-            window.location.href = '../index.html';
-        }
-
-        // Initialize page
+        // Initialize scanner when page loads
         document.addEventListener('DOMContentLoaded', function() {
-            // Check if user is logged in as partner
-            const currentRole = localStorage.getItem('selectedRole');
-            if (currentRole !== 'partner') {
-                window.location.href = '../index.html';
-                return;
-            }
-
             initializeScanner();
+            setupEventListeners();
         });
 
         function initializeScanner() {
-            video = document.getElementById('video');
-            canvas = document.getElementById('canvas');
-            context = canvas.getContext('2d');
-
-            // Event listeners
-            document.getElementById('start-camera').addEventListener('click', startCamera);
-            document.getElementById('stop-camera').addEventListener('click', stopCamera);
-            document.getElementById('validate-manual').addEventListener('click', validateManualCode);
-            document.getElementById('transaction-amount').addEventListener('input', calculateDiscount);
-            document.getElementById('process-transaction').addEventListener('click', processTransaction);
-            document.getElementById('new-transaction').addEventListener('click', resetTransaction);
-        }
-
-        async function startCamera() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { 
-                        facingMode: 'environment' // Use back camera on mobile
-                    } 
-                });
-                
-                video.srcObject = stream;
-                video.play();
-                
-                document.getElementById('start-camera').style.display = 'none';
-                document.getElementById('stop-camera').style.display = 'inline-block';
-                document.getElementById('scan-status').textContent = 'Camera active - Point at QR code';
-                document.getElementById('scan-status').style.color = 'var(--secondary-green)';
-                
-                scanning = true;
-                scanQRCode();
-            } catch (error) {
-                console.error('Error accessing camera:', error);
-                document.getElementById('scan-status').textContent = 'Camera access denied. Use manual entry.';
-                document.getElementById('scan-status').style.color = 'var(--accent-red)';
-            }
-        }
-
-        function stopCamera() {
-            if (video.srcObject) {
-                video.srcObject.getTracks().forEach(track => track.stop());
-                video.srcObject = null;
-            }
+            const qrReader = document.getElementById('qr-reader');
             
-            document.getElementById('start-camera').style.display = 'inline-block';
-            document.getElementById('stop-camera').style.display = 'none';
-            document.getElementById('scan-status').textContent = 'Camera stopped';
-            document.getElementById('scan-status').style.color = 'var(--text-light)';
-            
-            scanning = false;
-        }
+            // Check if qr-scanner is available
+            if (typeof QrScanner === 'undefined') {
+                showError('QR Scanner library failed to load. Please refresh the page.');
+                return;
+            }
 
-        function scanQRCode() {
-            if (!scanning) return;
-
-            if (video.readyState === video.HAVE_ENOUGH_DATA) {
-                canvas.height = video.videoHeight;
-                canvas.width = video.videoWidth;
-                context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                
-                const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-                const code = jsQR(imageData.data, imageData.width, imageData.height);
-                
-                if (code) {
-                    console.log('QR Code detected:', code.data);
-                    validateQRCode(code.data);
-                    return;
+            // Set up QR scanner
+            qrScanner = new QrScanner(
+                qrReader,
+                result => onScanSuccess(result),
+                {
+                    onDecodeError: error => {
+                        // Silently handle decode errors (normal during scanning)
+                        console.log('Decode error:', error);
+                    },
+                    highlightScanRegion: true,
+                    highlightCodeOutline: true,
                 }
-            }
-            
-            requestAnimationFrame(scanQRCode);
+            );
         }
 
-        async function validateQRCode(qrDataString) {
+        function setupEventListeners() {
+            document.getElementById('start-scanner').addEventListener('click', startScanner);
+            document.getElementById('stop-scanner').addEventListener('click', stopScanner);
+            document.getElementById('validate-manual').addEventListener('click', validateManualQR);
+        }
+
+        function startScanner() {
+            if (!qrScanner) {
+                showError('QR Scanner not initialized. Please refresh the page.');
+                return;
+            }
+
+            qrScanner.start().then(() => {
+                isScanning = true;
+                document.getElementById('start-scanner').style.display = 'none';
+                document.getElementById('stop-scanner').style.display = 'inline-block';
+                updateScanStatus('Scanner active - Point camera at QR code', 'info');
+            }).catch(err => {
+                console.error('Failed to start scanner:', err);
+                showError('Failed to start camera. Please check permissions and try again.');
+            });
+        }
+
+        function stopScanner() {
+            if (qrScanner && isScanning) {
+                qrScanner.stop();
+                isScanning = false;
+                document.getElementById('start-scanner').style.display = 'inline-block';
+                document.getElementById('stop-scanner').style.display = 'none';
+                updateScanStatus('Scanner stopped', 'neutral');
+            }
+        }
+
+        function onScanSuccess(result) {
+            console.log('QR Code scanned:', result);
+            
+            // Stop scanning after successful scan
+            stopScanner();
+            
+            // Process the QR code data
+            processQRCode(result);
+        }
+
+        function processQRCode(qrData) {
             try {
-                const qrData = JSON.parse(qrDataString);
+                // Parse QR code data
+                const qrObject = JSON.parse(qrData);
                 
                 // Validate QR code structure
-                const validation = validateQRData(qrData);
-                if (!validation.valid) {
-                    showValidationError(validation.error);
+                if (!qrObject.memberId || !qrObject.offerId || !qrObject.token) {
+                    throw new Error('Invalid QR code format');
+                }
+                
+                // Check if QR code is still valid
+                const qrKey = 'activeQR_' + qrObject.token;
+                const storedQR = localStorage.getItem(qrKey);
+                
+                if (!storedQR) {
+                    showValidationResult('QR Code Invalid', 'This QR code has expired or is invalid.', 'error');
                     return;
                 }
-
-                // Load offer and member data
-                const [offersResponse, usersResponse] = await Promise.all([
-                    fetch('../assets/data/offers.json'),
-                    fetch('../assets/data/users.json')
-                ]);
-
-                const offersData = await offersResponse.json();
-                const usersData = await usersResponse.json();
-
-                currentOffer = offersData.offers.find(o => o.id === qrData.offer_id);
-                currentMember = usersData.members.find(m => m.id === qrData.member_id);
-
-                if (!currentOffer || !currentMember) {
-                    showValidationError('Invalid offer or member data');
+                
+                const qrInfo = JSON.parse(storedQR);
+                
+                // Check if QR code has expired
+                if (Date.now() > qrInfo.expires) {
+                    showValidationResult('QR Code Expired', 'This QR code has expired. Please ask the member to generate a new one.', 'error');
+                    localStorage.removeItem(qrKey);
                     return;
                 }
-
-                currentQRData = qrData;
-                showValidationSuccess();
-                stopCamera();
-
+                
+                // Check if QR code has already been used
+                if (qrInfo.used) {
+                    showValidationResult('QR Code Already Used', 'This QR code has already been used. Each code can only be used once.', 'error');
+                    return;
+                }
+                
+                // Mark QR code as used
+                qrInfo.used = true;
+                localStorage.setItem(qrKey, JSON.stringify(qrInfo));
+                
+                // Process the transaction
+                processTransaction(qrObject, qrInfo);
+                
             } catch (error) {
-                console.error('Error validating QR code:', error);
-                showValidationError('Invalid QR code format');
+                console.error('Error processing QR code:', error);
+                showValidationResult('Invalid QR Code', 'The scanned QR code is not valid. Please try again.', 'error');
             }
         }
 
-        function validateQRData(qrData) {
-            if (!qrData || !qrData.token || !qrData.member_id || !qrData.offer_id) {
-                return { valid: false, error: 'Invalid QR code format' };
-            }
+        function processTransaction(qrObject, qrInfo) {
+            // Simulate transaction processing
+            const transaction = {
+                id: 't' + Date.now(),
+                memberId: qrObject.memberId,
+                offerId: qrObject.offerId,
+                partnerId: 'p001', // Sunger Pizza (demo partner)
+                amount: 45.00,
+                discount: 6.75,
+                timestamp: new Date().toISOString(),
+                status: 'completed'
+            };
             
-            const now = new Date();
-            const expiresAt = new Date(qrData.expires_at);
+            // Store transaction
+            const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+            transactions.push(transaction);
+            localStorage.setItem('transactions', JSON.stringify(transactions));
             
-            if (now > expiresAt) {
-                return { valid: false, error: 'QR code has expired' };
-            }
-            
-            return { valid: true };
+            // Show success message
+            showValidationResult(
+                'Transaction Successful!',
+                `Discount applied successfully. Member saved $${transaction.discount.toFixed(2)}.`,
+                'success',
+                transaction
+            );
         }
 
-        function showValidationSuccess() {
+        function validateManualQR() {
+            const qrData = document.getElementById('manual-qr-data').value.trim();
+            
+            if (!qrData) {
+                showError('Please enter QR code data');
+                return;
+            }
+            
+            processQRCode(qrData);
+        }
+
+        function showValidationResult(title, message, type, transaction = null) {
             const resultsSection = document.getElementById('validation-results');
             const content = document.getElementById('validation-content');
             
-            // Format discount display
-            let discountDisplay = '';
-            if (currentOffer.discount_type === 'percentage') {
-                discountDisplay = `${currentOffer.discount_value}% off`;
-            } else if (currentOffer.discount_type === 'fixed') {
-                discountDisplay = `$${currentOffer.discount_value} off`;
-            } else if (currentOffer.discount_type === 'bogo') {
-                discountDisplay = 'BOGO Offer';
+            let statusClass = '';
+            let statusIcon = '';
+            
+            switch (type) {
+                case 'success':
+                    statusClass = 'success';
+                    statusIcon = '✅';
+                    break;
+                case 'error':
+                    statusClass = 'error';
+                    statusIcon = '❌';
+                    break;
+                case 'warning':
+                    statusClass = 'warning';
+                    statusIcon = '⚠️';
+                    break;
+                default:
+                    statusClass = 'info';
+                    statusIcon = 'ℹ️';
             }
-
+            
+            let transactionDetails = '';
+            if (transaction) {
+                transactionDetails = `
+                    <div style="background: var(--background-light); border-radius: 12px; padding: 16px; margin-top: 16px; box-shadow: 8px 8px 20px var(--shadow-dark), -8px -8px 20px var(--shadow-light);">
+                        <h4 style="color: var(--text-dark); margin-bottom: 12px;">Transaction Details</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.9rem;">
+                            <div><strong>Transaction ID:</strong> ${transaction.id}</div>
+                            <div><strong>Amount:</strong> $${transaction.amount.toFixed(2)}</div>
+                            <div><strong>Discount:</strong> $${transaction.discount.toFixed(2)}</div>
+                            <div><strong>Time:</strong> ${new Date(transaction.timestamp).toLocaleTimeString()}</div>
+                        </div>
+                    </div>
+                `;
+            }
+            
             content.innerHTML = `
-                <div class="alert alert-success">
-                    <strong>QR Code Valid!</strong> Member discount approved.
-                </div>
-                <div style="display: flex; justify-content: space-between; align-items: start; margin: 1rem 0;">
-                    <div>
-                        <h4>${currentMember.name}</h4>
-                        <p style="color: var(--text-light);">Member ID: ${currentMember.membership_number}</p>
+                <div style="background: var(--background-light); border-radius: 12px; padding: 20px; box-shadow: 8px 8px 20px var(--shadow-dark), -8px -8px 20px var(--shadow-light);">
+                    <div style="display: flex; align-items: center; margin-bottom: 16px;">
+                        <span style="font-size: 24px; margin-right: 12px;">${statusIcon}</span>
+                        <h3 style="color: var(--text-dark); margin: 0;">${title}</h3>
                     </div>
-                    <div style="text-align: right;">
-                        <div style="font-size: 1.5rem; font-weight: 700; color: var(--secondary-green);">${discountDisplay}</div>
+                    <p style="color: var(--text-light); margin-bottom: 16px;">${message}</p>
+                    ${transactionDetails}
+                    <div style="margin-top: 20px;">
+                        <button onclick="resetScanner()" class="btn btn-primary">Scan Another QR Code</button>
                     </div>
-                </div>
-                <div style="background-color: #f3f4f6; padding: 1rem; border-radius: 0.5rem;">
-                    <h5>${currentOffer.title}</h5>
-                    <p style="margin: 0.5rem 0;">${currentOffer.description}</p>
-                    <p style="font-size: 0.9rem; color: var(--text-light); margin: 0;"><strong>Terms:</strong> ${currentOffer.terms}</p>
                 </div>
             `;
             
             resultsSection.style.display = 'block';
-            document.getElementById('transaction-section').style.display = 'block';
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
         }
 
-        function showValidationError(error) {
-            const resultsSection = document.getElementById('validation-results');
-            const content = document.getElementById('validation-content');
-            
-            content.innerHTML = `
-                <div class="alert alert-error">
-                    <strong>QR Code Invalid:</strong> ${error}
-                </div>
-                <p>Please ask the member to generate a new QR code or use manual entry.</p>
-            `;
-            
-            resultsSection.style.display = 'block';
+        function showError(message) {
+            updateScanStatus(message, 'error');
         }
 
-        async function validateManualCode() {
-            const pinCode = document.getElementById('manual-code').value.trim();
-            if (!pinCode) {
-                alert('Please enter a 4-digit PIN code');
-                return;
+        function updateScanStatus(message, type) {
+            const statusDiv = document.getElementById('scan-status');
+            statusDiv.textContent = message;
+            statusDiv.style.display = 'block';
+            
+            // Remove existing status classes
+            statusDiv.classList.remove('success', 'error', 'warning', 'info');
+            
+            // Add new status class
+            if (type) {
+                statusDiv.classList.add(type);
             }
             
-            // Check if PIN is 4 digits
-            if (!/^\d{4}$/.test(pinCode)) {
-                alert('Please enter a valid 4-digit PIN code');
-                return;
-            }
-            
-            try {
-                // Demo mode - accept PIN 1234 for testing
-                if (pinCode === '1234') {
-                    // Create demo data for testing
-                    const demoData = {
-                        pin: '1234',
-                        member_id: 'm001',
-                        offer_id: 'o001',
-                        timestamp: new Date().toISOString(),
-                        expires_at: new Date(Date.now() + 5 * 60 * 1000).toISOString()
-                    };
-                    
-                    // Load demo offer and member data
-                    const [offersResponse, usersResponse] = await Promise.all([
-                        fetch('../assets/data/offers.json'),
-                        fetch('../assets/data/users.json')
-                    ]);
-
-                    const offersData = await offersResponse.json();
-                    const usersData = await usersResponse.json();
-
-                    currentOffer = offersData.offers.find(o => o.id === 'o001');
-                    currentMember = usersData.members.find(m => m.id === 'm001');
-
-                    if (!currentOffer || !currentMember) {
-                        showValidationError('Demo data not found');
-                        return;
-                    }
-
-                    currentQRData = demoData;
-                    showValidationSuccess();
-                    return;
-                }
-                
-                // Get stored PIN data from localStorage using PIN-specific key
-                const storedPINData = localStorage.getItem('activePIN_' + pinCode);
-                if (!storedPINData) {
-                    showValidationError('PIN code not found. Please ask the member to generate a new PIN.');
-                    return;
-                }
-                
-                const data = JSON.parse(storedPINData);
-                
-                // Verify PIN matches (double check)
-                if (data.pin !== pinCode) {
-                    showValidationError('Invalid PIN code. Please check the number and try again.');
-                    return;
-                }
-                
-                // Check if PIN is expired
-                const now = new Date();
-                const expiresAt = new Date(data.expires_at);
-                
-                if (now > expiresAt) {
-                    showValidationError('PIN code has expired. Please ask the member to generate a new one.');
-                    return;
-                }
-                
-                // Check if PIN has already been used
-                const usedPINs = JSON.parse(localStorage.getItem('usedPINs') || '[]');
-                if (usedPINs.includes(pinCode)) {
-                    showValidationError('This PIN code has already been used.');
-                    return;
-                }
-                
-                // Load offer and member data
-                const [offersResponse, usersResponse] = await Promise.all([
-                    fetch('../assets/data/offers.json'),
-                    fetch('../assets/data/users.json')
-                ]);
-
-                const offersData = await offersResponse.json();
-                const usersData = await usersResponse.json();
-
-                currentOffer = offersData.offers.find(o => o.id === data.offer_id);
-                currentMember = usersData.members.find(m => m.id === data.member_id);
-
-                if (!currentOffer || !currentMember) {
-                    showValidationError('Invalid offer or member data');
-                    return;
-                }
-
-                currentQRData = data; // Store PIN data for transaction processing
-                showValidationSuccess();
-                
-            } catch (error) {
-                console.error('Error validating PIN code:', error);
-                showValidationError('Error validating PIN code. Please try again.');
+            // Set background color based on type
+            switch (type) {
+                case 'success':
+                    statusDiv.style.backgroundColor = '#d1fae5';
+                    statusDiv.style.color = '#065f46';
+                    break;
+                case 'error':
+                    statusDiv.style.backgroundColor = '#fee2e2';
+                    statusDiv.style.color = '#991b1b';
+                    break;
+                case 'warning':
+                    statusDiv.style.backgroundColor = '#fef3c7';
+                    statusDiv.style.color = '#92400e';
+                    break;
+                case 'info':
+                    statusDiv.style.backgroundColor = '#dbeafe';
+                    statusDiv.style.color = '#1e40af';
+                    break;
+                default:
+                    statusDiv.style.backgroundColor = 'var(--background-light)';
+                    statusDiv.style.color = 'var(--text-dark)';
             }
         }
 
-        async function loadDemoData() {
-            try {
-                const [offersResponse, usersResponse] = await Promise.all([
-                    fetch('../assets/data/offers.json'),
-                    fetch('../assets/data/users.json')
-                ]);
-
-                const offersData = await offersResponse.json();
-                const usersData = await usersResponse.json();
-
-                currentOffer = offersData.offers.find(o => o.id === currentQRData.offer_id);
-                currentMember = usersData.members.find(m => m.id === currentQRData.member_id);
-
-                showValidationSuccess();
-            } catch (error) {
-                console.error('Error loading demo data:', error);
-                showValidationError('Error loading offer data');
-            }
-        }
-
-        function calculateDiscount() {
-            const amount = parseFloat(document.getElementById('transaction-amount').value) || 0;
-            
-            if (amount <= 0) {
-                document.getElementById('discount-calculation').style.display = 'none';
-                return;
-            }
-
-            let discountAmount = 0;
-            
-            if (currentOffer.discount_type === 'percentage') {
-                discountAmount = (amount * currentOffer.discount_value) / 100;
-                if (currentOffer.max_discount) {
-                    discountAmount = Math.min(discountAmount, currentOffer.max_discount);
-                }
-            } else if (currentOffer.discount_type === 'fixed') {
-                discountAmount = currentOffer.discount_value;
-            } else if (currentOffer.discount_type === 'bogo') {
-                // Simplified BOGO calculation
-                discountAmount = amount * 0.3; // Assume 30% discount for BOGO
-            }
-
-            const finalAmount = amount - discountAmount;
-
-            document.getElementById('original-amount').textContent = `$${amount.toFixed(2)}`;
-            document.getElementById('discount-amount').textContent = `-$${discountAmount.toFixed(2)}`;
-            document.getElementById('final-amount').textContent = `$${finalAmount.toFixed(2)}`;
-            
-            document.getElementById('discount-calculation').style.display = 'block';
-        }
-
-        async function processTransaction() {
-            const amount = parseFloat(document.getElementById('transaction-amount').value);
-            if (!amount || amount <= 0) {
-                alert('Please enter a valid transaction amount');
-                return;
-            }
-
-            // Calculate discount
-            let discountAmount = 0;
-            if (currentOffer.discount_type === 'percentage') {
-                discountAmount = (amount * currentOffer.discount_value) / 100;
-                if (currentOffer.max_discount) {
-                    discountAmount = Math.min(discountAmount, currentOffer.max_discount);
-                }
-            } else if (currentOffer.discount_type === 'fixed') {
-                discountAmount = currentOffer.discount_value;
-            }
-
-            const finalAmount = amount - discountAmount;
-
-            // Show confirmation
-            const confirmationSection = document.getElementById('confirmation-section');
-            const confirmationContent = document.getElementById('confirmation-content');
-            
-            confirmationContent.innerHTML = `
-                <div class="alert alert-success">
-                    <strong>Transaction Processed Successfully!</strong>
-                </div>
-                <div style="background-color: #f3f4f6; padding: 1.5rem; border-radius: 0.5rem; margin: 1rem 0;">
-                    <h4>Transaction Details</h4>
-                    <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
-                        <span>Member:</span>
-                        <span><strong>${currentMember.name}</strong></span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
-                        <span>Offer:</span>
-                        <span>${currentOffer.title}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
-                        <span>Original Amount:</span>
-                        <span>$${amount.toFixed(2)}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
-                        <span>Discount Applied:</span>
-                        <span style="color: var(--secondary-green);">-$${discountAmount.toFixed(2)}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin: 0.5rem 0; font-weight: 600; font-size: 1.1rem; border-top: 1px solid #d1d5db; padding-top: 0.5rem;">
-                        <span>Final Amount:</span>
-                        <span>$${finalAmount.toFixed(2)}</span>
-                    </div>
-                </div>
-                <p style="text-align: center; color: var(--text-light);">
-                    Both you and the member have received transaction confirmation.
-                </p>
-            `;
-            
-            // Mark PIN as used
-            if (currentQRData && currentQRData.pin) {
-                const usedPINs = JSON.parse(localStorage.getItem('usedPINs') || '[]');
-                usedPINs.push(currentQRData.pin);
-                localStorage.setItem('usedPINs', JSON.stringify(usedPINs));
-                
-                // Remove the active PIN data
-                localStorage.removeItem('activePIN_' + currentQRData.pin);
-                localStorage.removeItem('currentPINData');
-            }
-            
-            confirmationSection.style.display = 'block';
-            document.getElementById('transaction-section').style.display = 'none';
-        }
-
-        function resetTransaction() {
-            // Reset all sections
+        function resetScanner() {
+            // Hide validation results
             document.getElementById('validation-results').style.display = 'none';
-            document.getElementById('transaction-section').style.display = 'none';
-            document.getElementById('confirmation-section').style.display = 'none';
             
-            // Clear form
-            document.getElementById('transaction-amount').value = '';
-            document.getElementById('manual-code').value = '';
+            // Clear manual input
+            document.getElementById('manual-qr-data').value = '';
             
-            // Reset variables
-            currentQRData = null;
-            currentOffer = null;
-            currentMember = null;
+            // Reset scan status
+            updateScanStatus('Ready to scan QR codes', 'neutral');
         }
+
+        function logout() {
+            // Stop scanner if running
+            if (qrScanner && isScanning) {
+                qrScanner.stop();
+            }
+            
+            // Redirect to main page
+            window.location.href = '../index.html';
+        }
+
+        // Clean up on page unload
+        window.addEventListener('beforeunload', function() {
+            if (qrScanner && isScanning) {
+                qrScanner.stop();
+            }
+        });
     </script>
 </body>
 </html>
