@@ -4,408 +4,833 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Savings - BAYK Partnership</title>
-    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛵</text></svg>">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="version" content="v4-20241220-midnight-ocean">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- Chart.js for savings visualization -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js?v=4"></script>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --secondary: #1e40af;
+            --accent: #3b82f6;
+            --background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #1e40af 100%);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --text-muted: rgba(255, 255, 255, 0.6);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-weight: 400;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(30, 58, 138, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(30, 64, 175, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(59, 130, 246, 0.2) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            font-size: 16px;
+        }
+
+        .nav {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            color: var(--text-primary);
+        }
+
+        /* Main Content */
+        .main {
+            padding: 40px 0;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            font-size: 16px;
+        }
+
+        /* Glass Cards */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Charts Grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .chart-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .chart-canvas {
+            position: relative;
+            height: 300px;
+        }
+
+        /* Goals Grid */
+        .goals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .goal-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .goal-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+        }
+
+        .goal-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .goal-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.1);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-fill {
+            background: var(--accent);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Transaction History */
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-info h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .transaction-info p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+
+        .transaction-amount {
+            text-align: right;
+        }
+
+        .discount-amount {
+            color: #10b981;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .total-amount {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* Filter Buttons */
+        .filter-buttons {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            border-radius: 12px;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+            color: var(--text-primary);
+        }
+
+        /* Top Partners */
+        .partner-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .partner-item:last-child {
+            border-bottom: none;
+        }
+
+        .partner-info h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .partner-info p {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .partner-savings {
+            color: #10b981;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--glass-border);
+            padding: 48px 0;
+            text-align: center;
+            margin-top: 80px;
+        }
+
+        .footer-text {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 16px;
+            }
+
+            .page-title {
+                font-size: 28px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .goals-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .glass-card {
+                padding: 20px;
+            }
+
+            .stat-card,
+            .goal-card {
+                padding: 20px;
+            }
+
+            .filter-buttons {
+                gap: 8px;
+            }
+
+            .filter-btn {
+                padding: 6px 12px;
+                font-size: 13px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
+    <!-- Header -->
+    <header class="header">
         <div class="container">
-            <a href="../index.html" class="navbar-brand">
-                <svg width="24" height="24" viewBox="0 0 100 100" class="bayk-logo-small">
-                    <rect x="10" y="10" width="80" height="80" fill="none" stroke="currentColor" stroke-width="3"/>
-                    <path d="M15 75 Q50 65 85 75 L85 85 L15 85 Z" fill="#0047AB"/>
-                    <path d="M50 15 L50 70 L35 70 Z" fill="#FF8C00"/>
-                    <path d="M35 70 Q50 75 65 70 L65 75 L35 75 Z" fill="currentColor"/>
-                </svg>
-                BAYK Partnership
-            </a>
-            <ul class="navbar-nav">
-                <li><a href="index.html">Dashboard</a></li>
-                <li><a href="offers.html">Browse Offers</a></li>
-                <li><a href="savings.html" class="active">My Savings</a></li>
-                <li><a href="#" onclick="logout()">Logout</a></li>
-            </ul>
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">⛵</div>
+                    BAYK Partnership
+                </div>
+                <nav>
+                    <ul class="nav">
+                        <li><a href="index.html">Dashboard</a></li>
+                        <li><a href="offers.html">Offers</a></li>
+                        <li><a href="savings.html" class="active">Savings</a></li>
+                        <li><a href="qr-code.html">QR Code</a></li>
+                    </ul>
+                </nav>
+            </div>
         </div>
-    </nav>
+    </header>
 
     <!-- Main Content -->
-    <main class="container" style="padding: 2rem 0;">
-        <!-- Page Header -->
-        <section class="card">
-            <h1>My Savings Dashboard</h1>
-            <p style="color: var(--text-light); font-size: 1.1rem;">
-                Track your savings and see the value of your club membership
-            </p>
-        </section>
+    <main class="main">
+        <div class="container">
+            <h1 class="page-title">My Savings</h1>
+            <p class="page-subtitle">Track your savings and spending with BAYK partners</p>
 
-        <!-- Savings Overview -->
-        <section class="grid grid-4" style="margin: 2rem 0;">
-            <div class="metric-card">
-                <div class="metric-value" id="total-savings">$892</div>
-                <div class="metric-label">Total Savings</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-value" id="monthly-savings">$127</div>
-                <div class="metric-label">This Month</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-value" id="transactions-count">23</div>
-                <div class="metric-label">Transactions</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-value" id="avg-savings">$38.78</div>
-                <div class="metric-label">Avg per Transaction</div>
-            </div>
-        </section>
-
-        <!-- Savings Chart -->
-        <section class="card">
-            <div class="card-header">
-                <h3>Savings Over Time</h3>
-            </div>
-            <div style="position: relative; height: 300px;">
-                <canvas id="savingsChart"></canvas>
-            </div>
-        </section>
-
-        <!-- Category Breakdown -->
-        <section class="grid grid-2" style="margin: 2rem 0;">
-            <div class="card">
-                <div class="card-header">
-                    <h3>Savings by Category</h3>
+            <!-- Savings Overview -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">₺1,250</div>
+                    <div class="stat-label">Total Saved</div>
                 </div>
-                <div style="position: relative; height: 250px;">
-                    <canvas id="categoryChart"></canvas>
+                <div class="stat-card">
+                    <div class="stat-value">₺3,750</div>
+                    <div class="stat-label">Total Spent</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">25%</div>
+                    <div class="stat-label">Average Discount</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">47</div>
+                    <div class="stat-label">Transactions</div>
                 </div>
             </div>
-            <div class="card">
-                <div class="card-header">
-                    <h3>Top Partners</h3>
-                </div>
-                <div id="top-partners">
-                    <!-- Top partners will be loaded here -->
-                </div>
-            </div>
-        </section>
 
-        <!-- Transaction History -->
-        <section class="card">
-            <div class="card-header">
-                <h3>Transaction History</h3>
-                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-                    <button class="btn btn-outline" onclick="filterTransactions('all')">All</button>
-                    <button class="btn btn-outline" onclick="filterTransactions('month')">This Month</button>
-                    <button class="btn btn-outline" onclick="filterTransactions('year')">This Year</button>
-                </div>
-            </div>
-            <div id="transaction-history">
-                <!-- Transaction history will be loaded here -->
-            </div>
-        </section>
-
-        <!-- Savings Goals -->
-        <section class="card">
-            <div class="card-header">
-                <h3>Savings Goals</h3>
-            </div>
-            <div class="grid grid-3">
-                <div class="metric-card">
-                    <div class="metric-value">$1,000</div>
-                    <div class="metric-label">Annual Goal</div>
-                    <div style="margin-top: 1rem;">
-                        <div style="background-color: #e5e7eb; height: 8px; border-radius: 4px; overflow: hidden;">
-                            <div style="background-color: var(--secondary-green); height: 100%; width: 89.2%;"></div>
-                        </div>
-                        <p style="text-align: center; margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-light);">89% Complete</p>
+            <!-- Charts Grid -->
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <h3 class="chart-title">Savings Trend</h3>
+                    <div class="chart-canvas">
+                        <canvas id="savingsChart"></canvas>
                     </div>
                 </div>
-                <div class="metric-card">
-                    <div class="metric-value">$150</div>
-                    <div class="metric-label">Monthly Goal</div>
-                    <div style="margin-top: 1rem;">
-                        <div style="background-color: #e5e7eb; height: 8px; border-radius: 4px; overflow: hidden;">
-                            <div style="background-color: var(--secondary-green); height: 100%; width: 84.7%;"></div>
-                        </div>
-                        <p style="text-align: center; margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-light);">85% Complete</p>
-                    </div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-value">$50</div>
-                    <div class="metric-label">Weekly Goal</div>
-                    <div style="margin-top: 1rem;">
-                        <div style="background-color: #e5e7eb; height: 8px; border-radius: 4px; overflow: hidden;">
-                            <div style="background-color: var(--secondary-green); height: 100%; width: 100%;"></div>
-                        </div>
-                        <p style="text-align: center; margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-light);">Goal Met!</p>
+                <div class="chart-container">
+                    <h3 class="chart-title">Category Breakdown</h3>
+                    <div class="chart-canvas">
+                        <canvas id="categoryChart"></canvas>
                     </div>
                 </div>
             </div>
-        </section>
+
+            <!-- Savings Goals -->
+            <div class="glass-card">
+                <h2 style="margin-bottom: 24px; color: var(--text-primary);">Savings Goals</h2>
+                <div class="goals-grid">
+                    <div class="goal-card">
+                        <div class="goal-value">₺500</div>
+                        <div class="goal-label">Monthly Goal</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 80%"></div>
+                        </div>
+                        <div class="progress-text">₺400 / ₺500</div>
+                    </div>
+                    <div class="goal-card">
+                        <div class="goal-value">₺2,000</div>
+                        <div class="goal-label">Annual Goal</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 62%"></div>
+                        </div>
+                        <div class="progress-text">₺1,250 / ₺2,000</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Partners -->
+            <div class="glass-card">
+                <h2 style="margin-bottom: 24px; color: var(--text-primary);">Top Partners by Savings</h2>
+                <div class="partners-list">
+                    <div class="partner-item">
+                        <div class="partner-info">
+                            <h4>Sunger Pizza</h4>
+                            <p>Restaurant & Dining</p>
+                        </div>
+                        <div class="partner-savings">₺320</div>
+                    </div>
+                    <div class="partner-item">
+                        <div class="partner-info">
+                            <h4>Marina Club</h4>
+                            <p>Entertainment</p>
+                        </div>
+                        <div class="partner-savings">₺280</div>
+                    </div>
+                    <div class="partner-item">
+                        <div class="partner-info">
+                            <h4>Fifi</h4>
+                            <p>Accommodation</p>
+                        </div>
+                        <div class="partner-savings">₺240</div>
+                    </div>
+                    <div class="partner-item">
+                        <div class="partner-info">
+                            <h4>Seckin Konaklar</h4>
+                            <p>Accommodation</p>
+                        </div>
+                        <div class="partner-savings">₺200</div>
+                    </div>
+                    <div class="partner-item">
+                        <div class="partner-info">
+                            <h4>Karia Princess</h4>
+                            <p>Accommodation</p>
+                        </div>
+                        <div class="partner-savings">₺180</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transaction History -->
+            <div class="glass-card">
+                <h2 style="margin-bottom: 24px; color: var(--text-primary);">Recent Transactions</h2>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="restaurant">Restaurant</button>
+                    <button class="filter-btn" data-filter="entertainment">Entertainment</button>
+                    <button class="filter-btn" data-filter="accommodation">Accommodation</button>
+                    <button class="filter-btn" data-filter="services">Services</button>
+                </div>
+                <div class="transactions-list" id="transactionsList">
+                    <!-- Transactions will be loaded here -->
+                </div>
+            </div>
+        </div>
     </main>
 
     <!-- Footer -->
-    <footer style="background-color: var(--primary-blue); color: var(--white); padding: 2rem 0; margin-top: 4rem;">
-        <div class="container text-center">
-            <p>&copy; 2025 Sailing Club Partnership Platform. All rights reserved.</p>
+    <footer class="footer">
+        <div class="container">
+            <p class="footer-text">&copy; 2024 BAYK Partnership. All rights reserved.</p>
         </div>
     </footer>
 
     <script>
-        let allTransactions = [];
-        let allOffers = [];
-        let allPartners = [];
+        // Sample transaction data
+        const transactions = [
+            {
+                id: 1,
+                partner: "Sunger Pizza",
+                category: "restaurant",
+                date: "2024-12-20",
+                originalAmount: 120,
+                discountAmount: 30,
+                finalAmount: 90,
+                discount: "25%"
+            },
+            {
+                id: 2,
+                partner: "Marina Club",
+                category: "entertainment",
+                date: "2024-12-19",
+                originalAmount: 200,
+                discountAmount: 50,
+                finalAmount: 150,
+                discount: "25%"
+            },
+            {
+                id: 3,
+                partner: "Fifi",
+                category: "accommodation",
+                date: "2024-12-18",
+                originalAmount: 400,
+                discountAmount: 80,
+                finalAmount: 320,
+                discount: "20%"
+            },
+            {
+                id: 4,
+                partner: "Seckin Konaklar",
+                category: "accommodation",
+                date: "2024-12-17",
+                originalAmount: 300,
+                discountAmount: 60,
+                finalAmount: 240,
+                discount: "20%"
+            },
+            {
+                id: 5,
+                partner: "Karia Princess",
+                category: "accommodation",
+                date: "2024-12-16",
+                originalAmount: 250,
+                discountAmount: 50,
+                finalAmount: 200,
+                discount: "20%"
+            },
+            {
+                id: 6,
+                partner: "Bodrum Milta Marina",
+                category: "services",
+                date: "2024-12-15",
+                originalAmount: 150,
+                discountAmount: 30,
+                finalAmount: 120,
+                discount: "20%"
+            },
+            {
+                id: 7,
+                partner: "SkyMarine",
+                category: "services",
+                date: "2024-12-14",
+                originalAmount: 100,
+                discountAmount: 20,
+                finalAmount: 80,
+                discount: "20%"
+            },
+            {
+                id: 8,
+                partner: "East Marine",
+                category: "services",
+                date: "2024-12-13",
+                originalAmount: 80,
+                discountAmount: 16,
+                finalAmount: 64,
+                discount: "20%"
+            },
+            {
+                id: 9,
+                partner: "Alize",
+                category: "services",
+                date: "2024-12-12",
+                originalAmount: 120,
+                discountAmount: 24,
+                finalAmount: 96,
+                discount: "20%"
+            },
+            {
+                id: 10,
+                partner: "Sportsworks",
+                category: "services",
+                date: "2024-12-11",
+                originalAmount: 90,
+                discountAmount: 18,
+                finalAmount: 72,
+                discount: "20%"
+            }
+        ];
 
-        // Logout functionality
-        function logout() {
-            localStorage.removeItem('selectedRole');
-            window.location.href = '../index.html';
+        // Load transactions
+        function loadTransactions(filter = 'all') {
+            const transactionsList = document.getElementById('transactionsList');
+            const filteredTransactions = filter === 'all' ? transactions : transactions.filter(t => t.category === filter);
+            
+            transactionsList.innerHTML = filteredTransactions.map(transaction => `
+                <div class="transaction-item">
+                    <div class="transaction-info">
+                        <h4>${transaction.partner}</h4>
+                        <p>${transaction.date}</p>
+                        <p>${transaction.discount} discount</p>
+                    </div>
+                    <div class="transaction-amount">
+                        <div class="discount-amount">-₺${transaction.discountAmount}</div>
+                        <div class="total-amount">₺${transaction.finalAmount}</div>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        // Initialize page
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check if user is logged in as member
-            const currentRole = localStorage.getItem('selectedRole');
-            if (currentRole !== 'member') {
-                window.location.href = '../index.html';
-                return;
-            }
-
-            loadData();
+        // Filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                loadTransactions(btn.dataset.filter);
+            });
         });
 
-        async function loadData() {
-            try {
-                // Load all data
-                const [transactionsResponse, offersResponse, usersResponse] = await Promise.all([
-                    fetch('../assets/data/transactions.json'),
-                    fetch('../assets/data/offers.json'),
-                    fetch('../assets/data/users.json')
-                ]);
+        // Initialize
+        loadTransactions();
 
-                const transactionsData = await transactionsResponse.json();
-                const offersData = await offersResponse.json();
-                const usersData = await usersResponse.json();
-
-                allTransactions = transactionsData.transactions.filter(t => t.member_id === 'm001'); // Zafer Gunel's transactions
-                allOffers = offersData.offers;
-                allPartners = usersData.partners;
-
-                displaySavingsOverview();
-                createSavingsChart();
-                createCategoryChart();
-                displayTopPartners();
-                displayTransactionHistory();
-            } catch (error) {
-                console.error('Error loading data:', error);
-            }
-        }
-
-        function displaySavingsOverview() {
-            const totalSavings = allTransactions.reduce((sum, t) => sum + t.discount_amount, 0);
-            const monthlySavings = allTransactions
-                .filter(t => new Date(t.timestamp).getMonth() === new Date().getMonth())
-                .reduce((sum, t) => sum + t.discount_amount, 0);
-            const avgSavings = totalSavings / allTransactions.length;
-
-            document.getElementById('total-savings').textContent = `$${totalSavings.toFixed(2)}`;
-            document.getElementById('monthly-savings').textContent = `$${monthlySavings.toFixed(2)}`;
-            document.getElementById('transactions-count').textContent = allTransactions.length;
-            document.getElementById('avg-savings').textContent = `$${avgSavings.toFixed(2)}`;
-        }
-
-        function createSavingsChart() {
-            const ctx = document.getElementById('savingsChart').getContext('2d');
-            
-            // Group transactions by month
-            const monthlyData = {};
-            allTransactions.forEach(transaction => {
-                const month = new Date(transaction.timestamp).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-                if (!monthlyData[month]) {
-                    monthlyData[month] = 0;
-                }
-                monthlyData[month] += transaction.discount_amount;
-            });
-
-            const labels = Object.keys(monthlyData).sort();
-            const data = labels.map(label => monthlyData[label]);
-
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Monthly Savings',
-                        data: data,
-                        borderColor: '#1e40af',
-                        backgroundColor: 'rgba(30, 64, 175, 0.1)',
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.4
-                    }]
+        // Initialize savings chart
+        const ctx = document.getElementById('savingsChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [{
+                    label: 'Monthly Savings',
+                    data: [80, 120, 100, 150, 200, 180, 220, 250, 200, 180, 160, 140],
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#ffffff'
                         }
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return '$' + value;
-                                }
-                            }
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#ffffff'
                         }
                     }
                 }
-            });
-        }
+            }
+        });
 
-        function createCategoryChart() {
-            const ctx = document.getElementById('categoryChart').getContext('2d');
-            
-            // Group transactions by category
-            const categoryData = {};
-            allTransactions.forEach(transaction => {
-                const offer = allOffers.find(o => o.id === transaction.offer_id);
-                if (offer) {
-                    if (!categoryData[offer.category]) {
-                        categoryData[offer.category] = 0;
-                    }
-                    categoryData[offer.category] += transaction.discount_amount;
-                }
-            });
-
-            const labels = Object.keys(categoryData).map(cat => 
-                cat.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())
-            );
-            const data = Object.values(categoryData);
-            const colors = ['#1e40af', '#059669', '#dc2626', '#f59e0b', '#8b5cf6'];
-
-            new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: data,
-                        backgroundColor: colors.slice(0, labels.length),
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
+        // Initialize category chart
+        const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+        new Chart(categoryCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Restaurant', 'Entertainment', 'Accommodation', 'Services'],
+                datasets: [{
+                    data: [320, 280, 620, 108],
+                    backgroundColor: [
+                        '#3b82f6',
+                        '#1e40af',
+                        '#1e3a8a',
+                        '#0f172a'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#ffffff',
+                            padding: 20
                         }
                     }
                 }
-            });
-        }
-
-        function displayTopPartners() {
-            const partnerData = {};
-            allTransactions.forEach(transaction => {
-                const partner = allPartners.find(p => p.id === transaction.partner_id);
-                if (partner) {
-                    if (!partnerData[partner.business_name]) {
-                        partnerData[partner.business_name] = { savings: 0, count: 0 };
-                    }
-                    partnerData[partner.business_name].savings += transaction.discount_amount;
-                    partnerData[partner.business_name].count += 1;
-                }
-            });
-
-            const topPartners = Object.entries(partnerData)
-                .sort((a, b) => b[1].savings - a[1].savings)
-                .slice(0, 5);
-
-            const container = document.getElementById('top-partners');
-            container.innerHTML = '';
-
-            topPartners.forEach(([partnerName, data], index) => {
-                const partnerDiv = document.createElement('div');
-                partnerDiv.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid #e5e7eb;';
-                
-                partnerDiv.innerHTML = `
-                    <div>
-                        <div style="font-weight: 600;">${index + 1}. ${partnerName}</div>
-                        <div style="color: var(--text-light); font-size: 0.9rem;">${data.count} transactions</div>
-                    </div>
-                    <div style="color: var(--secondary-green); font-weight: 600;">$${data.savings.toFixed(2)}</div>
-                `;
-                
-                container.appendChild(partnerDiv);
-            });
-        }
-
-        function displayTransactionHistory(filter = 'all') {
-            let filteredTransactions = allTransactions;
-
-            if (filter === 'month') {
-                const currentMonth = new Date().getMonth();
-                const currentYear = new Date().getFullYear();
-                filteredTransactions = allTransactions.filter(t => {
-                    const transactionDate = new Date(t.timestamp);
-                    return transactionDate.getMonth() === currentMonth && transactionDate.getFullYear() === currentYear;
-                });
-            } else if (filter === 'year') {
-                const currentYear = new Date().getFullYear();
-                filteredTransactions = allTransactions.filter(t => {
-                    const transactionDate = new Date(t.timestamp);
-                    return transactionDate.getFullYear() === currentYear;
-                });
             }
-
-            const container = document.getElementById('transaction-history');
-            container.innerHTML = '';
-
-            if (filteredTransactions.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: var(--text-light); padding: 2rem;">No transactions found for this period.</p>';
-                return;
-            }
-
-            // Sort by date (newest first)
-            filteredTransactions.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
-            filteredTransactions.forEach(transaction => {
-                const offer = allOffers.find(o => o.id === transaction.offer_id);
-                const partner = allPartners.find(p => p.id === transaction.partner_id);
-                
-                if (!offer || !partner) return;
-
-                const transactionDiv = document.createElement('div');
-                transactionDiv.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid #e5e7eb;';
-                
-                transactionDiv.innerHTML = `
-                    <div>
-                        <h4>${offer.title}</h4>
-                        <p style="color: var(--text-light); font-size: 0.9rem;">${partner.business_name}</p>
-                        <p style="color: var(--text-light); font-size: 0.8rem;">${new Date(transaction.timestamp).toLocaleDateString()}</p>
-                    </div>
-                    <div style="text-align: right;">
-                        <div style="color: var(--secondary-green); font-weight: 600;">-$${transaction.discount_amount.toFixed(2)}</div>
-                        <div style="color: var(--text-light); font-size: 0.9rem;">$${transaction.final_amount.toFixed(2)} total</div>
-                    </div>
-                `;
-                
-                container.appendChild(transactionDiv);
-            });
-        }
-
-        function filterTransactions(filter) {
-            displayTransactionHistory(filter);
-        }
+        });
     </script>
 </body>
 </html>
