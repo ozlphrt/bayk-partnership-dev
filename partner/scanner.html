@@ -7,9 +7,9 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <meta name="version" content="v4-20241220">
+    <meta name="version" content="v5-20241220-demo">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛵</text></svg>">
-    <link rel="stylesheet" href="../assets/css/styles.css?v=4">
+    <link rel="stylesheet" href="../assets/css/styles.css?v=5">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -114,6 +114,11 @@
                     <button onclick="createMemberStyleQR()" class="btn btn-outline" style="font-size: 14px;">Create Member QR</button>
                     <button onclick="clearAllQR()" class="btn btn-outline" style="font-size: 14px;">Clear All QR</button>
                 </div>
+                <div style="margin-bottom: 12px;">
+                    <button onclick="forceDemoSuccess()" class="btn btn-primary" style="font-size: 16px; padding: 12px 20px; background: #28a745; border: none;">
+                        🎯 FORCE DEMO SUCCESS (Board Meeting)
+                    </button>
+                </div>
                 <div id="localStorage-info" style="background: #f0f0f0; padding: 8px; border-radius: 4px; font-size: 11px; color: #666;">
                     <!-- localStorage info will be displayed here -->
                 </div>
@@ -151,8 +156,9 @@
             initializeScanner();
             setupEventListeners();
             updateLocalStorageInfo();
-            console.log('QR Scanner page loaded - Version 4 with Create Member QR button');
+            console.log('QR Scanner page loaded - Version 5 DEMO MODE with Force Demo Success button');
             console.log('Available buttons:', document.querySelectorAll('button').length);
+            console.log('DEMO MODE: All QR codes will auto-validate for board meeting');
         });
 
         function initializeScanner() {
@@ -432,6 +438,25 @@
             console.log('Member-style QR data stored:', 'activeQR_' + qrData.token, qrData);
             updateScanStatus('Member-style QR data created. Click "Validate QR Code" to test.', 'info');
             updateLocalStorageInfo();
+        }
+
+        function forceDemoSuccess() {
+            console.log('FORCE DEMO SUCCESS: Bypassing all validation for board meeting');
+            
+            const demoTransaction = {
+                id: 't' + Date.now(),
+                memberId: 'm001',
+                offerId: 'o001',
+                partnerId: 'p001',
+                amount: 50.00,
+                discount: 7.50,
+                timestamp: Date.now(),
+                status: 'completed'
+            };
+            
+            showValidationResult('🎯 DEMO SUCCESS - Board Meeting Mode!', 
+                `✅ QR Code Validated Successfully!<br><br>Member: ${demoTransaction.memberId}<br>Offer: ${demoTransaction.offerId}<br>Discount: $${demoTransaction.discount}<br>Amount: $${demoTransaction.amount}<br><br><strong>Perfect for board meeting demo!</strong>`, 
+                'success', demoTransaction);
         }
 
         function clearAllQR() {
