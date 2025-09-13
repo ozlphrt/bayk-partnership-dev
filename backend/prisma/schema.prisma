@@ -1,0 +1,253 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model - Base for all user types
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  firstName String
+  lastName  String
+  phone     String?
+  role      UserRole @default(MEMBER)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  memberProfile Member?
+  partnerProfile Partner?
+  adminProfile  Admin?
+
+  @@map("users")
+}
+
+// Member profile
+model Member {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  membershipId  String   @unique
+  membershipType MembershipType @default(STANDARD)
+  duesStatus    DuesStatus @default(CURRENT)
+  duesAmount    Decimal  @default(0)
+  duesDueDate   DateTime?
+  qrCode        String   @unique
+  qrCodeExpiry  DateTime
+  location      String?
+  joinedDate    DateTime @default(now())
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  usageHistory  UsageHistory[]
+  transactions  Transaction[]
+
+  @@map("members")
+}
+
+// Partner profile
+model Partner {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  businessName    String
+  businessType    BusinessType
+  description     String?
+  address         String
+  city            String
+  state           String
+  zipCode         String
+  country         String   @default("US")
+  phone           String?
+  website         String?
+  contactEmail    String
+  isActive        Boolean  @default(true)
+  isVerified      Boolean  @default(false)
+  partnershipDate DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  agreements      PartnershipAgreement[]
+  transactions    Transaction[]
+  promotions      Promotion[]
+
+  @@map("partners")
+}
+
+// Admin profile
+model Admin {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  adminType AdminType @default(STAFF)
+  permissions String[] // JSON array of permissions
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("admins")
+}
+
+// Partnership agreements
+model PartnershipAgreement {
+  id              String   @id @default(cuid())
+  partnerId       String
+  agreementType   AgreementType
+  discountType    DiscountType
+  discountValue   Decimal
+  description     String?
+  terms           String?
+  startDate       DateTime
+  endDate         DateTime?
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  partner         Partner  @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+  transactions    Transaction[]
+
+  @@map("partnership_agreements")
+}
+
+// Member usage history
+model UsageHistory {
+  id              String   @id @default(cuid())
+  memberId        String
+  partnerId       String
+  agreementId     String
+  discountAmount  Decimal
+  originalAmount  Decimal
+  finalAmount     Decimal
+  description     String?
+  usedAt          DateTime @default(now())
+  createdAt       DateTime @default(now())
+
+  // Relations
+  member          Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@map("usage_history")
+}
+
+// Transactions (discount applications)
+model Transaction {
+  id              String   @id @default(cuid())
+  memberId        String
+  partnerId       String
+  agreementId     String
+  transactionType TransactionType
+  amount          Decimal
+  discountAmount  Decimal
+  finalAmount     Decimal
+  description     String?
+  status          TransactionStatus @default(PENDING)
+  processedAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  member          Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  partner         Partner  @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+  agreement       PartnershipAgreement @relation(fields: [agreementId], references: [id], onDelete: Cascade)
+
+  @@map("transactions")
+}
+
+// Promotions
+model Promotion {
+  id              String   @id @default(cuid())
+  partnerId       String
+  title           String
+  description     String
+  discountType    DiscountType
+  discountValue   Decimal
+  startDate       DateTime
+  endDate         DateTime
+  isActive        Boolean  @default(true)
+  maxUses         Int?
+  currentUses     Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  partner         Partner  @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+
+  @@map("promotions")
+}
+
+// Enums
+enum UserRole {
+  MEMBER
+  PARTNER
+  ADMIN
+}
+
+enum MembershipType {
+  STANDARD
+  PREMIUM
+  VIP
+  LIFETIME
+}
+
+enum DuesStatus {
+  CURRENT
+  OVERDUE
+  SUSPENDED
+  CANCELLED
+}
+
+enum BusinessType {
+  HOTEL
+  RESTAURANT
+  GYM
+  SAILING_EQUIPMENT
+  MARINA
+  TRAVEL
+  INSURANCE
+  OTHER
+}
+
+enum AdminType {
+  SUPER_ADMIN
+  ADMIN
+  STAFF
+}
+
+enum AgreementType {
+  STANDARD
+  PREMIUM
+  CUSTOM
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED_AMOUNT
+  FREE_ITEM
+  SPECIAL_OFFER
+}
+
+enum TransactionType {
+  DISCOUNT_APPLICATION
+  MEMBERSHIP_PAYMENT
+  PARTNER_PAYMENT
+}
+
+enum TransactionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
