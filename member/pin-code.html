@@ -3,17 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code - Sailing Club Partnership</title>
+    <title>PIN Code - Sailing Club Partnership</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛵</text></svg>">
     <link rel="stylesheet" href="../assets/css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- PIN Code Generation System -->
-    <script>
-        // Simple PIN generation system - no external dependencies
-        console.log('PIN Code system initialized');
-    </script>
 </head>
 <body>
     <!-- Navigation -->
@@ -104,7 +99,7 @@
     </footer>
 
     <script>
-        let qrTimer;
+        let pinTimer;
         let timeLeft = 300; // 5 minutes in seconds
         let currentOffer = null;
         let currentPartner = null;
@@ -200,112 +195,57 @@
             `;
         }
 
-        function generateQRCode() {
-            // Generate unique QR token
-            const qrToken = generateUniqueToken();
-            const qrData = {
-                token: qrToken,
+        function generatePIN() {
+            // Generate 4-digit PIN
+            const pin = Math.floor(1000 + Math.random() * 9000).toString();
+            
+            const pinData = {
+                pin: pin,
                 member_id: 'm001', // Sarah Marina's ID
                 offer_id: currentOffer.id,
                 timestamp: new Date().toISOString(),
                 expires_at: new Date(Date.now() + 5 * 60 * 1000).toISOString() // 5 minutes from now
             };
 
-            // Store QR data for validation
-            localStorage.setItem('currentQRData', JSON.stringify(qrData));
+            // Store PIN data for validation
+            localStorage.setItem('currentPINData', JSON.stringify(pinData));
 
-            // Generate QR code
-            const qrCodeElement = document.getElementById('qr-code');
+            // Display PIN
+            const pinCodeElement = document.getElementById('pin-code');
             
             // Clear loading indicator and show timer
-            qrCodeElement.innerHTML = '';
-            document.getElementById('qr-timer').style.display = 'block';
+            pinCodeElement.innerHTML = '';
+            document.getElementById('pin-timer').style.display = 'block';
             
-            // Try QRCode library first
-            if (checkQRCodeAvailable()) {
-                // Create a canvas element for the QR code
-                const canvas = document.createElement('canvas');
-                qrCodeElement.appendChild(canvas);
-                
-                QRCode.toCanvas(canvas, JSON.stringify(qrData), {
-                    width: 200,
-                    height: 200,
-                    color: {
-                        dark: '#1e40af',
-                        light: '#ffffff'
-                    },
-                    margin: 2
-                }, function (error) {
-                    if (error) {
-                        console.error('QRCode library error:', error);
-                        // Try Google Charts API as fallback
-                        generateQRWithGoogleCharts(qrData);
-                    } else {
-                        console.log('QR Code generated successfully with QRCode library');
-                    }
-                });
-            } else {
-                console.log('QRCode library not available, trying Google Charts API');
-                // Try Google Charts API
-                generateQRWithGoogleCharts(qrData);
-            }
-        }
-
-        function generateUniqueToken() {
-            return 'qr_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
-        }
-
-        function generateFallbackQR() {
-            // Generate unique QR token
-            const qrToken = generateUniqueToken();
-            const qrData = {
-                token: qrToken,
-                member_id: 'm001', // Sarah Marina's ID
-                offer_id: currentOffer.id,
-                timestamp: new Date().toISOString(),
-                expires_at: new Date(Date.now() + 5 * 60 * 1000).toISOString() // 5 minutes from now
-            };
-
-            // Store QR data for validation
-            localStorage.setItem('currentQRData', JSON.stringify(qrData));
-
-            // Clear loading indicator and show timer
-            const qrCodeElement = document.getElementById('qr-code');
-            qrCodeElement.innerHTML = '';
-            document.getElementById('qr-timer').style.display = 'block';
-            
-            // Try Google Charts API first, then fallback to text
-            console.log('Using fallback QR generation - trying Google Charts API');
-            generateQRWithGoogleCharts(qrData);
-        }
-
-        function createFallbackQR(element, qrData) {
-            element.innerHTML = `
-                <div style="border: 2px solid var(--primary-blue); border-radius: 0.5rem; padding: 1.5rem; background-color: white; text-align: center; max-width: 300px; margin: 0 auto;">
+            // Create PIN display
+            pinCodeElement.innerHTML = `
+                <div style="border: 2px solid var(--primary-blue); border-radius: 0.5rem; padding: 2rem; background-color: white; text-align: center; max-width: 300px; margin: 0 auto;">
                     <div style="font-size: 1.2rem; font-weight: 600; color: var(--primary-blue); margin-bottom: 1rem;">
-                        ⛵ DISCOUNT CODE
+                        ⛵ DISCOUNT PIN
                     </div>
-                    <div style="font-family: monospace; font-size: 0.9rem; color: var(--text-dark); margin-bottom: 1rem; word-break: break-all; background-color: #f3f4f6; padding: 0.5rem; border-radius: 0.25rem;">
-                        ${qrData.token}
+                    <div style="font-family: monospace; font-size: 3rem; font-weight: 700; color: var(--secondary-green); margin-bottom: 1rem; letter-spacing: 0.5rem;">
+                        ${pin}
                     </div>
                     <div style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 1rem;">
-                        Show this code to the partner
+                        Tell this PIN to the partner
                     </div>
                     <div style="font-size: 0.8rem; color: var(--text-light); background-color: #fef3c7; padding: 0.5rem; border-radius: 0.25rem;">
-                        💡 Partner can enter this code manually in their scanner
+                        💡 Partner will enter this PIN in their system
                     </div>
                 </div>
             `;
+            
+            console.log('PIN generated successfully:', pin);
         }
 
         function startTimer() {
-            qrTimer = setInterval(function() {
+            pinTimer = setInterval(function() {
                 timeLeft--;
                 updateTimerDisplay();
 
                 if (timeLeft <= 0) {
-                    clearInterval(qrTimer);
-                    handleQRExpiry();
+                    clearInterval(pinTimer);
+                    handlePINExpiry();
                 }
             }, 1000);
         }
@@ -313,7 +253,7 @@
         function updateTimerDisplay() {
             const minutes = Math.floor(timeLeft / 60);
             const seconds = timeLeft % 60;
-            const timerElement = document.getElementById('qr-timer');
+            const timerElement = document.getElementById('pin-timer');
             timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
 
             // Change color as time runs out
@@ -324,26 +264,26 @@
             }
         }
 
-        function handleQRExpiry() {
-            document.getElementById('qr-timer').textContent = 'EXPIRED';
-            document.getElementById('qr-timer').style.color = 'var(--accent-red)';
+        function handlePINExpiry() {
+            document.getElementById('pin-timer').textContent = 'EXPIRED';
+            document.getElementById('pin-timer').style.color = 'var(--accent-red)';
             
-            // Disable QR code
-            const qrCodeElement = document.getElementById('qr-code');
-            qrCodeElement.style.opacity = '0.5';
-            qrCodeElement.style.filter = 'grayscale(100%)';
+            // Disable PIN code
+            const pinCodeElement = document.getElementById('pin-code');
+            pinCodeElement.style.opacity = '0.5';
+            pinCodeElement.style.filter = 'grayscale(100%)';
 
             // Show expiry message
             const expiryAlert = document.createElement('div');
             expiryAlert.className = 'alert alert-error';
-            expiryAlert.innerHTML = '<strong>QR Code Expired:</strong> This code is no longer valid. Please generate a new one.';
+            expiryAlert.innerHTML = '<strong>PIN Code Expired:</strong> This code is no longer valid. Please generate a new one.';
             document.querySelector('.qr-container').appendChild(expiryAlert);
         }
 
-        function generateNewQR() {
+        function generateNewPIN() {
             // Clear existing timer
-            if (qrTimer) {
-                clearInterval(qrTimer);
+            if (pinTimer) {
+                clearInterval(pinTimer);
             }
 
             // Reset timer
@@ -355,25 +295,20 @@
                 existingAlert.remove();
             }
 
-            // Reset QR code display
-            const qrCodeElement = document.getElementById('qr-code');
-            qrCodeElement.style.opacity = '1';
-            qrCodeElement.style.filter = 'none';
+            // Reset PIN code display
+            const pinCodeElement = document.getElementById('pin-code');
+            pinCodeElement.style.opacity = '1';
+            pinCodeElement.style.filter = 'none';
 
-            // Check if QRCode library is available or use fallback
-            if (typeof QRCode === 'undefined' || window.QRCodeFallback) {
-                console.log('Using fallback QR generation');
-                generateFallbackQR();
-            } else {
-                generateQRCode();
-            }
+            // Generate new PIN and start timer
+            generatePIN();
             startTimer();
         }
 
         // Clean up timer when page is unloaded
         window.addEventListener('beforeunload', function() {
-            if (qrTimer) {
-                clearInterval(qrTimer);
+            if (pinTimer) {
+                clearInterval(pinTimer);
             }
         });
     </script>

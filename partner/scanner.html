@@ -67,23 +67,23 @@
             </div>
         </section>
 
-        <!-- Manual Entry Section -->
+        <!-- PIN Entry Section -->
         <section class="card">
-            <h3>Manual Entry (Backup)</h3>
+            <h3>Enter Member PIN Code</h3>
             <p style="color: var(--text-light); margin-bottom: 1rem;">
-                If QR scanning doesn't work, you can manually enter the member's discount code
+                Ask the member for their 4-digit discount PIN code
             </p>
             <div class="form-group">
-                <label class="form-label">Member Discount Code</label>
-                <input type="text" id="manual-code" class="form-input" placeholder="Enter QR code data or member ID">
+                <label class="form-label">4-Digit PIN Code</label>
+                <input type="text" id="manual-code" class="form-input" placeholder="Enter 4-digit PIN (e.g., 1234)" maxlength="4" pattern="[0-9]{4}">
             </div>
-            <button id="validate-manual" class="btn btn-secondary">Validate Code</button>
+            <button id="validate-manual" class="btn btn-secondary">Validate PIN</button>
         </section>
 
         <!-- Validation Results -->
         <section id="validation-results" class="card" style="display: none;">
             <div class="card-header">
-                <h3>QR Code Validation</h3>
+                <h3>PIN Code Validation</h3>
             </div>
             <div id="validation-content">
                 <!-- Validation results will be displayed here -->
@@ -341,28 +341,74 @@
             resultsSection.style.display = 'block';
         }
 
-        function validateManualCode() {
-            const manualCode = document.getElementById('manual-code').value.trim();
-            if (!manualCode) {
-                alert('Please enter a discount code');
+        async function validateManualCode() {
+            const pinCode = document.getElementById('manual-code').value.trim();
+            if (!pinCode) {
+                alert('Please enter a 4-digit PIN code');
                 return;
             }
             
-            // For demo purposes, accept "demo123" as a valid manual code
-            if (manualCode === 'demo123') {
-                // Simulate valid QR data
-                currentQRData = {
-                    token: 'manual_demo_token',
-                    member_id: 'm001',
-                    offer_id: 'o001',
-                    timestamp: new Date().toISOString(),
-                    expires_at: new Date(Date.now() + 5 * 60 * 1000).toISOString()
-                };
+            // Check if PIN is 4 digits
+            if (!/^\d{4}$/.test(pinCode)) {
+                alert('Please enter a valid 4-digit PIN code');
+                return;
+            }
+            
+            try {
+                // Get stored PIN data from localStorage (simulating backend validation)
+                const storedPINData = localStorage.getItem('currentPINData');
+                if (!storedPINData) {
+                    showValidationError('No active PIN found. Please ask the member to generate a new PIN.');
+                    return;
+                }
                 
-                // Load demo data
-                loadDemoData();
-            } else {
-                showValidationError('Invalid manual code. Use "demo123" for demo.');
+                const data = JSON.parse(storedPINData);
+                
+                // Check if PIN matches
+                if (data.pin !== pinCode) {
+                    showValidationError('Invalid PIN code. Please check the number and try again.');
+                    return;
+                }
+                
+                // Check if PIN is expired
+                const now = new Date();
+                const expiresAt = new Date(data.expires_at);
+                
+                if (now > expiresAt) {
+                    showValidationError('PIN code has expired. Please ask the member to generate a new one.');
+                    return;
+                }
+                
+                // Check if PIN has already been used
+                const usedPINs = JSON.parse(localStorage.getItem('usedPINs') || '[]');
+                if (usedPINs.includes(pinCode)) {
+                    showValidationError('This PIN code has already been used.');
+                    return;
+                }
+                
+                // Load offer and member data
+                const [offersResponse, usersResponse] = await Promise.all([
+                    fetch('../assets/data/offers.json'),
+                    fetch('../assets/data/users.json')
+                ]);
+
+                const offersData = await offersResponse.json();
+                const usersData = await usersResponse.json();
+
+                currentOffer = offersData.offers.find(o => o.id === data.offer_id);
+                currentMember = usersData.members.find(m => m.id === data.member_id);
+
+                if (!currentOffer || !currentMember) {
+                    showValidationError('Invalid offer or member data');
+                    return;
+                }
+
+                currentQRData = data; // Store PIN data for transaction processing
+                showValidationSuccess();
+                
+            } catch (error) {
+                console.error('Error validating PIN code:', error);
+                showValidationError('Error validating PIN code. Please try again.');
             }
         }
 
@@ -472,6 +518,13 @@
                     Both you and the member have received transaction confirmation.
                 </p>
             `;
+            
+            // Mark PIN as used
+            if (currentQRData && currentQRData.pin) {
+                const usedPINs = JSON.parse(localStorage.getItem('usedPINs') || '[]');
+                usedPINs.push(currentQRData.pin);
+                localStorage.setItem('usedPINs', JSON.stringify(usedPINs));
+            }
             
             confirmationSection.style.display = 'block';
             document.getElementById('transaction-section').style.display = 'none';
