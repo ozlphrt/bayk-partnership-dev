@@ -122,6 +122,13 @@
                 return;
             }
 
+            // Check if QRCode library is loaded
+            if (typeof QRCode === 'undefined') {
+                console.error('QRCode library not loaded');
+                document.getElementById('qr-code').innerHTML = '<p style="color: var(--accent-red); padding: 2rem;">QR Code library failed to load. Please refresh the page.</p>';
+                return;
+            }
+
             loadOfferData(selectedOfferId);
         });
 
@@ -206,23 +213,51 @@
 
             // Generate QR code
             const qrCodeElement = document.getElementById('qr-code');
-            QRCode.toCanvas(qrCodeElement, JSON.stringify(qrData), {
+            
+            // Clear any existing content
+            qrCodeElement.innerHTML = '';
+            
+            // Create a canvas element for the QR code
+            const canvas = document.createElement('canvas');
+            qrCodeElement.appendChild(canvas);
+            
+            QRCode.toCanvas(canvas, JSON.stringify(qrData), {
                 width: 200,
                 height: 200,
                 color: {
                     dark: '#1e40af',
                     light: '#ffffff'
-                }
+                },
+                margin: 2
             }, function (error) {
                 if (error) {
                     console.error('QR Code generation error:', error);
-                    qrCodeElement.innerHTML = '<p style="color: var(--accent-red);">Error generating QR code</p>';
+                    // Fallback: create a simple text representation
+                    createFallbackQR(qrCodeElement, qrData);
+                } else {
+                    console.log('QR Code generated successfully');
                 }
             });
         }
 
         function generateUniqueToken() {
             return 'qr_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+        }
+
+        function createFallbackQR(element, qrData) {
+            element.innerHTML = `
+                <div style="border: 2px solid var(--primary-blue); border-radius: 0.5rem; padding: 1rem; background-color: white; text-align: center;">
+                    <div style="font-size: 1.2rem; font-weight: 600; color: var(--primary-blue); margin-bottom: 1rem;">
+                        DISCOUNT CODE
+                    </div>
+                    <div style="font-family: monospace; font-size: 1rem; color: var(--text-dark); margin-bottom: 1rem; word-break: break-all;">
+                        ${qrData.token}
+                    </div>
+                    <div style="font-size: 0.9rem; color: var(--text-light);">
+                        Show this code to the partner
+                    </div>
+                </div>
+            `;
         }
 
         function startTimer() {
@@ -286,6 +321,12 @@
             const qrCodeElement = document.getElementById('qr-code');
             qrCodeElement.style.opacity = '1';
             qrCodeElement.style.filter = 'none';
+
+            // Check if QRCode library is available
+            if (typeof QRCode === 'undefined') {
+                console.error('QRCode library not available for new QR generation');
+                return;
+            }
 
             // Generate new QR code and start timer
             generateQRCode();
