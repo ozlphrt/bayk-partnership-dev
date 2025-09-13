@@ -30,7 +30,7 @@
     <main class="container" style="padding: 2rem 0;">
         <!-- Welcome Section -->
         <section class="card">
-            <h1>Welcome back, Sarah Marina!</h1>
+            <h1>Welcome back, Zafer Gunel!</h1>
             <p style="color: var(--text-light); font-size: 1.1rem;">
                 Ready to discover your next savings opportunity?
             </p>
@@ -60,7 +60,7 @@
             <div class="recent-transactions">
                 <div class="transaction-item" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid #e5e7eb;">
                     <div>
-                        <h4>Waterfront Bistro</h4>
+                        <h4>Sunger Pizza</h4>
                         <p style="color: var(--text-light); font-size: 0.9rem;">15% off all meals</p>
                     </div>
                     <div style="text-align: right;">
@@ -70,7 +70,7 @@
                 </div>
                 <div class="transaction-item" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid #e5e7eb;">
                     <div>
-                        <h4>Sailor's Tavern</h4>
+                        <h4>Marina Club</h4>
                         <p style="color: var(--text-light); font-size: 0.9rem;">Buy one, get one appetizer</p>
                     </div>
                     <div style="text-align: right;">
@@ -80,7 +80,7 @@
                 </div>
                 <div class="transaction-item" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem;">
                     <div>
-                        <h4>Marina Resort</h4>
+                        <h4>Seckin Konaklar</h4>
                         <p style="color: var(--text-light); font-size: 0.9rem;">20% off weekend stays</p>
                     </div>
                     <div style="text-align: right;">
@@ -116,19 +116,19 @@
             <div class="grid grid-3">
                 <div class="offer-card">
                     <div class="offer-title">15% off all meals</div>
-                    <div class="offer-discount">Waterfront Bistro</div>
+                    <div class="offer-discount">Sunger Pizza</div>
                     <div class="offer-description">Valid for lunch and dinner. Cannot be combined with other offers.</div>
                     <a href="offers.html" class="btn btn-primary">View Offer</a>
                 </div>
                 <div class="offer-card">
                     <div class="offer-title">20% off weekend stays</div>
-                    <div class="offer-discount">Marina Resort</div>
-                    <div class="offer-description">Enjoy 20% off your weekend accommodation at Marina Resort.</div>
+                    <div class="offer-discount">Seckin Konaklar</div>
+                    <div class="offer-description">Enjoy 20% off your weekend accommodation at Seckin Konaklar.</div>
                     <a href="offers.html" class="btn btn-primary">View Offer</a>
                 </div>
                 <div class="offer-card">
                     <div class="offer-title">10% off boat repairs</div>
-                    <div class="offer-discount">Bay Marine Services</div>
+                    <div class="offer-discount">Bodrum Milta Marina</div>
                     <div class="offer-description">Save 10% on all marine repair services and maintenance.</div>
                     <a href="offers.html" class="btn btn-primary">View Offer</a>
                 </div>
@@ -168,7 +168,7 @@
                 const response = await fetch('../assets/data/users.json');
                 const data = await response.json();
                 
-                // Find Sarah Marina (demo user)
+                // Find Zafer Gunel (demo user)
                 const member = data.members.find(m => m.id === 'm001');
                 if (member) {
                     // Update welcome message
