@@ -78,6 +78,9 @@
                 <input type="text" id="manual-code" class="form-input" placeholder="Enter 4-digit PIN (e.g., 1234)" maxlength="4" pattern="[0-9]{4}">
             </div>
             <button id="validate-manual" class="btn btn-secondary">Validate PIN</button>
+            <div style="background-color: #fef3c7; padding: 0.75rem; border-radius: 0.25rem; margin-top: 1rem; font-size: 0.9rem;">
+                <strong>Demo Note:</strong> Use PIN <strong>1234</strong> for testing purposes
+            </div>
         </section>
 
         <!-- Validation Results -->
@@ -355,16 +358,49 @@
             }
             
             try {
-                // Get stored PIN data from localStorage (simulating backend validation)
-                const storedPINData = localStorage.getItem('currentPINData');
+                // Demo mode - accept PIN 1234 for testing
+                if (pinCode === '1234') {
+                    // Create demo data for testing
+                    const demoData = {
+                        pin: '1234',
+                        member_id: 'm001',
+                        offer_id: 'o001',
+                        timestamp: new Date().toISOString(),
+                        expires_at: new Date(Date.now() + 5 * 60 * 1000).toISOString()
+                    };
+                    
+                    // Load demo offer and member data
+                    const [offersResponse, usersResponse] = await Promise.all([
+                        fetch('../assets/data/offers.json'),
+                        fetch('../assets/data/users.json')
+                    ]);
+
+                    const offersData = await offersResponse.json();
+                    const usersData = await usersResponse.json();
+
+                    currentOffer = offersData.offers.find(o => o.id === 'o001');
+                    currentMember = usersData.members.find(m => m.id === 'm001');
+
+                    if (!currentOffer || !currentMember) {
+                        showValidationError('Demo data not found');
+                        return;
+                    }
+
+                    currentQRData = demoData;
+                    showValidationSuccess();
+                    return;
+                }
+                
+                // Get stored PIN data from localStorage using PIN-specific key
+                const storedPINData = localStorage.getItem('activePIN_' + pinCode);
                 if (!storedPINData) {
-                    showValidationError('No active PIN found. Please ask the member to generate a new PIN.');
+                    showValidationError('PIN code not found. Please ask the member to generate a new PIN.');
                     return;
                 }
                 
                 const data = JSON.parse(storedPINData);
                 
-                // Check if PIN matches
+                // Verify PIN matches (double check)
                 if (data.pin !== pinCode) {
                     showValidationError('Invalid PIN code. Please check the number and try again.');
                     return;
@@ -524,6 +560,10 @@
                 const usedPINs = JSON.parse(localStorage.getItem('usedPINs') || '[]');
                 usedPINs.push(currentQRData.pin);
                 localStorage.setItem('usedPINs', JSON.stringify(usedPINs));
+                
+                // Remove the active PIN data
+                localStorage.removeItem('activePIN_' + currentQRData.pin);
+                localStorage.removeItem('currentPINData');
             }
             
             confirmationSection.style.display = 'block';

@@ -207,7 +207,8 @@
                 expires_at: new Date(Date.now() + 5 * 60 * 1000).toISOString() // 5 minutes from now
             };
 
-            // Store PIN data for validation
+            // Store PIN data for validation (use a more specific key)
+            localStorage.setItem('activePIN_' + pin, JSON.stringify(pinData));
             localStorage.setItem('currentPINData', JSON.stringify(pinData));
 
             // Display PIN
