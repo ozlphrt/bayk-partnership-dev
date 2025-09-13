@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sailing Club Partnership Platform</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="#" class="navbar-brand">
+                <span class="sailing-icon">⛵</span>
+                Sailing Club Partnership
+            </a>
+            <ul class="navbar-nav">
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <main class="container">
+        <section class="hero text-center" style="padding: 4rem 0;">
+            <h1>Welcome to the Sailing Club Partnership Platform</h1>
+            <p style="font-size: 1.25rem; color: var(--text-light); margin: 1rem 0 3rem 0;">
+                Connect with local businesses and save money through exclusive member discounts
+            </p>
+            
+            <!-- Role Selection Cards -->
+            <div class="grid grid-3" style="max-width: 900px; margin: 0 auto;">
+                <!-- Member Card -->
+                <div class="card" style="text-align: center; cursor: pointer;" onclick="selectRole('member')">
+                    <div class="sailing-icon" style="font-size: 3rem; margin-bottom: 1rem;">👤</div>
+                    <h3>Club Member</h3>
+                    <p>Browse exclusive offers, generate QR codes, and track your savings</p>
+                    <div class="btn btn-primary" style="margin-top: 1rem;">Enter as Member</div>
+                </div>
+
+                <!-- Partner Card -->
+                <div class="card" style="text-align: center; cursor: pointer;" onclick="selectRole('partner')">
+                    <div class="sailing-icon" style="font-size: 3rem; margin-bottom: 1rem;">🏪</div>
+                    <h3>Business Partner</h3>
+                    <p>Scan QR codes, process transactions, and view analytics</p>
+                    <div class="btn btn-secondary" style="margin-top: 1rem;">Enter as Partner</div>
+                </div>
+
+                <!-- Admin Card -->
+                <div class="card" style="text-align: center; cursor: pointer;" onclick="selectRole('admin')">
+                    <div class="sailing-icon" style="font-size: 3rem; margin-bottom: 1rem;">⚙️</div>
+                    <h3>Administrator</h3>
+                    <p>Monitor platform activity, manage partners and members</p>
+                    <div class="btn btn-outline" style="margin-top: 1rem;">Enter as Admin</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" style="padding: 3rem 0;">
+            <div class="wave-pattern"></div>
+            <h2 class="text-center">How It Works</h2>
+            <div class="grid grid-3" style="margin-top: 2rem;">
+                <div class="card text-center">
+                    <div class="sailing-icon" style="font-size: 2.5rem; margin-bottom: 1rem;">🔍</div>
+                    <h4>Discover Offers</h4>
+                    <p>Members browse exclusive discounts from local restaurants, hotels, marina services, and retail partners.</p>
+                </div>
+                <div class="card text-center">
+                    <div class="sailing-icon" style="font-size: 2.5rem; margin-bottom: 1rem;">📱</div>
+                    <h4>Generate QR Code</h4>
+                    <p>Select an offer and generate a secure, time-limited QR code for redemption at the partner business.</p>
+                </div>
+                <div class="card text-center">
+                    <div class="sailing-icon" style="font-size: 2.5rem; margin-bottom: 1rem;">💳</div>
+                    <h4>Redeem & Save</h4>
+                    <p>Partners scan the QR code, apply the discount, and both parties benefit from the transaction.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Platform Stats -->
+        <section style="padding: 3rem 0; background-color: var(--white); border-radius: 1rem; margin: 2rem 0;">
+            <h2 class="text-center">Platform Impact</h2>
+            <div class="grid grid-4" style="margin-top: 2rem;">
+                <div class="metric-card">
+                    <div class="metric-value">234</div>
+                    <div class="metric-label">Total Transactions</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">$3,420</div>
+                    <div class="metric-label">Member Savings</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">89%</div>
+                    <div class="metric-label">Participation Rate</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">10</div>
+                    <div class="metric-label">Active Partners</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" style="padding: 3rem 0;">
+            <div class="wave-pattern"></div>
+            <h2 class="text-center">Get Started</h2>
+            <div class="text-center" style="margin-top: 2rem;">
+                <p style="font-size: 1.1rem; color: var(--text-light); margin-bottom: 2rem;">
+                    Ready to join the sailing club partnership program?
+                </p>
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <a href="mailto:partnerships@sailclub.com" class="btn btn-primary">Contact Us</a>
+                    <a href="tel:+15551234567" class="btn btn-outline">Call (555) 123-4567</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer style="background-color: var(--primary-blue); color: var(--white); padding: 2rem 0; margin-top: 4rem;">
+        <div class="container text-center">
+            <p>&copy; 2025 Sailing Club Partnership Platform. All rights reserved.</p>
+            <p style="margin-top: 0.5rem; opacity: 0.8;">Connecting sailors with local businesses</p>
+        </div>
+    </footer>
+
+    <script>
+        // Role selection functionality
+        function selectRole(role) {
+            // Store selected role in localStorage for session management
+            localStorage.setItem('selectedRole', role);
+            
+            // Redirect to appropriate interface
+            switch(role) {
+                case 'member':
+                    window.location.href = 'member/index.html';
+                    break;
+                case 'partner':
+                    window.location.href = 'partner/index.html';
+                    break;
+                case 'admin':
+                    window.location.href = 'admin/index.html';
+                    break;
+                default:
+                    console.error('Invalid role selected');
+            }
+        }
+
+        // Check if user is already logged in and redirect
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentRole = localStorage.getItem('selectedRole');
+            if (currentRole && window.location.pathname === '/') {
+                // User is already logged in, show welcome message
+                console.log('User already logged in as:', currentRole);
+            }
+        });
+    </script>
+</body>
+</html>

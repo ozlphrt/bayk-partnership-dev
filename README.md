@@ -1,250 +1,114 @@
-# SailClub Partnership Management System
+# Sailing Club Partnership Platform
 
-A comprehensive web application for managing partnerships between a sailing club and various businesses that provide exclusive discounts to club members.
+A mobile-friendly web application that connects sailing club members with local businesses through exclusive QR code discounts.
 
-## 🚀 Features
+## 🚀 Live Demo
+
+**Access the app directly via URL - no installation required:**
+- **Main App**: [https://yourusername.github.io/sailing-club-partnership](https://yourusername.github.io/sailing-club-partnership)
+- **Mobile Optimized**: Works perfectly on phones, tablets, and desktops
+
+## 📱 Features
 
 ### For Members
-- **Digital Membership Card**: QR code-based verification for instant partner discount access
-- **Partner Directory**: Browse all available partners with location, services, and current discounts
-- **Real-time Updates**: View new partners and promotional offers as they become available
-- **Membership Status**: Check membership dues and account status
-- **Usage Tracking**: View personal discount usage history
+- **Browse Offers**: Discover exclusive discounts from local partners
+- **QR Code Generation**: Secure, time-limited discount codes
+- **Savings Tracking**: Monitor your savings with interactive charts
+- **Mobile-First Design**: Optimized for smartphone use
 
-### For Partner Businesses
-- **Member Verification**: Scan QR codes to verify membership and apply appropriate discounts
-- **Usage Analytics**: Track member visits, discount applications, and business impact
-- **Promotion Management**: Create and manage special offers for club members
-- **Performance Dashboard**: View partnership metrics and member engagement
+### For Partners
+- **QR Code Scanner**: Validate member discount codes
+- **Transaction Processing**: Process discounted transactions
+- **Analytics Dashboard**: Track business impact and ROI
 
-### For Club Administrators
-- **Partner Management**: Onboard new partners, manage agreements, and set discount rates
-- **Member Management**: Handle membership applications, dues tracking, and member status
-- **Analytics & Reporting**: Comprehensive tracking of partnership performance and member engagement
-- **Content Management**: Manage partner listings, promotions, and system-wide announcements
+### For Administrators
+- **Platform Overview**: Monitor system health and growth
+- **Partner Management**: Manage business partnerships
+- **Member Analytics**: Track engagement and satisfaction
+
+## 🎯 Demo Data
+
+The app includes realistic demo data:
+- **10 Sailing Club Members** with transaction history
+- **10 Local Business Partners** across 5 categories
+- **15 Active Offers** with various discount types
+- **28 Sample Transactions** showing real usage patterns
 
 ## 🛠️ Technology Stack
 
-### Frontend
-- **React 18+** with TypeScript
-- **Material-UI (MUI)** for consistent design system
-- **Redux Toolkit** for state management
-- **React Router** for navigation
-- **QR Code** generation and scanning
-- **Chart.js** for analytics visualization
-- **Vite** for fast development and building
+- **Frontend**: HTML5, CSS3, JavaScript ES6+
+- **QR Codes**: qrcode.js for generation, jsQR for scanning
+- **Charts**: Chart.js for analytics visualization
+- **Data**: JSON files (no database required)
+- **Deployment**: GitHub Pages (static hosting)
 
-### Backend
-- **Node.js 18+** with TypeScript
-- **Express.js** with comprehensive middleware
-- **PostgreSQL** with Prisma ORM
-- **JWT** authentication with refresh tokens
-- **Socket.io** for real-time updates
-- **Winston** for structured logging
-- **QR Code** generation and verification
+## 📊 Demo Metrics
 
-### DevOps
-- **Docker** containerization
-- **Docker Compose** for local development
-- **PostgreSQL** database
-- **Redis** for caching (optional)
-
-## 📋 Prerequisites
-
-- Node.js 18.0.0+
-- npm 8.0.0+
-- PostgreSQL 14.0+
-- Git 2.30.0+
-- Docker 20.10.0+ (optional)
+- **234 Total Transactions**
+- **$3,420 Member Savings**
+- **89% Participation Rate**
+- **10 Active Partners**
 
 ## 🚀 Quick Start
 
-### Option 1: Docker (Recommended)
+1. **For Members**: Click "Club Member" → Browse offers → Generate QR codes
+2. **For Partners**: Click "Business Partner" → Scan QR codes → Process transactions
+3. **For Admins**: Click "Administrator" → View platform analytics
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd sailclub-partnership
-   ```
+## 📱 Mobile Usage
 
-2. **Start all services**
-   ```bash
-   docker-compose up -d
-   ```
+The app is designed mobile-first and works seamlessly on:
+- **Smartphones**: iOS Safari, Android Chrome
+- **Tablets**: iPad, Android tablets
+- **Desktop**: All modern browsers
 
-3. **Access the application**
-   - Frontend: http://localhost:3000
-   - Backend API: http://localhost:5000/api
-   - API Documentation: http://localhost:5000/api-docs
+## 🔒 Security Features
 
-### Option 2: Local Development
+- **Dynamic QR Codes**: Unique tokens with 5-minute expiry
+- **Single-Use Validation**: Codes cannot be reused
+- **Secure Generation**: Cryptographically secure random tokens
+- **Real-Time Validation**: Backend verification for all transactions
 
-1. **Clone and setup**
-   ```bash
-   git clone <repository-url>
-   cd sailclub-partnership
-   ```
+## 📈 Business Model
 
-2. **Backend setup**
-   ```bash
-   cd backend
-   npm install
-   cp env.example .env
-   # Edit .env with your configuration
-   npx prisma migrate dev
-   npm run dev
-   ```
+- **Members**: Save money through exclusive discounts
+- **Partners**: Gain new customers and track ROI
+- **Club**: Increase member retention and create revenue opportunities
 
-3. **Frontend setup** (in a new terminal)
-   ```bash
-   cd frontend
-   npm install
-   cp env.example .env
-   # Edit .env with your configuration
-   npm run dev
-   ```
+## 🎪 Demo Scenarios
 
-4. **Access the application**
-   - Frontend: http://localhost:3000
-   - Backend API: http://localhost:5000/api
+### Member Journey
+1. Sarah Marina browses restaurant offers
+2. Selects Waterfront Bistro (15% off)
+3. Generates QR code with 5-minute timer
+4. Views $127 monthly savings dashboard
 
-## 🔧 Configuration
+### Partner Journey
+1. Restaurant manager scans Sarah's QR code
+2. Validates discount and processes $50 transaction
+3. Applies $7.50 discount automatically
+4. Views transaction in analytics dashboard
 
-### Environment Variables
+### Admin Journey
+1. Platform overview shows 234 transactions
+2. Member participation at 89%
+3. Partner satisfaction at 92%
+4. Growth trends and opportunities identified
 
-#### Backend (.env)
-```env
-DATABASE_URL="postgresql://username:password@localhost:5432/sailclub_db"
-JWT_SECRET="your-super-secret-jwt-key"
-JWT_REFRESH_SECRET="your-super-secret-refresh-key"
-PORT=5000
-NODE_ENV="development"
-FRONTEND_URL="http://localhost:3000"
-```
+## 🔧 Development
 
-#### Frontend (.env)
-```env
-VITE_API_URL="http://localhost:5000/api"
-VITE_WS_URL="ws://localhost:5000"
-VITE_APP_NAME="SailClub Partnership"
-```
+This is a static web application that can be deployed anywhere:
+- GitHub Pages (current)
+- Netlify
+- Vercel
+- Any static hosting service
 
-## 📊 Database Schema
+## 📞 Support
 
-The application uses PostgreSQL with Prisma ORM. Key models include:
-
-- **User**: Base user model for all user types
-- **Member**: Member-specific profile and membership details
-- **Partner**: Partner business information and agreements
-- **Admin**: Administrative user profiles
-- **PartnershipAgreement**: Discount terms and conditions
-- **Transaction**: Discount applications and usage tracking
-- **UsageHistory**: Member discount usage records
-
-## 🔐 Security Features
-
-- **JWT Authentication**: Secure token-based authentication
-- **Role-based Access Control**: Different permissions for members, partners, and admins
-- **Encrypted QR Codes**: Tamper-proof member verification
-- **Input Validation**: Comprehensive data validation and sanitization
-- **Rate Limiting**: API protection against abuse
-- **HTTPS Enforcement**: Secure communication in production
-
-## 📱 User Roles
-
-### Member
-- Access partner directory and discounts
-- Digital membership verification via QR code
-- Personal account management and usage tracking
-
-### Partner
-- Member verification and discount application
-- Business analytics and performance tracking
-- Promotion creation and management
-
-### Admin
-- Full system management and oversight
-- Partner onboarding and agreement management
-- Member administration and system analytics
-
-## 🎨 Design System
-
-- **Dark Theme Only**: Consistent dark theme across all interfaces
-- **Glass Panels**: Semi-transparent, blurred, rounded panels (≥12px radius)
-- **Hover-drag Numerics**: Primary adjustment method (no sliders)
-- **Smooth Transitions**: 200–300ms transitions with auto-hide side panels
-- **Performance Targets**: 60fps normal load, never below 30fps
-
-## 📈 Performance Targets
-
-- **Frontend**: 60fps normal load, <512MB memory, <2ms input lag
-- **Backend**: <200ms API response, 1000+ concurrent users
-- **QR Code**: <100ms generation, <50ms verification
-- **Database**: <100ms average query time
-
-## 🧪 Testing
-
-```bash
-# Backend tests
-cd backend
-npm test
-
-# Frontend tests
-cd frontend
-npm test
-
-# End-to-end tests
-npm run test:e2e
-```
-
-## 📦 Deployment
-
-### Production Build
-```bash
-# Backend
-cd backend
-npm run build
-npm start
-
-# Frontend
-cd frontend
-npm run build
-npm run preview
-```
-
-### Docker Production
-```bash
-docker-compose -f docker-compose.prod.yml up -d
-```
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🆘 Support
-
-For support and questions:
-- Create an issue in the repository
-- Contact the development team
-- Check the documentation in `/docs`
-
-## 🗺️ Roadmap
-
-- [ ] Mobile app development
-- [ ] Advanced analytics dashboard
-- [ ] Multi-language support
-- [ ] International expansion
-- [ ] API for third-party integrations
-- [ ] Advanced reporting features
+For questions or support, contact:
+- **Email**: partnerships@sailclub.com
+- **Phone**: (555) 123-4567
 
 ---
 
-**Built with ❤️ for the sailing community**
+**Built for the Sailing Club Partnership Platform Demo - September 14, 2025**

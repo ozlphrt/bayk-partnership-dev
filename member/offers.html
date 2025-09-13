@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Offers - Sailing Club Partnership</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="../index.html" class="navbar-brand">
+                <span class="sailing-icon">⛵</span>
+                Sailing Club Partnership
+            </a>
+            <ul class="navbar-nav">
+                <li><a href="index.html">Dashboard</a></li>
+                <li><a href="offers.html" class="active">Browse Offers</a></li>
+                <li><a href="savings.html">My Savings</a></li>
+                <li><a href="#" onclick="logout()">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container" style="padding: 2rem 0;">
+        <!-- Page Header -->
+        <section class="card">
+            <h1>Browse Partner Offers</h1>
+            <p style="color: var(--text-light); font-size: 1.1rem;">
+                Discover exclusive discounts from local businesses
+            </p>
+        </section>
+
+        <!-- Category Filter -->
+        <section class="card">
+            <h3>Filter by Category</h3>
+            <div class="category-filters" style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;">
+                <button class="btn btn-outline category-btn active" data-category="all">All Offers</button>
+                <button class="btn btn-outline category-btn" data-category="restaurant">Restaurants</button>
+                <button class="btn btn-outline category-btn" data-category="hotel">Hotels</button>
+                <button class="btn btn-outline category-btn" data-category="marina_services">Marina Services</button>
+                <button class="btn btn-outline category-btn" data-category="marine_supplies">Marine Supplies</button>
+                <button class="btn btn-outline category-btn" data-category="retail">Retail</button>
+            </div>
+        </section>
+
+        <!-- Offers Grid -->
+        <section id="offers-container">
+            <!-- Offers will be loaded dynamically -->
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer style="background-color: var(--primary-blue); color: var(--white); padding: 2rem 0; margin-top: 4rem;">
+        <div class="container text-center">
+            <p>&copy; 2025 Sailing Club Partnership Platform. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        let allOffers = [];
+        let allPartners = [];
+
+        // Logout functionality
+        function logout() {
+            localStorage.removeItem('selectedRole');
+            window.location.href = '../index.html';
+        }
+
+        // Load data and initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in as member
+            const currentRole = localStorage.getItem('selectedRole');
+            if (currentRole !== 'member') {
+                window.location.href = '../index.html';
+                return;
+            }
+
+            loadData();
+            setupCategoryFilters();
+        });
+
+        async function loadData() {
+            try {
+                // Load offers and partners data
+                const [offersResponse, partnersResponse] = await Promise.all([
+                    fetch('../assets/data/offers.json'),
+                    fetch('../assets/data/users.json')
+                ]);
+
+                const offersData = await offersResponse.json();
+                const usersData = await partnersResponse.json();
+
+                allOffers = offersData.offers;
+                allPartners = usersData.partners;
+
+                displayOffers(allOffers);
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+
+        function displayOffers(offers) {
+            const container = document.getElementById('offers-container');
+            container.innerHTML = '';
+
+            if (offers.length === 0) {
+                container.innerHTML = '<div class="card text-center"><p>No offers found for this category.</p></div>';
+                return;
+            }
+
+            const offersGrid = document.createElement('div');
+            offersGrid.className = 'grid grid-3';
+
+            offers.forEach(offer => {
+                const partner = allPartners.find(p => p.id === offer.partner_id);
+                if (!partner) return;
+
+                const offerCard = createOfferCard(offer, partner);
+                offersGrid.appendChild(offerCard);
+            });
+
+            container.appendChild(offersGrid);
+        }
+
+        function createOfferCard(offer, partner) {
+            const card = document.createElement('div');
+            card.className = 'offer-card';
+            card.setAttribute('data-category', offer.category);
+
+            // Format discount display
+            let discountDisplay = '';
+            if (offer.discount_type === 'percentage') {
+                discountDisplay = `${offer.discount_value}% off`;
+            } else if (offer.discount_type === 'fixed') {
+                discountDisplay = `$${offer.discount_value} off`;
+            } else if (offer.discount_type === 'bogo') {
+                discountDisplay = 'BOGO Offer';
+            }
+
+            card.innerHTML = `
+                <div class="offer-title">${offer.title}</div>
+                <div class="offer-discount">${discountDisplay}</div>
+                <div class="offer-partner">${partner.business_name}</div>
+                <div class="offer-description">${offer.description}</div>
+                <div style="margin: 1rem 0; padding: 0.75rem; background-color: #f3f4f6; border-radius: 0.5rem; font-size: 0.9rem;">
+                    <strong>Terms:</strong> ${offer.terms}
+                </div>
+                <div style="margin: 1rem 0; font-size: 0.9rem; color: var(--text-light);">
+                    <strong>Valid until:</strong> ${new Date(offer.valid_until).toLocaleDateString()}
+                </div>
+                <button class="btn btn-primary" onclick="generateQRCode('${offer.id}')" style="width: 100%;">
+                    Generate QR Code
+                </button>
+            `;
+
+            return card;
+        }
+
+        function setupCategoryFilters() {
+            const categoryBtns = document.querySelectorAll('.category-btn');
+            
+            categoryBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    categoryBtns.forEach(b => b.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Filter offers
+                    const category = this.getAttribute('data-category');
+                    filterOffers(category);
+                });
+            });
+        }
+
+        function filterOffers(category) {
+            if (category === 'all') {
+                displayOffers(allOffers);
+            } else {
+                const filteredOffers = allOffers.filter(offer => offer.category === category);
+                displayOffers(filteredOffers);
+            }
+        }
+
+        function generateQRCode(offerId) {
+            // Store the selected offer for QR generation
+            localStorage.setItem('selectedOffer', offerId);
+            
+            // Redirect to QR code page
+            window.location.href = 'qr-code.html';
+        }
+    </script>
+</body>
+</html>
