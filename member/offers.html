@@ -195,11 +195,11 @@
         }
 
         function generateQRCode(offerId) {
-            // Store the selected offer for PIN generation
+            // Store the selected offer for QR code generation
             localStorage.setItem('selectedOffer', offerId);
             
-            // Redirect to PIN code page
-            window.location.href = 'pin-code.html';
+            // Redirect to QR code page
+            window.location.href = 'qr-code.html?offerId=' + offerId;
         }
     </script>
 </body>
