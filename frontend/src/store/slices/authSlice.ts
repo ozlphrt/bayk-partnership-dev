@@ -1,22 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-
-export interface User {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  role: 'MEMBER' | 'PARTNER' | 'ADMIN';
-  isActive: boolean;
-}
-
-export interface AuthState {
-  user: User | null;
-  token: string | null;
-  refreshToken: string | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  error: string | null;
-}
+import { apiService } from '../../services/api';
+import { User, AuthState, LoginForm, RegisterForm, AuthResponse } from '../../types';
 
 const initialState: AuthState = {
   user: null,
@@ -30,25 +14,24 @@ const initialState: AuthState = {
 // Async thunks
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
-  async (credentials: { email: string; password: string }, { rejectWithValue }) => {
+  async (credentials: LoginForm, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(credentials),
-      });
+      const response = await apiService.login(credentials.email, credentials.password);
+      return response.data as AuthResponse;
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Login failed');
+    }
+  }
+);
 
-      if (!response.ok) {
-        const error = await response.json();
-        return rejectWithValue(error.message || 'Login failed');
-      }
-
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      return rejectWithValue('Network error occurred');
+export const registerUser = createAsyncThunk(
+  'auth/registerUser',
+  async (userData: RegisterForm, { rejectWithValue }) => {
+    try {
+      const response = await apiService.register(userData);
+      return response.data as AuthResponse;
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Registration failed');
     }
   }
 );
@@ -58,22 +41,14 @@ export const refreshToken = createAsyncThunk(
   async (_, { getState, rejectWithValue }) => {
     try {
       const state = getState() as { auth: AuthState };
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/refresh`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ refreshToken: state.auth.refreshToken }),
-      });
-
-      if (!response.ok) {
-        return rejectWithValue('Token refresh failed');
+      if (!state.auth.refreshToken) {
+        return rejectWithValue('No refresh token available');
       }
-
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      return rejectWithValue('Network error occurred');
+      
+      const response = await apiService.refreshToken(state.auth.refreshToken);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Token refresh failed');
     }
   }
 );
@@ -82,17 +57,22 @@ export const logoutUser = createAsyncThunk(
   'auth/logoutUser',
   async (_, { getState }) => {
     try {
-      const state = getState() as { auth: AuthState };
-      await fetch(`${import.meta.env.VITE_API_URL}/auth/logout`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${state.auth.token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+      await apiService.logout();
     } catch (error) {
       // Even if logout fails on server, clear local state
       console.error('Logout error:', error);
+    }
+  }
+);
+
+export const getCurrentUser = createAsyncThunk(
+  'auth/getCurrentUser',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await apiService.getProfile();
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Failed to get user profile');
     }
   }
 );
@@ -135,6 +115,40 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(loginUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+        state.isAuthenticated = false;
+      })
+      // Register
+      .addCase(registerUser.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(registerUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+        state.refreshToken = action.payload.refreshToken;
+        state.isAuthenticated = true;
+        state.error = null;
+      })
+      .addCase(registerUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+        state.isAuthenticated = false;
+      })
+      // Get current user
+      .addCase(getCurrentUser.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(getCurrentUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.user = action.payload;
+        state.isAuthenticated = true;
+        state.error = null;
+      })
+      .addCase(getCurrentUser.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
         state.isAuthenticated = false;

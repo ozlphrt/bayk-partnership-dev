@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -12,34 +12,46 @@ import {
   CircularProgress,
   Container,
   Paper,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from '@mui/material';
 import { AppDispatch, RootState } from '../store/store';
-import { loginUser, clearError } from '../store/slices/authSlice';
+import { loginUser, registerUser, clearError } from '../store/slices/authSlice';
+import { useAuth } from '../hooks/useAuth';
 
 const LoginPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { isLoading, error, isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { isLoading, error, isAuthenticated, user } = useSelector((state: RootState) => state.auth);
+  const { getRedirectPath } = useAuth();
 
+  const [isLoginMode, setIsLoginMode] = useState(true);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+    firstName: '',
+    lastName: '',
+    phone: '',
+    role: 'MEMBER' as 'MEMBER' | 'PARTNER' | 'ADMIN',
   });
 
   const [validationErrors, setValidationErrors] = useState<{
     email?: string;
     password?: string;
+    firstName?: string;
+    lastName?: string;
   }>({});
 
   // Redirect if already authenticated
-  React.useEffect(() => {
-    if (isAuthenticated) {
-      // Redirect based on user role (will be implemented when auth is complete)
-      navigate('/member');
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      navigate(getRedirectPath());
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, user, navigate, getRedirectPath]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -75,6 +87,15 @@ const LoginPage: React.FC = () => {
       errors.password = 'Password must be at least 6 characters';
     }
 
+    if (!isLoginMode) {
+      if (!formData.firstName) {
+        errors.firstName = 'First name is required';
+      }
+      if (!formData.lastName) {
+        errors.lastName = 'Last name is required';
+      }
+    }
+
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -87,15 +108,46 @@ const LoginPage: React.FC = () => {
     }
 
     try {
-      const result = await dispatch(loginUser(formData));
-      
-      if (loginUser.fulfilled.match(result)) {
-        // Navigation will be handled by useEffect
-        console.log('Login successful');
+      if (isLoginMode) {
+        const result = await dispatch(loginUser({
+          email: formData.email,
+          password: formData.password,
+        }));
+        
+        if (loginUser.fulfilled.match(result)) {
+          console.log('Login successful');
+        }
+      } else {
+        const result = await dispatch(registerUser({
+          email: formData.email,
+          password: formData.password,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          phone: formData.phone || undefined,
+          role: formData.role,
+        }));
+        
+        if (registerUser.fulfilled.match(result)) {
+          console.log('Registration successful');
+        }
       }
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('Auth error:', error);
     }
+  };
+
+  const toggleMode = () => {
+    setIsLoginMode(!isLoginMode);
+    setFormData({
+      email: '',
+      password: '',
+      firstName: '',
+      lastName: '',
+      phone: '',
+      role: 'MEMBER',
+    });
+    setValidationErrors({});
+    dispatch(clearError());
   };
 
   return (
@@ -140,7 +192,7 @@ const LoginPage: React.FC = () => {
               Partnership Management
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Sign in to access your account
+              {isLoginMode ? 'Sign in to access your account' : 'Create a new account'}
             </Typography>
           </Box>
 
@@ -151,6 +203,82 @@ const LoginPage: React.FC = () => {
           )}
 
           <Box component="form" onSubmit={handleSubmit}>
+            {!isLoginMode && (
+              <>
+                <TextField
+                  fullWidth
+                  label="First Name"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleInputChange}
+                  error={!!validationErrors.firstName}
+                  helperText={validationErrors.firstName}
+                  disabled={isLoading}
+                  sx={{
+                    mb: 3,
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2,
+                    },
+                  }}
+                />
+
+                <TextField
+                  fullWidth
+                  label="Last Name"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleInputChange}
+                  error={!!validationErrors.lastName}
+                  helperText={validationErrors.lastName}
+                  disabled={isLoading}
+                  sx={{
+                    mb: 3,
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2,
+                    },
+                  }}
+                />
+
+                <TextField
+                  fullWidth
+                  label="Phone Number (Optional)"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  disabled={isLoading}
+                  sx={{
+                    mb: 3,
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2,
+                    },
+                  }}
+                />
+
+                <FormControl
+                  fullWidth
+                  sx={{
+                    mb: 3,
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2,
+                    },
+                  }}
+                >
+                  <InputLabel>Role</InputLabel>
+                  <Select
+                    name="role"
+                    value={formData.role}
+                    onChange={handleInputChange}
+                    label="Role"
+                    disabled={isLoading}
+                  >
+                    <MenuItem value="MEMBER">Member</MenuItem>
+                    <MenuItem value="PARTNER">Partner</MenuItem>
+                    <MenuItem value="ADMIN">Admin</MenuItem>
+                  </Select>
+                </FormControl>
+              </>
+            )}
+
             <TextField
               fullWidth
               label="Email Address"
@@ -207,24 +335,36 @@ const LoginPage: React.FC = () => {
               {isLoading ? (
                 <CircularProgress size={24} color="inherit" />
               ) : (
-                'Sign In'
+                isLoginMode ? 'Sign In' : 'Create Account'
               )}
             </Button>
           </Box>
 
           <Box sx={{ mt: 4, textAlign: 'center' }}>
-            <Typography variant="body2" color="text.secondary">
-              Demo Credentials:
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-              Member: member@sailclub.com / password123
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Partner: partner@sailclub.com / password123
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Admin: admin@sailclub.com / password123
-            </Typography>
+            <Button
+              variant="text"
+              onClick={toggleMode}
+              sx={{ mb: 2, color: 'primary.main' }}
+            >
+              {isLoginMode ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
+            </Button>
+            
+            {isLoginMode && (
+              <>
+                <Typography variant="body2" color="text.secondary">
+                  Demo Credentials:
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                  Member: member@sailclub.com / password123
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Partner: partner@sailclub.com / password123
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Admin: admin@sailclub.com / password123
+                </Typography>
+              </>
+            )}
           </Box>
         </Paper>
       </Box>

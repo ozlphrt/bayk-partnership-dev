@@ -1,67 +1,14 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-
-export interface AdminProfile {
-  id: string;
-  adminType: 'SUPER_ADMIN' | 'ADMIN' | 'STAFF';
-  permissions: string[];
-}
-
-export interface SystemStats {
-  totalMembers: number;
-  totalPartners: number;
-  totalTransactions: number;
-  totalSavings: number;
-  activeMembers: number;
-  activePartners: number;
-  monthlyGrowth: {
-    month: string;
-    members: number;
-    partners: number;
-    transactions: number;
-    savings: number;
-  }[];
-}
-
-export interface Member {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  membershipId: string;
-  membershipType: string;
-  duesStatus: string;
-  duesAmount: number;
-  duesDueDate: string | null;
-  isActive: boolean;
-  joinedDate: string;
-}
-
-export interface Partner {
-  id: string;
-  email: string;
-  businessName: string;
-  businessType: string;
-  city: string;
-  state: string;
-  isActive: boolean;
-  isVerified: boolean;
-  partnershipDate: string;
-}
-
-export interface AdminState {
-  profile: AdminProfile | null;
-  stats: SystemStats | null;
-  members: Member[];
-  partners: Partner[];
-  isLoading: boolean;
-  error: string | null;
-}
+import { apiService } from '../../services/api';
+import { AdminProfile, SystemStats, Member, Partner, PartnershipAgreement, Transaction, AdminState } from '../../types';
 
 const initialState: AdminState = {
   profile: null,
   stats: null,
   members: [],
   partners: [],
+  agreements: [],
+  transactions: [],
   isLoading: false,
   error: null,
 };
@@ -69,138 +16,144 @@ const initialState: AdminState = {
 // Async thunks
 export const fetchAdminProfile = createAsyncThunk(
   'admin/fetchProfile',
-  async (_, { getState, rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const state = getState() as { auth: { token: string } };
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/profile`, {
-        headers: {
-          'Authorization': `Bearer ${state.auth.token}`,
-        },
-      });
-
-      if (!response.ok) {
-        return rejectWithValue('Failed to fetch admin profile');
-      }
-
-      return await response.json();
-    } catch (error) {
-      return rejectWithValue('Network error occurred');
+      const response = await apiService.getAdminProfile();
+      return response.data as AdminProfile;
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Failed to fetch admin profile');
     }
   }
 );
 
 export const fetchSystemStats = createAsyncThunk(
   'admin/fetchSystemStats',
-  async (_, { getState, rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const state = getState() as { auth: { token: string } };
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/stats`, {
-        headers: {
-          'Authorization': `Bearer ${state.auth.token}`,
-        },
-      });
-
-      if (!response.ok) {
-        return rejectWithValue('Failed to fetch system stats');
-      }
-
-      return await response.json();
-    } catch (error) {
-      return rejectWithValue('Network error occurred');
+      const response = await apiService.getSystemStats();
+      return response.data as SystemStats;
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Failed to fetch system stats');
     }
   }
 );
 
 export const fetchMembers = createAsyncThunk(
   'admin/fetchMembers',
-  async (_, { getState, rejectWithValue }) => {
+  async (params: { page?: number; limit?: number; search?: string; membershipType?: string; duesStatus?: string } = {}, { rejectWithValue }) => {
     try {
-      const state = getState() as { auth: { token: string } };
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/members`, {
-        headers: {
-          'Authorization': `Bearer ${state.auth.token}`,
-        },
-      });
-
-      if (!response.ok) {
-        return rejectWithValue('Failed to fetch members');
-      }
-
-      return await response.json();
-    } catch (error) {
-      return rejectWithValue('Network error occurred');
+      const response = await apiService.getAllMembers(
+        params.page || 1,
+        params.limit || 20,
+        params.search,
+        params.membershipType,
+        params.duesStatus
+      );
+      return response.data as Member[];
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Failed to fetch members');
     }
   }
 );
 
 export const fetchPartners = createAsyncThunk(
   'admin/fetchPartners',
-  async (_, { getState, rejectWithValue }) => {
+  async (params: { page?: number; limit?: number; search?: string; businessType?: string; isVerified?: boolean } = {}, { rejectWithValue }) => {
     try {
-      const state = getState() as { auth: { token: string } };
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/partners`, {
-        headers: {
-          'Authorization': `Bearer ${state.auth.token}`,
-        },
-      });
-
-      if (!response.ok) {
-        return rejectWithValue('Failed to fetch partners');
-      }
-
-      return await response.json();
-    } catch (error) {
-      return rejectWithValue('Network error occurred');
+      const response = await apiService.getAllPartners(
+        params.page || 1,
+        params.limit || 20,
+        params.search,
+        params.businessType,
+        params.isVerified
+      );
+      return response.data as Partner[];
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Failed to fetch partners');
     }
   }
 );
 
 export const updateMember = createAsyncThunk(
   'admin/updateMember',
-  async ({ memberId, updates }: { memberId: string; updates: Partial<Member> }, { getState, rejectWithValue }) => {
+  async ({ memberId, updates }: { memberId: string; updates: any }, { rejectWithValue }) => {
     try {
-      const state = getState() as { auth: { token: string } };
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/members/${memberId}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${state.auth.token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updates),
-      });
-
-      if (!response.ok) {
-        return rejectWithValue('Failed to update member');
-      }
-
-      return await response.json();
-    } catch (error) {
-      return rejectWithValue('Network error occurred');
+      const response = await apiService.updateMember(memberId, updates);
+      return response.data as Member;
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Failed to update member');
     }
   }
 );
 
 export const updatePartner = createAsyncThunk(
   'admin/updatePartner',
-  async ({ partnerId, updates }: { partnerId: string; updates: Partial<Partner> }, { getState, rejectWithValue }) => {
+  async ({ partnerId, updates }: { partnerId: string; updates: any }, { rejectWithValue }) => {
     try {
-      const state = getState() as { auth: { token: string } };
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/partners/${partnerId}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${state.auth.token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updates),
-      });
+      const response = await apiService.updatePartner(partnerId, updates);
+      return response.data as Partner;
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Failed to update partner');
+    }
+  }
+);
 
-      if (!response.ok) {
-        return rejectWithValue('Failed to update partner');
-      }
+export const createPartnershipAgreement = createAsyncThunk(
+  'admin/createPartnershipAgreement',
+  async (agreementData: any, { rejectWithValue }) => {
+    try {
+      const response = await apiService.createPartnershipAgreement(agreementData);
+      return response.data as PartnershipAgreement;
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Failed to create partnership agreement');
+    }
+  }
+);
 
-      return await response.json();
-    } catch (error) {
-      return rejectWithValue('Network error occurred');
+export const fetchPartnershipAgreements = createAsyncThunk(
+  'admin/fetchPartnershipAgreements',
+  async (params: { page?: number; limit?: number; partnerId?: string; isActive?: boolean } = {}, { rejectWithValue }) => {
+    try {
+      const response = await apiService.getPartnershipAgreements(
+        params.page || 1,
+        params.limit || 20,
+        params.partnerId,
+        params.isActive
+      );
+      return response.data as PartnershipAgreement[];
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Failed to fetch partnership agreements');
+    }
+  }
+);
+
+export const updatePartnershipAgreement = createAsyncThunk(
+  'admin/updatePartnershipAgreement',
+  async ({ agreementId, updates }: { agreementId: string; updates: any }, { rejectWithValue }) => {
+    try {
+      const response = await apiService.updatePartnershipAgreement(agreementId, updates);
+      return response.data as PartnershipAgreement;
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Failed to update partnership agreement');
+    }
+  }
+);
+
+export const fetchSystemTransactions = createAsyncThunk(
+  'admin/fetchSystemTransactions',
+  async (params: { page?: number; limit?: number; status?: string; transactionType?: string; startDate?: string; endDate?: string } = {}, { rejectWithValue }) => {
+    try {
+      const response = await apiService.getSystemTransactions(
+        params.page || 1,
+        params.limit || 20,
+        params.status,
+        params.transactionType,
+        params.startDate,
+        params.endDate
+      );
+      return response.data as Transaction[];
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Failed to fetch system transactions');
     }
   }
 );
@@ -289,6 +242,45 @@ const adminSlice = createSlice({
         if (index !== -1) {
           state.partners[index] = action.payload;
         }
+      })
+      // Create partnership agreement
+      .addCase(createPartnershipAgreement.fulfilled, (state, action) => {
+        state.agreements.push(action.payload);
+      })
+      // Fetch partnership agreements
+      .addCase(fetchPartnershipAgreements.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchPartnershipAgreements.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.agreements = action.payload;
+        state.error = null;
+      })
+      .addCase(fetchPartnershipAgreements.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
+      // Update partnership agreement
+      .addCase(updatePartnershipAgreement.fulfilled, (state, action) => {
+        const index = state.agreements.findIndex(agreement => agreement.id === action.payload.id);
+        if (index !== -1) {
+          state.agreements[index] = action.payload;
+        }
+      })
+      // Fetch system transactions
+      .addCase(fetchSystemTransactions.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchSystemTransactions.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.transactions = action.payload;
+        state.error = null;
+      })
+      .addCase(fetchSystemTransactions.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
       });
   },
 });

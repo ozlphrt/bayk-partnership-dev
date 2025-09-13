@@ -1,87 +1,12 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-
-export interface MemberProfile {
-  id: string;
-  membershipId: string;
-  membershipType: 'STANDARD' | 'PREMIUM' | 'VIP' | 'LIFETIME';
-  duesStatus: 'CURRENT' | 'OVERDUE' | 'SUSPENDED' | 'CANCELLED';
-  duesAmount: number;
-  duesDueDate: string | null;
-  qrCode: string;
-  qrCodeExpiry: string;
-  location: string | null;
-  joinedDate: string;
-  isActive: boolean;
-}
-
-export interface Partner {
-  id: string;
-  businessName: string;
-  businessType: string;
-  description: string | null;
-  address: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  country: string;
-  phone: string | null;
-  website: string | null;
-  contactEmail: string;
-  isActive: boolean;
-  isVerified: boolean;
-  partnershipDate: string;
-  agreements: PartnershipAgreement[];
-  promotions: Promotion[];
-}
-
-export interface PartnershipAgreement {
-  id: string;
-  agreementType: 'STANDARD' | 'PREMIUM' | 'CUSTOM';
-  discountType: 'PERCENTAGE' | 'FIXED_AMOUNT' | 'FREE_ITEM' | 'SPECIAL_OFFER';
-  discountValue: number;
-  description: string | null;
-  terms: string | null;
-  startDate: string;
-  endDate: string | null;
-  isActive: boolean;
-}
-
-export interface Promotion {
-  id: string;
-  title: string;
-  description: string;
-  discountType: 'PERCENTAGE' | 'FIXED_AMOUNT' | 'FREE_ITEM' | 'SPECIAL_OFFER';
-  discountValue: number;
-  startDate: string;
-  endDate: string;
-  isActive: boolean;
-  maxUses: number | null;
-  currentUses: number;
-}
-
-export interface UsageHistory {
-  id: string;
-  partnerId: string;
-  agreementId: string;
-  discountAmount: number;
-  originalAmount: number;
-  finalAmount: number;
-  description: string | null;
-  usedAt: string;
-}
-
-export interface MemberState {
-  profile: MemberProfile | null;
-  partners: Partner[];
-  usageHistory: UsageHistory[];
-  isLoading: boolean;
-  error: string | null;
-}
+import { apiService } from '../../services/api';
+import { MemberProfile, PartnerProfile, UsageHistory, MemberStats, MemberState } from '../../types';
 
 const initialState: MemberState = {
   profile: null,
   partners: [],
   usageHistory: [],
+  stats: null,
   isLoading: false,
   error: null,
 };
@@ -89,89 +14,89 @@ const initialState: MemberState = {
 // Async thunks
 export const fetchMemberProfile = createAsyncThunk(
   'member/fetchProfile',
-  async (_, { getState, rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const state = getState() as { auth: { token: string } };
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/members/profile`, {
-        headers: {
-          'Authorization': `Bearer ${state.auth.token}`,
-        },
-      });
+      const response = await apiService.getMemberProfile();
+      return response.data as MemberProfile;
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Failed to fetch member profile');
+    }
+  }
+);
 
-      if (!response.ok) {
-        return rejectWithValue('Failed to fetch member profile');
-      }
-
-      return await response.json();
-    } catch (error) {
-      return rejectWithValue('Network error occurred');
+export const updateMemberProfile = createAsyncThunk(
+  'member/updateProfile',
+  async (profileData: any, { rejectWithValue }) => {
+    try {
+      const response = await apiService.updateMemberProfile(profileData);
+      return response.data as MemberProfile;
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Failed to update member profile');
     }
   }
 );
 
 export const fetchPartners = createAsyncThunk(
   'member/fetchPartners',
-  async (_, { getState, rejectWithValue }) => {
+  async (params: { page?: number; limit?: number; search?: string; businessType?: string } = {}, { rejectWithValue }) => {
     try {
-      const state = getState() as { auth: { token: string } };
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/partners`, {
-        headers: {
-          'Authorization': `Bearer ${state.auth.token}`,
-        },
-      });
-
-      if (!response.ok) {
-        return rejectWithValue('Failed to fetch partners');
-      }
-
-      return await response.json();
-    } catch (error) {
-      return rejectWithValue('Network error occurred');
+      const response = await apiService.getAvailablePartners(
+        params.page || 1,
+        params.limit || 20,
+        params.search,
+        params.businessType
+      );
+      return response.data as PartnerProfile[];
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Failed to fetch partners');
     }
   }
 );
 
 export const fetchUsageHistory = createAsyncThunk(
   'member/fetchUsageHistory',
-  async (_, { getState, rejectWithValue }) => {
+  async (params: { page?: number; limit?: number } = {}, { rejectWithValue }) => {
     try {
-      const state = getState() as { auth: { token: string } };
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/members/usage-history`, {
-        headers: {
-          'Authorization': `Bearer ${state.auth.token}`,
-        },
-      });
+      const response = await apiService.getUsageHistory(params.page || 1, params.limit || 20);
+      return response.data as UsageHistory[];
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Failed to fetch usage history');
+    }
+  }
+);
 
-      if (!response.ok) {
-        return rejectWithValue('Failed to fetch usage history');
-      }
-
-      return await response.json();
-    } catch (error) {
-      return rejectWithValue('Network error occurred');
+export const fetchMemberStats = createAsyncThunk(
+  'member/fetchStats',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await apiService.getMemberStats();
+      return response.data as MemberStats;
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Failed to fetch member stats');
     }
   }
 );
 
 export const generateQRCode = createAsyncThunk(
   'member/generateQRCode',
-  async (_, { getState, rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const state = getState() as { auth: { token: string } };
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/members/qr-code`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${state.auth.token}`,
-        },
-      });
+      const response = await apiService.getMemberQRCode();
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Failed to generate QR code');
+    }
+  }
+);
 
-      if (!response.ok) {
-        return rejectWithValue('Failed to generate QR code');
-      }
-
-      return await response.json();
-    } catch (error) {
-      return rejectWithValue('Network error occurred');
+export const regenerateQRCode = createAsyncThunk(
+  'member/regenerateQRCode',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await apiService.regenerateQRCode();
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Failed to regenerate QR code');
     }
   }
 );
@@ -205,6 +130,20 @@ const memberSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload as string;
       })
+      // Update member profile
+      .addCase(updateMemberProfile.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(updateMemberProfile.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.profile = action.payload;
+        state.error = null;
+      })
+      .addCase(updateMemberProfile.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
       // Fetch partners
       .addCase(fetchPartners.pending, (state) => {
         state.isLoading = true;
@@ -233,11 +172,32 @@ const memberSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload as string;
       })
+      // Fetch member stats
+      .addCase(fetchMemberStats.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchMemberStats.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.stats = action.payload;
+        state.error = null;
+      })
+      .addCase(fetchMemberStats.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
       // Generate QR code
       .addCase(generateQRCode.fulfilled, (state, action) => {
         if (state.profile) {
           state.profile.qrCode = action.payload.qrCode;
-          state.profile.qrCodeExpiry = action.payload.qrCodeExpiry;
+          state.profile.qrCodeExpiry = action.payload.expiry;
+        }
+      })
+      // Regenerate QR code
+      .addCase(regenerateQRCode.fulfilled, (state, action) => {
+        if (state.profile) {
+          state.profile.qrCode = action.payload.qrCode;
+          state.profile.qrCodeExpiry = action.payload.expiry;
         }
       });
   },

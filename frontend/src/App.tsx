@@ -6,13 +6,16 @@ import { Box } from '@mui/material';
 import { Provider } from 'react-redux';
 import { store } from './store/store';
 
-// Import pages (to be created)
+// Import pages
 import LoginPage from './pages/LoginPage';
 import MemberDashboard from './pages/MemberDashboard';
 import PartnerDashboard from './pages/PartnerDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import PartnerDirectory from './pages/PartnerDirectory';
 import QRCodeScanner from './pages/QRCodeScanner';
+
+// Import components
+import ProtectedRoute from './components/ProtectedRoute';
 
 // Create dark theme
 const darkTheme = createTheme({
@@ -103,15 +106,50 @@ function App() {
               <Route path="/login" element={<LoginPage />} />
               
               {/* Member Routes */}
-              <Route path="/member" element={<MemberDashboard />} />
-              <Route path="/member/partners" element={<PartnerDirectory />} />
+              <Route 
+                path="/member" 
+                element={
+                  <ProtectedRoute requiredRole="MEMBER">
+                    <MemberDashboard />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/member/partners" 
+                element={
+                  <ProtectedRoute requiredRole="MEMBER">
+                    <PartnerDirectory />
+                  </ProtectedRoute>
+                } 
+              />
               
               {/* Partner Routes */}
-              <Route path="/partner" element={<PartnerDashboard />} />
-              <Route path="/partner/scanner" element={<QRCodeScanner />} />
+              <Route 
+                path="/partner" 
+                element={
+                  <ProtectedRoute requiredRole="PARTNER">
+                    <PartnerDashboard />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/partner/scanner" 
+                element={
+                  <ProtectedRoute requiredRole="PARTNER">
+                    <QRCodeScanner />
+                  </ProtectedRoute>
+                } 
+              />
               
               {/* Admin Routes */}
-              <Route path="/admin" element={<AdminDashboard />} />
+              <Route 
+                path="/admin" 
+                element={
+                  <ProtectedRoute requiredRole="ADMIN">
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                } 
+              />
               
               {/* Default redirect */}
               <Route path="/" element={<Navigate to="/login" replace />} />
