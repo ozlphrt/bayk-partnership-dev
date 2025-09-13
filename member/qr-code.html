@@ -8,8 +8,21 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- QR Code Library -->
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <!-- QR Code Library - Multiple CDN sources for reliability -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js" onerror="loadBackupQR()"></script>
+    <script>
+        // Backup QR library loader
+        function loadBackupQR() {
+            console.log('Primary QR library failed, loading backup...');
+            const script = document.createElement('script');
+            script.src = 'https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js';
+            script.onerror = function() {
+                console.log('Backup QR library also failed, using fallback method');
+                window.QRCodeFallback = true;
+            };
+            document.head.appendChild(script);
+        }
+    </script>
 </head>
 <body>
     <!-- Navigation -->
@@ -122,15 +135,55 @@
                 return;
             }
 
-            // Check if QRCode library is loaded
-            if (typeof QRCode === 'undefined') {
-                console.error('QRCode library not loaded');
-                document.getElementById('qr-code').innerHTML = '<p style="color: var(--accent-red); padding: 2rem;">QR Code library failed to load. Please refresh the page.</p>';
+            // Check if QRCode library is loaded or if we should use fallback
+            if (typeof QRCode === 'undefined' && !window.QRCodeFallback) {
+                // Wait a bit for the library to load
+                setTimeout(() => {
+                    if (typeof QRCode === 'undefined') {
+                        console.log('QRCode library not available, using fallback method');
+                        loadOfferDataWithFallback(selectedOfferId);
+                    } else {
+                        loadOfferData(selectedOfferId);
+                    }
+                }, 1000);
+                return;
+            } else if (window.QRCodeFallback) {
+                loadOfferDataWithFallback(selectedOfferId);
                 return;
             }
 
             loadOfferData(selectedOfferId);
         });
+
+        async function loadOfferDataWithFallback(offerId) {
+            try {
+                // Load offers and partners data
+                const [offersResponse, partnersResponse] = await Promise.all([
+                    fetch('../assets/data/offers.json'),
+                    fetch('../assets/data/users.json')
+                ]);
+
+                const offersData = await offersResponse.json();
+                const usersData = await partnersResponse.json();
+
+                // Find the selected offer and partner
+                currentOffer = offersData.offers.find(o => o.id === offerId);
+                currentPartner = usersData.partners.find(p => p.id === currentOffer.partner_id);
+
+                if (!currentOffer || !currentPartner) {
+                    alert('Offer not found. Please try again.');
+                    window.location.href = 'offers.html';
+                    return;
+                }
+
+                displayOfferDetails();
+                generateFallbackQR();
+                startTimer();
+            } catch (error) {
+                console.error('Error loading offer data:', error);
+                alert('Error loading offer. Please try again.');
+            }
+        }
 
         async function loadOfferData(offerId) {
             try {
@@ -244,17 +297,39 @@
             return 'qr_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
         }
 
+        function generateFallbackQR() {
+            // Generate unique QR token
+            const qrToken = generateUniqueToken();
+            const qrData = {
+                token: qrToken,
+                member_id: 'm001', // Sarah Marina's ID
+                offer_id: currentOffer.id,
+                timestamp: new Date().toISOString(),
+                expires_at: new Date(Date.now() + 5 * 60 * 1000).toISOString() // 5 minutes from now
+            };
+
+            // Store QR data for validation
+            localStorage.setItem('currentQRData', JSON.stringify(qrData));
+
+            // Create fallback QR display
+            const qrCodeElement = document.getElementById('qr-code');
+            createFallbackQR(qrCodeElement, qrData);
+        }
+
         function createFallbackQR(element, qrData) {
             element.innerHTML = `
-                <div style="border: 2px solid var(--primary-blue); border-radius: 0.5rem; padding: 1rem; background-color: white; text-align: center;">
+                <div style="border: 2px solid var(--primary-blue); border-radius: 0.5rem; padding: 1.5rem; background-color: white; text-align: center; max-width: 300px; margin: 0 auto;">
                     <div style="font-size: 1.2rem; font-weight: 600; color: var(--primary-blue); margin-bottom: 1rem;">
-                        DISCOUNT CODE
+                        ⛵ DISCOUNT CODE
                     </div>
-                    <div style="font-family: monospace; font-size: 1rem; color: var(--text-dark); margin-bottom: 1rem; word-break: break-all;">
+                    <div style="font-family: monospace; font-size: 0.9rem; color: var(--text-dark); margin-bottom: 1rem; word-break: break-all; background-color: #f3f4f6; padding: 0.5rem; border-radius: 0.25rem;">
                         ${qrData.token}
                     </div>
-                    <div style="font-size: 0.9rem; color: var(--text-light);">
+                    <div style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 1rem;">
                         Show this code to the partner
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--text-light); background-color: #fef3c7; padding: 0.5rem; border-radius: 0.25rem;">
+                        💡 Partner can enter this code manually in their scanner
                     </div>
                 </div>
             `;
@@ -322,14 +397,13 @@
             qrCodeElement.style.opacity = '1';
             qrCodeElement.style.filter = 'none';
 
-            // Check if QRCode library is available
-            if (typeof QRCode === 'undefined') {
-                console.error('QRCode library not available for new QR generation');
-                return;
+            // Check if QRCode library is available or use fallback
+            if (typeof QRCode === 'undefined' || window.QRCodeFallback) {
+                console.log('Using fallback QR generation');
+                generateFallbackQR();
+            } else {
+                generateQRCode();
             }
-
-            // Generate new QR code and start timer
-            generateQRCode();
             startTimer();
         }
 
