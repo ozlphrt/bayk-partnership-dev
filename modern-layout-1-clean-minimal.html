@@ -3,26 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BAYK Partnership Platform</title>
+    <title>BAYK Partnership - Clean Minimal Layout</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛵</text></svg>">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <meta name="version" content="v4-20241220-midnight-ocean">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #1e3a8a;
-            --secondary: #1e40af;
+            --primary: #1a1a1a;
+            --secondary: #6b7280;
             --accent: #3b82f6;
-            --background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #1e40af 100%);
-            --glass-bg: rgba(255, 255, 255, 0.1);
-            --glass-border: rgba(255, 255, 255, 0.2);
-            --text-primary: #ffffff;
-            --text-secondary: rgba(255, 255, 255, 0.8);
-            --text-muted: rgba(255, 255, 255, 0.6);
+            --background: #ffffff;
+            --surface: #f8fafc;
+            --border: #e5e7eb;
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --text-muted: #9ca3af;
         }
 
         * {
@@ -37,23 +33,6 @@
             color: var(--text-primary);
             line-height: 1.6;
             font-weight: 400;
-            min-height: 100vh;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(30, 58, 138, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(30, 64, 175, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(59, 130, 246, 0.2) 0%, transparent 50%);
-            z-index: -1;
         }
 
         .container {
@@ -64,9 +43,8 @@
 
         /* Header */
         .header {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--glass-border);
+            background: var(--background);
+            border-bottom: 1px solid var(--border);
             padding: 20px 0;
             position: sticky;
             top: 0;
@@ -91,14 +69,12 @@
         .logo-icon {
             width: 32px;
             height: 32px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
-            border-radius: 8px;
+            background: var(--accent);
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--text-primary);
+            color: white;
             font-size: 16px;
         }
 
@@ -130,16 +106,15 @@
         }
 
         .hero-logo {
-            width: 100px;
-            height: 100px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
+            width: 80px;
+            height: 80px;
+            background: var(--surface);
+            border-radius: 20px;
             margin: 0 auto 32px;
             display: flex;
             align-items: center;
             justify-content: center;
+            border: 1px solid var(--border);
         }
 
         .hero-title {
@@ -164,7 +139,7 @@
             margin: 0 auto;
         }
 
-        /* Glass Cards */
+        /* Cards Grid */
         .cards-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -172,46 +147,32 @@
             margin-bottom: 80px;
         }
 
-        .glass-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
+        .card {
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 12px;
             padding: 32px;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             cursor: pointer;
-            position: relative;
-            overflow: hidden;
         }
 
-        .glass-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-        }
-
-        .glass-card:hover {
-            transform: translateY(-4px);
-            background: rgba(255, 255, 255, 0.15);
-            border-color: rgba(255, 255, 255, 0.3);
+        .card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
         }
 
         .card-icon {
-            width: 56px;
-            height: 56px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
+            width: 48px;
+            height: 48px;
+            background: var(--surface);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 24px;
             margin-bottom: 20px;
+            border: 1px solid var(--border);
         }
 
         .card-title {
@@ -228,22 +189,20 @@
             line-height: 1.5;
         }
 
-        .glass-button {
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
-            color: var(--text-primary);
-            border-radius: 12px;
+        .card-button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
             padding: 12px 24px;
             font-size: 14px;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: background 0.2s ease;
         }
 
-        .glass-button:hover {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: rgba(255, 255, 255, 0.4);
+        .card-button:hover {
+            background: #2563eb;
         }
 
         /* Stats */
@@ -256,11 +215,6 @@
 
         .stat {
             text-align: center;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 32px 24px;
         }
 
         .stat-value {
@@ -298,25 +252,18 @@
 
         .step {
             text-align: center;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 32px 24px;
         }
 
         .step-number {
-            width: 56px;
-            height: 56px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
-            color: var(--text-primary);
+            width: 48px;
+            height: 48px;
+            background: var(--accent);
+            color: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 600;
             margin: 0 auto 20px;
         }
@@ -335,9 +282,8 @@
 
         /* Footer */
         .footer {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border-top: 1px solid var(--glass-border);
+            background: var(--surface);
+            border-top: 1px solid var(--border);
             padding: 48px 0;
             text-align: center;
         }
@@ -370,7 +316,7 @@
                 gap: 16px;
             }
 
-            .glass-card {
+            .card {
                 padding: 24px;
             }
 
@@ -411,10 +357,10 @@
             <!-- Hero -->
             <section class="hero">
                 <div class="hero-logo">
-                    <svg width="50" height="50" viewBox="0 0 100 100">
-                        <rect x="10" y="10" width="80" height="80" fill="none" stroke="currentColor" stroke-width="3"/>
-                        <path d="M15 75 Q50 65 85 75 L85 85 L15 85 Z" fill="currentColor"/>
-                        <path d="M50 15 L50 70 L35 70 Z" fill="currentColor"/>
+                    <svg width="40" height="40" viewBox="0 0 100 100">
+                        <rect x="10" y="10" width="80" height="80" fill="none" stroke="#3b82f6" stroke-width="3"/>
+                        <path d="M15 75 Q50 65 85 75 L85 85 L15 85 Z" fill="#3b82f6"/>
+                        <path d="M50 15 L50 70 L35 70 Z" fill="#3b82f6"/>
                     </svg>
                 </div>
                 <h1 class="hero-title">BAYK Partnership</h1>
@@ -424,25 +370,25 @@
 
             <!-- Role Cards -->
             <section class="cards-grid">
-                <div class="glass-card" onclick="selectRole('member')">
+                <div class="card" onclick="selectRole('member')">
                     <div class="card-icon">👤</div>
                     <h3 class="card-title">Club Member</h3>
                     <p class="card-description">Browse exclusive offers, generate QR codes, and track your savings through our partnership program.</p>
-                    <button class="glass-button">Enter as Member</button>
+                    <button class="card-button">Enter as Member</button>
                 </div>
 
-                <div class="glass-card" onclick="selectRole('partner')">
+                <div class="card" onclick="selectRole('partner')">
                     <div class="card-icon">🏪</div>
                     <h3 class="card-title">Business Partner</h3>
                     <p class="card-description">Validate member QR codes, process discount transactions, and view detailed analytics for your business.</p>
-                    <button class="glass-button">Enter as Partner</button>
+                    <button class="card-button">Enter as Partner</button>
                 </div>
 
-                <div class="glass-card" onclick="selectRole('admin')">
+                <div class="card" onclick="selectRole('admin')">
                     <div class="card-icon">⚙️</div>
                     <h3 class="card-title">Administrator</h3>
                     <p class="card-description">Monitor platform activity, manage partners and members, and view comprehensive analytics and reports.</p>
-                    <button class="glass-button">Enter as Admin</button>
+                    <button class="card-button">Enter as Admin</button>
                 </div>
             </section>
 

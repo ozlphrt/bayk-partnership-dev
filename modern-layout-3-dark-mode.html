@@ -3,26 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BAYK Partnership Platform</title>
+    <title>BAYK Partnership - Dark Mode Layout</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛵</text></svg>">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <meta name="version" content="v4-20241220-midnight-ocean">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #1e3a8a;
-            --secondary: #1e40af;
-            --accent: #3b82f6;
-            --background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #1e40af 100%);
-            --glass-bg: rgba(255, 255, 255, 0.1);
-            --glass-border: rgba(255, 255, 255, 0.2);
-            --text-primary: #ffffff;
-            --text-secondary: rgba(255, 255, 255, 0.8);
-            --text-muted: rgba(255, 255, 255, 0.6);
+            --primary: #3b82f6;
+            --secondary: #8b5cf6;
+            --accent: #06b6d4;
+            --background: #0f172a;
+            --surface: #1e293b;
+            --surface-elevated: #334155;
+            --border: #475569;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
         }
 
         * {
@@ -37,23 +37,6 @@
             color: var(--text-primary);
             line-height: 1.6;
             font-weight: 400;
-            min-height: 100vh;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(30, 58, 138, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(30, 64, 175, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(59, 130, 246, 0.2) 0%, transparent 50%);
-            z-index: -1;
         }
 
         .container {
@@ -64,9 +47,8 @@
 
         /* Header */
         .header {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--glass-border);
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
             padding: 20px 0;
             position: sticky;
             top: 0;
@@ -91,14 +73,12 @@
         .logo-icon {
             width: 32px;
             height: 32px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
+            background: var(--primary);
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--text-primary);
+            color: white;
             font-size: 16px;
         }
 
@@ -132,14 +112,23 @@
         .hero-logo {
             width: 100px;
             height: 100px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
+            background: var(--surface);
+            border: 1px solid var(--border);
             border-radius: 24px;
             margin: 0 auto 32px;
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
+        }
+
+        .hero-logo::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary), var(--accent));
+            border-radius: 26px;
+            z-index: -1;
         }
 
         .hero-title {
@@ -164,7 +153,7 @@
             margin: 0 auto;
         }
 
-        /* Glass Cards */
+        /* Cards Grid */
         .cards-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -172,10 +161,9 @@
             margin-bottom: 80px;
         }
 
-        .glass-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
+        .dark-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
             border-radius: 16px;
             padding: 32px;
             transition: all 0.3s ease;
@@ -184,34 +172,55 @@
             overflow: hidden;
         }
 
-        .glass-card::before {
+        .dark-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
         }
 
-        .glass-card:hover {
+        .dark-card:hover {
             transform: translateY(-4px);
-            background: rgba(255, 255, 255, 0.15);
-            border-color: rgba(255, 255, 255, 0.3);
+            background: var(--surface-elevated);
+            border-color: var(--primary);
+        }
+
+        .dark-card:hover::before {
+            transform: scaleX(1);
         }
 
         .card-icon {
             width: 56px;
             height: 56px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
             border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 24px;
             margin-bottom: 20px;
+            position: relative;
+        }
+
+        .card-icon::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            border-radius: 17px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .dark-card:hover .card-icon::before {
+            opacity: 1;
         }
 
         .card-title {
@@ -228,22 +237,38 @@
             line-height: 1.5;
         }
 
-        .glass-button {
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
-            color: var(--text-primary);
+        .dark-button {
+            background: var(--primary);
+            color: white;
+            border: none;
             border-radius: 12px;
             padding: 12px 24px;
             font-size: 14px;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        .glass-button:hover {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: rgba(255, 255, 255, 0.4);
+        .dark-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .dark-button:hover {
+            background: var(--secondary);
+            transform: translateY(-1px);
+        }
+
+        .dark-button:hover::before {
+            left: 100%;
         }
 
         /* Stats */
@@ -256,11 +281,22 @@
 
         .stat {
             text-align: center;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
+            background: var(--surface);
+            border: 1px solid var(--border);
             border-radius: 16px;
             padding: 32px 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
         }
 
         .stat-value {
@@ -298,19 +334,18 @@
 
         .step {
             text-align: center;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
+            background: var(--surface);
+            border: 1px solid var(--border);
             border-radius: 16px;
             padding: 32px 24px;
+            position: relative;
         }
 
         .step-number {
             width: 56px;
             height: 56px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
             color: var(--text-primary);
             border-radius: 50%;
             display: flex;
@@ -319,6 +354,16 @@
             font-size: 20px;
             font-weight: 600;
             margin: 0 auto 20px;
+            position: relative;
+        }
+
+        .step-number::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            z-index: -1;
         }
 
         .step-title {
@@ -335,9 +380,8 @@
 
         /* Footer */
         .footer {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border-top: 1px solid var(--glass-border);
+            background: var(--surface);
+            border-top: 1px solid var(--border);
             padding: 48px 0;
             text-align: center;
         }
@@ -370,7 +414,7 @@
                 gap: 16px;
             }
 
-            .glass-card {
+            .dark-card {
                 padding: 24px;
             }
 
@@ -424,25 +468,25 @@
 
             <!-- Role Cards -->
             <section class="cards-grid">
-                <div class="glass-card" onclick="selectRole('member')">
+                <div class="dark-card" onclick="selectRole('member')">
                     <div class="card-icon">👤</div>
                     <h3 class="card-title">Club Member</h3>
                     <p class="card-description">Browse exclusive offers, generate QR codes, and track your savings through our partnership program.</p>
-                    <button class="glass-button">Enter as Member</button>
+                    <button class="dark-button">Enter as Member</button>
                 </div>
 
-                <div class="glass-card" onclick="selectRole('partner')">
+                <div class="dark-card" onclick="selectRole('partner')">
                     <div class="card-icon">🏪</div>
                     <h3 class="card-title">Business Partner</h3>
                     <p class="card-description">Validate member QR codes, process discount transactions, and view detailed analytics for your business.</p>
-                    <button class="glass-button">Enter as Partner</button>
+                    <button class="dark-button">Enter as Partner</button>
                 </div>
 
-                <div class="glass-card" onclick="selectRole('admin')">
+                <div class="dark-card" onclick="selectRole('admin')">
                     <div class="card-icon">⚙️</div>
                     <h3 class="card-title">Administrator</h3>
                     <p class="card-description">Monitor platform activity, manage partners and members, and view comprehensive analytics and reports.</p>
-                    <button class="glass-button">Enter as Admin</button>
+                    <button class="dark-button">Enter as Admin</button>
                 </div>
             </section>
 

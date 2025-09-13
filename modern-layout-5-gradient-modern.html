@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BAYK Partnership - Gradient Modern Layout</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛵</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --error: #f87171;
+            --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --surface: rgba(255, 255, 255, 0.95);
+            --surface-glass: rgba(255, 255, 255, 0.1);
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --text-white: #ffffff;
+            --border: rgba(255, 255, 255, 0.2);
+            --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            --shadow-lg: 0 35px 60px -12px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-weight: 400;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--surface-glass);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-white);
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--surface);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 18px;
+            box-shadow: var(--shadow);
+        }
+
+        .nav {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav a {
+            text-decoration: none;
+            color: var(--text-white);
+            font-weight: 500;
+            transition: all 0.2s ease;
+            padding: 8px 16px;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav a:hover {
+            background: var(--surface-glass);
+            transform: translateY(-1px);
+        }
+
+        /* Main Content */
+        .main {
+            padding: 80px 0;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 100px;
+        }
+
+        .hero-logo {
+            width: 120px;
+            height: 120px;
+            background: var(--surface);
+            border-radius: 30px;
+            margin: 0 auto 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+        }
+
+        .hero-logo::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary), var(--accent));
+            border-radius: 34px;
+            z-index: -1;
+        }
+
+        .hero-title {
+            font-size: 56px;
+            font-weight: 800;
+            color: var(--text-white);
+            margin-bottom: 20px;
+            letter-spacing: -0.03em;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 24px;
+            color: var(--text-white);
+            margin-bottom: 12px;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+
+        .hero-description {
+            font-size: 20px;
+            color: var(--text-white);
+            max-width: 700px;
+            margin: 0 auto;
+            opacity: 0.8;
+            font-weight: 400;
+        }
+
+        /* Gradient Cards */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 32px;
+            margin-bottom: 100px;
+        }
+
+        .gradient-card {
+            background: var(--surface);
+            border-radius: 24px;
+            padding: 40px 32px;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .gradient-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .gradient-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .gradient-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card-icon {
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: white;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .card-icon::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary), var(--accent));
+            border-radius: 22px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .gradient-card:hover .card-icon::before {
+            opacity: 1;
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .card-description {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            line-height: 1.6;
+        }
+
+        .gradient-button {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 16px;
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gradient-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .gradient-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .gradient-button:hover::before {
+            left: 100%;
+        }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 32px;
+            margin-bottom: 100px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 40px 32px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            margin: 0 auto 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-value {
+            font-size: 40px;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 600;
+        }
+
+        /* Process */
+        .process {
+            margin-bottom: 100px;
+        }
+
+        .section-title {
+            font-size: 40px;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 60px;
+            color: var(--text-white);
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .process-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+        }
+
+        .process-card {
+            background: var(--surface);
+            border-radius: 24px;
+            padding: 48px 40px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .process-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .process-number {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 800;
+            margin: 0 auto 32px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+        }
+
+        .process-number::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary), var(--accent));
+            border-radius: 50%;
+            z-index: -1;
+        }
+
+        .process-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .process-description {
+            font-size: 16px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--surface-glass);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border);
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .footer-text {
+            color: var(--text-white);
+            font-size: 16px;
+            opacity: 0.8;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 16px;
+            }
+
+            .hero-title {
+                font-size: 40px;
+            }
+
+            .hero-subtitle {
+                font-size: 20px;
+            }
+
+            .hero-description {
+                font-size: 18px;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .gradient-card {
+                padding: 32px 24px;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 24px;
+            }
+
+            .process-cards {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+
+            .section-title {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">⛵</div>
+                    BAYK Partnership
+                </div>
+                <nav>
+                    <ul class="nav">
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Hero -->
+            <section class="hero">
+                <div class="hero-logo">
+                    <svg width="60" height="60" viewBox="0 0 100 100">
+                        <rect x="10" y="10" width="80" height="80" fill="none" stroke="currentColor" stroke-width="3"/>
+                        <path d="M15 75 Q50 65 85 75 L85 85 L15 85 Z" fill="currentColor"/>
+                        <path d="M50 15 L50 70 L35 70 Z" fill="currentColor"/>
+                    </svg>
+                </div>
+                <h1 class="hero-title">BAYK Partnership</h1>
+                <p class="hero-subtitle">Bodrum Açıkdeniz Yelken Spor Kulübü</p>
+                <p class="hero-description">Connect with local businesses and save money through exclusive member discounts</p>
+            </section>
+
+            <!-- Role Cards -->
+            <section class="cards-grid">
+                <div class="gradient-card" onclick="selectRole('member')">
+                    <div class="card-icon">👤</div>
+                    <h3 class="card-title">Club Member</h3>
+                    <p class="card-description">Browse exclusive offers, generate QR codes, and track your savings through our comprehensive partnership program.</p>
+                    <button class="gradient-button">Enter as Member</button>
+                </div>
+
+                <div class="gradient-card" onclick="selectRole('partner')">
+                    <div class="card-icon">🏪</div>
+                    <h3 class="card-title">Business Partner</h3>
+                    <p class="card-description">Validate member QR codes, process discount transactions, and view detailed analytics for your business growth.</p>
+                    <button class="gradient-button">Enter as Partner</button>
+                </div>
+
+                <div class="gradient-card" onclick="selectRole('admin')">
+                    <div class="card-icon">⚙️</div>
+                    <h3 class="card-title">Administrator</h3>
+                    <p class="card-description">Monitor platform activity, manage partners and members, and view comprehensive analytics and detailed reports.</p>
+                    <button class="gradient-button">Enter as Admin</button>
+                </div>
+            </section>
+
+            <!-- Stats -->
+            <section class="stats">
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-value">234</div>
+                    <div class="stat-label">Total Transactions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-value">$3,420</div>
+                    <div class="stat-label">Member Savings</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📈</div>
+                    <div class="stat-value">89%</div>
+                    <div class="stat-label">Participation Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🤝</div>
+                    <div class="stat-value">10</div>
+                    <div class="stat-label">Active Partners</div>
+                </div>
+            </section>
+
+            <!-- Process -->
+            <section id="about" class="process">
+                <h2 class="section-title">How It Works</h2>
+                <div class="process-cards">
+                    <div class="process-card">
+                        <div class="process-number">1</div>
+                        <h3 class="process-title">Discover Offers</h3>
+                        <p class="process-description">Browse exclusive discounts from local restaurants, hotels, marina services, and retail partners.</p>
+                    </div>
+                    <div class="process-card">
+                        <div class="process-number">2</div>
+                        <h3 class="process-title">Generate QR Code</h3>
+                        <p class="process-description">Select an offer and generate a secure, time-limited QR code for redemption at the partner business.</p>
+                    </div>
+                    <div class="process-card">
+                        <div class="process-number">3</div>
+                        <h3 class="process-title">Redeem & Save</h3>
+                        <p class="process-description">Partners scan the QR code, apply the discount, and both parties benefit from the transaction.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p class="footer-text">&copy; 2025 BAYK Partnership Platform. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        function selectRole(role) {
+            localStorage.setItem('selectedRole', role);
+            switch(role) {
+                case 'member':
+                    window.location.href = 'member/index.html';
+                    break;
+                case 'partner':
+                    window.location.href = 'partner/index.html';
+                    break;
+                case 'admin':
+                    window.location.href = 'admin/index.html';
+                    break;
+            }
+        }
+    </script>
+</body>
+</html>
