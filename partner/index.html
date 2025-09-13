@@ -4,178 +4,475 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Partner Dashboard - BAYK Partnership</title>
-    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛵</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #2563eb;
+            --primary-blue-dark: #1d4ed8;
+            --background-color: #f8fafc;
+            --background-light: #ffffff;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-light: #ffffff;
+            --shadow-dark: #cbd5e1;
+            --success-green: #10b981;
+            --warning-orange: #f59e0b;
+            --error-red: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--background-color);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--background-light);
+            padding: 16px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-blue);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--primary-blue);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: var(--primary-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 24px 0;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+
+        .page-subtitle {
+            color: var(--text-light);
+            margin-bottom: 24px;
+        }
+
+        /* Tile Grid */
+        .tile-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .tile {
+            background: var(--background-light);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 8px 8px 20px var(--shadow-dark), -8px -8px 20px var(--shadow-light);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+        }
+
+        .tile:hover {
+            transform: translateY(-2px);
+            box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
+        }
+
+        .tile-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .tile-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+        }
+
+        .tile-icon.primary { background: var(--primary-blue); }
+        .tile-icon.success { background: var(--success-green); }
+        .tile-icon.warning { background: var(--warning-orange); }
+        .tile-icon.error { background: var(--error-red); }
+
+        .tile-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .tile-subtitle {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 12px;
+        }
+
+        .tile-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 8px;
+        }
+
+        .tile-description {
+            font-size: 13px;
+            color: var(--text-light);
+            line-height: 1.4;
+        }
+
+        /* Compact Stats */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--background-light);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 4px 4px 12px var(--shadow-dark), -4px -4px 12px var(--shadow-light);
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .action-btn {
+            background: var(--background-light);
+            border: none;
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 4px 4px 12px var(--shadow-dark), -4px -4px 12px var(--shadow-light);
+            text-decoration: none;
+            color: var(--text-dark);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 6px 6px 16px var(--shadow-dark), -6px -6px 16px var(--shadow-light);
+        }
+
+        .action-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--primary-blue);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+        }
+
+        .action-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 12px;
+            }
+
+            .header {
+                padding: 12px 0;
+            }
+
+            .logo-text {
+                font-size: 18px;
+            }
+
+            .nav-links {
+                gap: 16px;
+            }
+
+            .main-content {
+                padding: 16px 0;
+            }
+
+            .page-title {
+                font-size: 24px;
+            }
+
+            .tile-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .tile {
+                padding: 16px;
+            }
+
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+
+            .stat-card {
+                padding: 12px;
+            }
+
+            .stat-value {
+                font-size: 18px;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .action-btn {
+                padding: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-row {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .stat-card {
+                padding: 8px;
+            }
+
+            .stat-value {
+                font-size: 16px;
+            }
+
+            .stat-label {
+                font-size: 10px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
+    <!-- Header -->
+    <header class="header">
         <div class="container">
-            <a href="../index.html" class="navbar-brand">
-                <svg width="24" height="24" viewBox="0 0 100 100" class="bayk-logo-small">
-                    <rect x="10" y="10" width="80" height="80" fill="none" stroke="currentColor" stroke-width="3"/>
-                    <path d="M15 75 Q50 65 85 75 L85 85 L15 85 Z" fill="#0047AB"/>
-                    <path d="M50 15 L50 70 L35 70 Z" fill="#FF8C00"/>
-                    <path d="M35 70 Q50 75 65 70 L65 75 L35 75 Z" fill="currentColor"/>
-                </svg>
-                BAYK Partnership
-            </a>
-            <ul class="navbar-nav">
-                <li><a href="index.html" class="active">Dashboard</a></li>
-                <li><a href="scanner.html">QR Scanner</a></li>
-                <li><a href="analytics.html">Analytics</a></li>
-                <li><a href="#" onclick="logout()">Logout</a></li>
-            </ul>
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">⛵</div>
+                    <div class="logo-text">BAYK Partnership</div>
+                </div>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link active">Dashboard</a>
+                    <a href="scanner.html" class="nav-link">QR Scanner</a>
+                    <a href="analytics.html" class="nav-link">Analytics</a>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar">S</div>
+                    <span>Sunger Pizza</span>
+                </div>
+            </div>
         </div>
-    </nav>
+    </header>
 
     <!-- Main Content -->
-    <main class="container" style="padding: 2rem 0;">
-        <!-- Welcome Section -->
-        <section class="card">
-            <h1 style="color: var(--text-dark);">Welcome, Sunger Pizza!</h1>
-            <p style="color: var(--text-light); font-size: 1.1rem;">
-                Ready to serve sailing club members with exclusive discounts?
-            </p>
-        </section>
+    <main class="main-content">
+        <div class="container">
+            <h1 class="page-title">Partner Dashboard</h1>
+            <p class="page-subtitle">Welcome, Sunger Pizza! Ready to serve sailing club members with exclusive discounts?</p>
 
-        <!-- Quick Stats -->
-        <section class="grid grid-4" style="margin: 2rem 0;">
-            <div class="metric-card">
-                <div class="metric-value">45</div>
-                <div class="metric-label">Total Transactions</div>
+            <!-- Quick Stats -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-value">45</div>
+                    <div class="stat-label">Transactions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">$1,247</div>
+                    <div class="stat-label">Revenue</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">$186</div>
+                    <div class="stat-label">Discounts</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">32</div>
+                    <div class="stat-label">Members</div>
+                </div>
             </div>
-            <div class="metric-card">
-                <div class="metric-value">$2,100</div>
-                <div class="metric-label">Revenue Impact</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-value">$340</div>
-                <div class="metric-label">Discounts Provided</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-value">$1,760</div>
-                <div class="metric-label">Net Revenue</div>
-            </div>
-        </section>
 
-        <!-- Quick Actions -->
-        <section class="grid grid-2" style="margin: 2rem 0;">
-            <div class="card text-center">
-                <div class="sailing-icon" style="font-size: 3rem; margin-bottom: 1rem;">📱</div>
-                <h3>Scan QR Code</h3>
-                <p>Validate member discount codes and process transactions</p>
-                <a href="scanner.html" class="btn btn-primary" style="margin-top: 1rem;">Open Scanner</a>
-            </div>
-            <div class="card text-center">
-                <div class="sailing-icon" style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
-                <h3>View Analytics</h3>
-                <p>Track your business performance and ROI</p>
-                <a href="analytics.html" class="btn btn-secondary" style="margin-top: 1rem;">View Analytics</a>
-            </div>
-        </section>
+            <!-- Main Tiles -->
+            <div class="tile-grid">
+                <div class="tile">
+                    <div class="tile-header">
+                        <div class="tile-icon primary">📱</div>
+                    </div>
+                    <div class="tile-title">QR Code Scanner</div>
+                    <div class="tile-subtitle">Validate member discounts</div>
+                    <div class="tile-value">Ready</div>
+                    <div class="tile-description">Scan QR codes from BAYK members to validate their discount offers instantly.</div>
+                </div>
 
-        <!-- Recent Transactions -->
-        <section class="card">
-            <div class="card-header">
-                <h2 style="color: var(--text-dark);">Recent Transactions</h2>
-            </div>
-            <div class="recent-transactions">
-                <div class="transaction-item" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid #e5e7eb;">
-                    <div>
-                        <h4 style="color: var(--text-dark);">Zafer Gunel</h4>
-                        <p style="color: var(--text-light); font-size: 0.9rem;">15% off all meals</p>
-                        <p style="color: var(--text-light); font-size: 0.8rem;">Sep 13, 6:30 PM</p>
+                <div class="tile">
+                    <div class="tile-header">
+                        <div class="tile-icon success">📊</div>
                     </div>
-                    <div style="text-align: right;">
-                        <div style="color: var(--secondary-green); font-weight: 600;">$45.00</div>
-                        <div style="color: var(--text-light); font-size: 0.9rem;">-$6.75 discount</div>
-                    </div>
+                    <div class="tile-title">Today's Performance</div>
+                    <div class="tile-subtitle">Current day stats</div>
+                    <div class="tile-value">8</div>
+                    <div class="tile-description">Transactions processed today. Keep up the great work serving BAYK members!</div>
                 </div>
-                <div class="transaction-item" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid #e5e7eb;">
-                    <div>
-                        <h4 style="color: var(--text-dark);">Serdar Bilecen</h4>
-                        <p style="color: var(--text-light); font-size: 0.9rem;">15% off all meals</p>
-                        <p style="color: var(--text-light); font-size: 0.8rem;">Sep 11, 8:00 PM</p>
-                    </div>
-                    <div style="text-align: right;">
-                        <div style="color: var(--secondary-green); font-weight: 600;">$60.00</div>
-                        <div style="color: var(--text-light); font-size: 0.9rem;">-$9.00 discount</div>
-                    </div>
-                </div>
-                <div class="transaction-item" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem;">
-                    <div>
-                        <h4 style="color: var(--text-dark);">Ozalp Harut</h4>
-                        <p style="color: var(--text-light); font-size: 0.9rem;">Happy Hour Special</p>
-                        <p style="color: var(--text-light); font-size: 0.8rem;">Sep 12, 5:30 PM</p>
-                    </div>
-                    <div style="text-align: right;">
-                        <div style="color: var(--secondary-green); font-weight: 600;">$20.00</div>
-                        <div style="color: var(--text-light); font-size: 0.9rem;">-$10.00 discount</div>
-                    </div>
-                </div>
-            </div>
-        </section>
 
-        <!-- Current Offers -->
-        <section class="card">
-            <div class="card-header">
-                <h2>Your Active Offers</h2>
-            </div>
-            <div class="grid grid-2">
-                <div class="offer-card">
-                    <div class="offer-title">15% off all meals</div>
-                    <div class="offer-discount">Most Popular</div>
-                    <div class="offer-description">Valid for lunch and dinner. Cannot be combined with other offers.</div>
-                    <div style="margin: 1rem 0; font-size: 0.9rem; color: var(--text-light);">
-                        <strong>Used:</strong> 32 times this month
+                <div class="tile">
+                    <div class="tile-header">
+                        <div class="tile-icon warning">💰</div>
                     </div>
+                    <div class="tile-title">Monthly Revenue</div>
+                    <div class="tile-subtitle">This month's earnings</div>
+                    <div class="tile-value">$1,247</div>
+                    <div class="tile-description">Total revenue from BAYK member transactions this month.</div>
                 </div>
-                <div class="offer-card">
-                    <div class="offer-title">Happy Hour Special</div>
-                    <div class="offer-discount">50% off appetizers</div>
-                    <div class="offer-description">Valid 4-6 PM only. Dine-in only.</div>
-                    <div style="margin: 1rem 0; font-size: 0.9rem; color: var(--text-light);">
-                        <strong>Used:</strong> 13 times this month
+
+                <div class="tile">
+                    <div class="tile-header">
+                        <div class="tile-icon error">🎯</div>
                     </div>
+                    <div class="tile-title">Popular Offer</div>
+                    <div class="tile-subtitle">15% off all meals</div>
+                    <div class="tile-value">$6.75</div>
+                    <div class="tile-description">Most used discount. Valid for lunch and dinner. Cannot be combined with other offers.</div>
                 </div>
             </div>
-        </section>
 
-        <!-- Instructions -->
-        <section class="card">
-            <div class="card-header">
-                <h2>How to Process Member Discounts</h2>
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <a href="scanner.html" class="action-btn">
+                    <div class="action-icon">📱</div>
+                    <div class="action-text">Scan QR Code</div>
+                </a>
+                <a href="analytics.html" class="action-btn">
+                    <div class="action-icon">📊</div>
+                    <div class="action-text">View Analytics</div>
+                </a>
+                <a href="analytics.html" class="action-btn">
+                    <div class="action-icon">📈</div>
+                    <div class="action-text">Performance</div>
+                </a>
+                <a href="analytics.html" class="action-btn">
+                    <div class="action-icon">📋</div>
+                    <div class="action-text">Transaction History</div>
+                </a>
             </div>
-            <div class="instructions">
-                <div style="display: flex; align-items: center; margin-bottom: 1rem;">
-                    <div style="background-color: var(--primary-blue); color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; margin-right: 1rem; font-weight: bold;">1</div>
-                    <p>Member shows you their QR code on their phone</p>
-                </div>
-                <div style="display: flex; align-items: center; margin-bottom: 1rem;">
-                    <div style="background-color: var(--primary-blue); color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; margin-right: 1rem; font-weight: bold;">2</div>
-                    <p>Open the QR Scanner and scan their code</p>
-                </div>
-                <div style="display: flex; align-items: center; margin-bottom: 1rem;">
-                    <div style="background-color: var(--primary-blue); color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; margin-right: 1rem; font-weight: bold;">3</div>
-                    <p>Enter the transaction amount and apply the discount</p>
-                </div>
-                <div style="display: flex; align-items: center; margin-bottom: 1rem;">
-                    <div style="background-color: var(--primary-blue); color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; margin-right: 1rem; font-weight: bold;">4</div>
-                    <p>Complete the transaction and both parties get confirmation</p>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Footer -->
-    <footer style="background-color: var(--primary-blue); color: var(--white); padding: 2rem 0; margin-top: 4rem;">
-        <div class="container text-center">
-            <p>&copy; 2025 Sailing Club Partnership Platform. All rights reserved.</p>
         </div>
-    </footer>
+    </main>
 
     <script>
         // Logout functionality
@@ -193,6 +490,7 @@
                 return;
             }
 
+            // Load partner data from JSON
             loadPartnerData();
         });
 
@@ -205,13 +503,7 @@
                 const partner = data.partners.find(p => p.id === 'p001');
                 if (partner) {
                     // Update welcome message
-                    document.querySelector('h1').textContent = `Welcome, ${partner.business_name}!`;
-                    
-                    // Update metrics
-                    document.querySelectorAll('.metric-value')[0].textContent = partner.total_transactions;
-                    document.querySelectorAll('.metric-value')[1].textContent = `$${partner.revenue_impact}`;
-                    document.querySelectorAll('.metric-value')[2].textContent = `$${partner.discounts_provided}`;
-                    document.querySelectorAll('.metric-value')[3].textContent = `$${partner.revenue_impact - partner.discounts_provided}`;
+                    document.querySelector('.page-subtitle').textContent = `Welcome, ${partner.business_name}! Ready to serve sailing club members with exclusive discounts?`;
                 }
             } catch (error) {
                 console.error('Error loading partner data:', error);

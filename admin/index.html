@@ -5,263 +5,528 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - BAYK Partnership</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛵</text></svg>">
-    <link rel="stylesheet" href="../assets/css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        .admin-header {
-            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-green) 100%);
-            color: white;
-            padding: 2rem 0;
-            margin-bottom: 2rem;
+        :root {
+            --primary-blue: #2563eb;
+            --primary-blue-dark: #1d4ed8;
+            --background-color: #f8fafc;
+            --background-light: #ffffff;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-light: #ffffff;
+            --shadow-dark: #cbd5e1;
+            --success-green: #10b981;
+            --warning-orange: #f59e0b;
+            --error-red: #ef4444;
         }
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        .metric-card {
-            background: white;
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            border-left: 4px solid var(--primary-blue);
-        }
-        .metric-value {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--primary-blue);
-            margin-bottom: 0.5rem;
-        }
-        .metric-label {
-            color: var(--text-light);
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        .metric-change {
-            font-size: 0.8rem;
-            margin-top: 0.5rem;
-        }
-        .metric-change.positive {
-            color: var(--secondary-green);
-        }
-        .metric-change.negative {
-            color: var(--accent-red);
-        }
-        .chart-container {
-            background: white;
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
-        }
-        .chart-container canvas {
-            max-height: 300px !important;
-            height: 300px !important;
-        }
-        .admin-nav {
-            background: white;
-            border-radius: 0.75rem;
-            padding: 1rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
-        }
-        .admin-nav ul {
-            display: flex;
-            gap: 1rem;
-            list-style: none;
+
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
-        .admin-nav a {
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            text-decoration: none;
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--background-color);
             color: var(--text-dark);
-            font-weight: 500;
-            transition: all 0.2s;
+            line-height: 1.6;
         }
-        .admin-nav a:hover,
-        .admin-nav a.active {
-            background-color: var(--primary-blue);
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--success-green) 100%);
             color: white;
+            padding: 20px 0;
+            margin-bottom: 24px;
         }
-        .recent-activity {
-            background: white;
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-        .activity-item {
+
+        .header-content {
             display: flex;
             align-items: center;
-            padding: 1rem 0;
-            border-bottom: 1px solid #f3f4f6;
+            justify-content: space-between;
         }
-        .activity-item:last-child {
-            border-bottom: none;
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
-        .activity-icon {
+
+        .logo-icon {
             width: 40px;
             height: 40px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: white;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: rgba(255,255,255,0.2);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-right: 1rem;
-            font-size: 1.2rem;
+            color: white;
+            font-weight: 600;
         }
-        .activity-icon.transaction {
-            background-color: #dbeafe;
+
+        /* Main Content */
+        .main-content {
+            padding: 24px 0;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+
+        .page-subtitle {
+            color: var(--text-light);
+            margin-bottom: 24px;
+        }
+
+        /* Tile Grid */
+        .tile-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .tile {
+            background: var(--background-light);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 8px 8px 20px var(--shadow-dark), -8px -8px 20px var(--shadow-light);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+        }
+
+        .tile:hover {
+            transform: translateY(-2px);
+            box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
+        }
+
+        .tile-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .tile-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+        }
+
+        .tile-icon.primary { background: var(--primary-blue); }
+        .tile-icon.success { background: var(--success-green); }
+        .tile-icon.warning { background: var(--warning-orange); }
+        .tile-icon.error { background: var(--error-red); }
+
+        .tile-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .tile-subtitle {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 12px;
+        }
+
+        .tile-value {
+            font-size: 24px;
+            font-weight: 700;
             color: var(--primary-blue);
+            margin-bottom: 8px;
         }
-        .activity-icon.partner {
-            background-color: #dcfce7;
-            color: var(--secondary-green);
+
+        .tile-description {
+            font-size: 13px;
+            color: var(--text-light);
+            line-height: 1.4;
         }
-        .activity-icon.member {
-            background-color: #fef3c7;
-            color: #f59e0b;
+
+        /* Compact Stats */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--background-light);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 4px 4px 12px var(--shadow-dark), -4px -4px 12px var(--shadow-light);
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .action-btn {
+            background: var(--background-light);
+            border: none;
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 4px 4px 12px var(--shadow-dark), -4px -4px 12px var(--shadow-light);
+            text-decoration: none;
+            color: var(--text-dark);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 6px 6px 16px var(--shadow-dark), -6px -6px 16px var(--shadow-light);
+        }
+
+        .action-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--primary-blue);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+        }
+
+        .action-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        /* Chart Container */
+        .chart-container {
+            background: var(--background-light);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 8px 8px 20px var(--shadow-dark), -8px -8px 20px var(--shadow-light);
+            margin-bottom: 24px;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 12px;
+            }
+
+            .header {
+                padding: 16px 0;
+            }
+
+            .logo-text {
+                font-size: 18px;
+            }
+
+            .nav-links {
+                gap: 16px;
+            }
+
+            .main-content {
+                padding: 16px 0;
+            }
+
+            .page-title {
+                font-size: 24px;
+            }
+
+            .tile-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .tile {
+                padding: 16px;
+            }
+
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+
+            .stat-card {
+                padding: 12px;
+            }
+
+            .stat-value {
+                font-size: 18px;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .action-btn {
+                padding: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-row {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .stat-card {
+                padding: 8px;
+            }
+
+            .stat-value {
+                font-size: 16px;
+            }
+
+            .stat-label {
+                font-size: 10px;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Admin Header -->
-    <header class="admin-header">
+    <!-- Header -->
+    <header class="header">
         <div class="container">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <h1 style="margin: 0; font-size: 2rem; color: white;">⛵ Admin Dashboard</h1>
-                    <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">BAYK Partnership Platform</p>
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">⛵</div>
+                    <div class="logo-text">BAYK Partnership</div>
                 </div>
-                <div style="text-align: right;">
-                    <p style="margin: 0; font-size: 0.9rem; opacity: 0.8;">Last updated: <span id="last-updated"></span></p>
-                    <button onclick="logout()" class="btn btn-outline" style="margin-top: 0.5rem; background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); color: white;">
-                        Logout
-                    </button>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link active">Dashboard</a>
+                    <a href="analytics.html" class="nav-link">Analytics</a>
+                    <a href="partners.html" class="nav-link">Partners</a>
+                    <a href="members.html" class="nav-link">Members</a>
+                    <a href="transactions.html" class="nav-link">Transactions</a>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar">A</div>
+                    <span>Admin</span>
                 </div>
             </div>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="container">
-        <!-- Admin Navigation -->
-        <nav class="admin-nav">
-            <ul>
-                <li><a href="index.html" class="active">Dashboard</a></li>
-                <li><a href="analytics.html">Analytics</a></li>
-                <li><a href="partners.html">Partners</a></li>
-                <li><a href="members.html">Members</a></li>
-                <li><a href="transactions.html">Transactions</a></li>
-            </ul>
-        </nav>
+    <main class="main-content">
+        <div class="container">
+            <h1 class="page-title">Admin Dashboard</h1>
+            <p class="page-subtitle">Platform overview and management center</p>
 
-        <!-- Key Metrics -->
-        <section class="metrics-grid">
-            <div class="metric-card">
-                <div class="metric-value">234</div>
-                <div class="metric-label">Transactions This Month</div>
-                <div class="metric-change positive">↗ +12% from last month</div>
+            <!-- Quick Stats -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-value">156</div>
+                    <div class="stat-label">Members</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">24</div>
+                    <div class="stat-label">Partners</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">1,247</div>
+                    <div class="stat-label">Transactions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">$18,456</div>
+                    <div class="stat-label">Revenue</div>
+                </div>
             </div>
-            <div class="metric-card">
-                <div class="metric-value">$3,420</div>
-                <div class="metric-label">Total Member Savings</div>
-                <div class="metric-change positive">↗ +18% from last month</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-value">12</div>
-                <div class="metric-label">Active Partners</div>
-                <div class="metric-change positive">↗ +2 new this month</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-value">89%</div>
-                <div class="metric-label">Member Participation</div>
-                <div class="metric-change positive">↗ +5% from last month</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-value">92%</div>
-                <div class="metric-label">Partner Satisfaction</div>
-                <div class="metric-change positive">↗ +3% from last month</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-value">156</div>
-                <div class="metric-label">Growth Opportunity</div>
-                <div class="metric-change">Members not yet active</div>
-            </div>
-        </section>
 
-        <!-- Charts Row -->
-        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; margin-bottom: 2rem;">
-            <!-- Transaction Trends Chart -->
+            <!-- Main Tiles -->
+            <div class="tile-grid">
+                <div class="tile">
+                    <div class="tile-header">
+                        <div class="tile-icon primary">📊</div>
+                    </div>
+                    <div class="tile-title">Platform Analytics</div>
+                    <div class="tile-subtitle">Performance metrics</div>
+                    <div class="tile-value">+23%</div>
+                    <div class="tile-description">Growth in transaction volume this month compared to last month.</div>
+                </div>
+
+                <div class="tile">
+                    <div class="tile-header">
+                        <div class="tile-icon success">🤝</div>
+                    </div>
+                    <div class="tile-title">Active Partnerships</div>
+                    <div class="tile-subtitle">Business collaborations</div>
+                    <div class="tile-value">24</div>
+                    <div class="tile-description">Active partner businesses providing exclusive offers to BAYK members.</div>
+                </div>
+
+                <div class="tile">
+                    <div class="tile-header">
+                        <div class="tile-icon warning">💰</div>
+                    </div>
+                    <div class="tile-title">Member Savings</div>
+                    <div class="tile-subtitle">Total discounts given</div>
+                    <div class="tile-value">$2,847</div>
+                    <div class="tile-description">Total amount saved by BAYK members through partnership discounts.</div>
+                </div>
+
+                <div class="tile">
+                    <div class="tile-header">
+                        <div class="tile-icon error">📈</div>
+                    </div>
+                    <div class="tile-title">Platform Growth</div>
+                    <div class="tile-subtitle">Monthly increase</div>
+                    <div class="tile-value">+15%</div>
+                    <div class="tile-description">Increase in new member registrations compared to last month.</div>
+                </div>
+            </div>
+
+            <!-- Chart Section -->
             <div class="chart-container">
-                <h3 style="margin-top: 0; margin-bottom: 1.5rem;">Transaction Trends</h3>
+                <div class="chart-title">Transaction Volume Trend</div>
                 <canvas id="transactionChart" width="400" height="200"></canvas>
             </div>
 
-            <!-- Partner Performance -->
-            <div class="chart-container">
-                <h3 style="margin-top: 0; margin-bottom: 1.5rem;">Top Partners</h3>
-                <canvas id="partnerChart" width="300" height="200"></canvas>
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <a href="analytics.html" class="action-btn">
+                    <div class="action-icon">📊</div>
+                    <div class="action-text">View Analytics</div>
+                </a>
+                <a href="partners.html" class="action-btn">
+                    <div class="action-icon">🤝</div>
+                    <div class="action-text">Manage Partners</div>
+                </a>
+                <a href="members.html" class="action-btn">
+                    <div class="action-icon">👥</div>
+                    <div class="action-text">Manage Members</div>
+                </a>
+                <a href="transactions.html" class="action-btn">
+                    <div class="action-icon">📋</div>
+                    <div class="action-text">View Transactions</div>
+                </a>
             </div>
         </div>
-
-        <!-- Recent Activity -->
-        <section class="recent-activity">
-            <h3 style="margin-top: 0; margin-bottom: 1.5rem;">Recent Activity</h3>
-            <div id="activity-list">
-                <!-- Activity items will be loaded here -->
-            </div>
-        </section>
     </main>
 
-    <!-- Footer -->
-    <footer style="background-color: var(--primary-blue); color: var(--white); padding: 2rem 0; margin-top: 4rem;">
-        <div class="container text-center">
-            <p>&copy; 2025 BAYK Partnership Platform. All rights reserved.</p>
-        </div>
-    </footer>
-
     <script>
-        // Check admin authentication
+        // Logout functionality
+        function logout() {
+            localStorage.removeItem('selectedRole');
+            window.location.href = '../index.html';
+        }
+
+        // Load admin data
         document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in as admin
             const currentRole = localStorage.getItem('selectedRole');
             if (currentRole !== 'admin') {
                 window.location.href = '../index.html';
                 return;
             }
 
-            // Update last updated time
-            document.getElementById('last-updated').textContent = new Date().toLocaleTimeString();
-            
-            // Initialize charts
-            initializeCharts();
-            
-            // Load recent activity
-            loadRecentActivity();
+            // Initialize chart
+            initializeChart();
         });
 
-        function logout() {
-            localStorage.removeItem('selectedRole');
-            window.location.href = '../index.html';
-        }
-
-        function initializeCharts() {
-            // Transaction Trends Chart
-            const transactionCtx = document.getElementById('transactionChart').getContext('2d');
-            new Chart(transactionCtx, {
+        function initializeChart() {
+            const ctx = document.getElementById('transactionChart').getContext('2d');
+            new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
                     datasets: [{
                         label: 'Transactions',
-                        data: [180, 195, 210, 225, 240, 234],
-                        borderColor: 'rgb(30, 64, 175)',
-                        backgroundColor: 'rgba(30, 64, 175, 0.1)',
+                        data: [65, 78, 90, 85, 95, 110],
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
                         tension: 0.4,
                         fill: true
                     }]
@@ -269,7 +534,6 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    aspectRatio: 2,
                     plugins: {
                         legend: {
                             display: false
@@ -277,102 +541,19 @@
                     },
                     scales: {
                         y: {
-                            beginAtZero: true
+                            beginAtZero: true,
+                            grid: {
+                                color: '#e2e8f0'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: '#e2e8f0'
+                            }
                         }
                     }
                 }
             });
-
-            // Partner Performance Chart
-            const partnerCtx = document.getElementById('partnerChart').getContext('2d');
-            new Chart(partnerCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Sunger Pizza', 'East Marine', 'Seckin Konaklar', 'Others'],
-                    datasets: [{
-                        data: [45, 23, 18, 14],
-                        backgroundColor: [
-                            'rgb(30, 64, 175)',
-                            'rgb(34, 197, 94)',
-                            'rgb(245, 158, 11)',
-                            'rgb(156, 163, 175)'
-                        ]
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    aspectRatio: 1,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }
-            });
-        }
-
-        function loadRecentActivity() {
-            const activityList = document.getElementById('activity-list');
-            
-            const activities = [
-                {
-                    type: 'transaction',
-                    icon: '💰',
-                    title: 'New Transaction',
-                    description: 'Zafer Gunel redeemed 15% discount at Sunger Pizza',
-                    time: '2 minutes ago',
-                    amount: '$12.50 saved'
-                },
-                {
-                    type: 'partner',
-                    icon: '🏪',
-                    title: 'Partner Added',
-                    description: 'Alize joined the partnership program',
-                    time: '1 hour ago',
-                    amount: 'New partner'
-                },
-                {
-                    type: 'member',
-                    icon: '👤',
-                    title: 'New Member',
-                    description: 'Omer Dirim registered and activated account',
-                    time: '3 hours ago',
-                    amount: 'Active member'
-                },
-                {
-                    type: 'transaction',
-                    icon: '💰',
-                    title: 'High Value Transaction',
-                    description: 'Gamze Celikyilmaz saved $45 at East Marine',
-                    time: '5 hours ago',
-                    amount: '$45.00 saved'
-                },
-                {
-                    type: 'partner',
-                    icon: '📊',
-                    title: 'Performance Update',
-                    description: 'Seckin Konaklar reached 50 transactions milestone',
-                    time: '1 day ago',
-                    amount: 'Milestone reached'
-                }
-            ];
-
-            activityList.innerHTML = activities.map(activity => `
-                <div class="activity-item">
-                    <div class="activity-icon ${activity.type}">
-                        ${activity.icon}
-                    </div>
-                    <div style="flex: 1;">
-                        <div style="font-weight: 600; margin-bottom: 0.25rem;">${activity.title}</div>
-                        <div style="color: var(--text-light); font-size: 0.9rem;">${activity.description}</div>
-                        <div style="color: var(--text-light); font-size: 0.8rem; margin-top: 0.25rem;">${activity.time}</div>
-                    </div>
-                    <div style="text-align: right; color: var(--secondary-green); font-weight: 600;">
-                        ${activity.amount}
-                    </div>
-                </div>
-            `).join('');
         }
     </script>
 </body>

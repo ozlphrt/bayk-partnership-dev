@@ -4,149 +4,475 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Member Dashboard - BAYK Partnership</title>
-    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛵</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #2563eb;
+            --primary-blue-dark: #1d4ed8;
+            --background-color: #f8fafc;
+            --background-light: #ffffff;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-light: #ffffff;
+            --shadow-dark: #cbd5e1;
+            --success-green: #10b981;
+            --warning-orange: #f59e0b;
+            --error-red: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--background-color);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--background-light);
+            padding: 16px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-blue);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--primary-blue);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: var(--primary-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 24px 0;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+
+        .page-subtitle {
+            color: var(--text-light);
+            margin-bottom: 24px;
+        }
+
+        /* Tile Grid */
+        .tile-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .tile {
+            background: var(--background-light);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 8px 8px 20px var(--shadow-dark), -8px -8px 20px var(--shadow-light);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+        }
+
+        .tile:hover {
+            transform: translateY(-2px);
+            box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
+        }
+
+        .tile-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .tile-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+        }
+
+        .tile-icon.primary { background: var(--primary-blue); }
+        .tile-icon.success { background: var(--success-green); }
+        .tile-icon.warning { background: var(--warning-orange); }
+        .tile-icon.error { background: var(--error-red); }
+
+        .tile-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .tile-subtitle {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 12px;
+        }
+
+        .tile-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 8px;
+        }
+
+        .tile-description {
+            font-size: 13px;
+            color: var(--text-light);
+            line-height: 1.4;
+        }
+
+        /* Compact Stats */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--background-light);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 4px 4px 12px var(--shadow-dark), -4px -4px 12px var(--shadow-light);
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .action-btn {
+            background: var(--background-light);
+            border: none;
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 4px 4px 12px var(--shadow-dark), -4px -4px 12px var(--shadow-light);
+            text-decoration: none;
+            color: var(--text-dark);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 6px 6px 16px var(--shadow-dark), -6px -6px 16px var(--shadow-light);
+        }
+
+        .action-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--primary-blue);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+        }
+
+        .action-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 12px;
+            }
+
+            .header {
+                padding: 12px 0;
+            }
+
+            .logo-text {
+                font-size: 18px;
+            }
+
+            .nav-links {
+                gap: 16px;
+            }
+
+            .main-content {
+                padding: 16px 0;
+            }
+
+            .page-title {
+                font-size: 24px;
+            }
+
+            .tile-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .tile {
+                padding: 16px;
+            }
+
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+
+            .stat-card {
+                padding: 12px;
+            }
+
+            .stat-value {
+                font-size: 18px;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .action-btn {
+                padding: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-row {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .stat-card {
+                padding: 8px;
+            }
+
+            .stat-value {
+                font-size: 16px;
+            }
+
+            .stat-label {
+                font-size: 10px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
+    <!-- Header -->
+    <header class="header">
         <div class="container">
-            <a href="../index.html" class="navbar-brand">
-                <svg width="24" height="24" viewBox="0 0 100 100" class="bayk-logo-small">
-                    <rect x="10" y="10" width="80" height="80" fill="none" stroke="currentColor" stroke-width="3"/>
-                    <path d="M15 75 Q50 65 85 75 L85 85 L15 85 Z" fill="#0047AB"/>
-                    <path d="M50 15 L50 70 L35 70 Z" fill="#FF8C00"/>
-                    <path d="M35 70 Q50 75 65 70 L65 75 L35 75 Z" fill="currentColor"/>
-                </svg>
-                BAYK Partnership
-            </a>
-            <ul class="navbar-nav">
-                <li><a href="index.html" class="active">Dashboard</a></li>
-                <li><a href="offers.html">Browse Offers</a></li>
-                <li><a href="savings.html">My Savings</a></li>
-                <li><a href="#" onclick="logout()">Logout</a></li>
-            </ul>
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">⛵</div>
+                    <div class="logo-text">BAYK Partnership</div>
+                </div>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link active">Dashboard</a>
+                    <a href="offers.html" class="nav-link">Browse Offers</a>
+                    <a href="savings.html" class="nav-link">My Savings</a>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar">Z</div>
+                    <span>Zafer Gunel</span>
+                </div>
+            </div>
         </div>
-    </nav>
+    </header>
 
     <!-- Main Content -->
-    <main class="container" style="padding: 2rem 0;">
-        <!-- Welcome Section -->
-        <section class="card">
-            <h1 style="color: var(--text-dark);">Welcome back, Zafer Gunel!</h1>
-            <p style="color: var(--text-light); font-size: 1.1rem;">
-                Ready to discover your next savings opportunity?
-            </p>
-        </section>
+    <main class="main-content">
+        <div class="container">
+            <h1 class="page-title">Dashboard</h1>
+            <p class="page-subtitle">Welcome back, Zafer Gunel! Ready to discover your next savings opportunity?</p>
 
-        <!-- Quick Stats -->
-        <section class="grid grid-3" style="margin: 2rem 0;">
-            <div class="metric-card">
-                <div class="metric-value">$127</div>
-                <div class="metric-label">Saved This Month</div>
+            <!-- Quick Stats -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Active Offers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">$127</div>
+                    <div class="stat-label">Total Saved</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">8</div>
+                    <div class="stat-label">Partners</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">24</div>
+                    <div class="stat-label">Transactions</div>
+                </div>
             </div>
-            <div class="metric-card">
-                <div class="metric-value">$892</div>
-                <div class="metric-label">Total Savings</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-value">23</div>
-                <div class="metric-label">Transactions</div>
-            </div>
-        </section>
 
-        <!-- Recent Activity -->
-        <section class="card">
-            <div class="card-header">
-                <h2 style="color: var(--text-dark);">Recent Activity</h2>
-            </div>
-            <div class="recent-transactions">
-                <div class="transaction-item" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid #e5e7eb;">
-                    <div>
-                        <h4 style="color: var(--text-dark);">Sunger Pizza</h4>
-                        <p style="color: var(--text-light); font-size: 0.9rem;">15% off all meals</p>
+            <!-- Main Tiles -->
+            <div class="tile-grid">
+                <div class="tile">
+                    <div class="tile-header">
+                        <div class="tile-icon primary">🍕</div>
                     </div>
-                    <div style="text-align: right;">
-                        <div style="color: var(--secondary-green); font-weight: 600;">-$6.75</div>
-                        <div style="color: var(--text-light); font-size: 0.9rem;">Sep 13</div>
-                    </div>
+                    <div class="tile-title">Sunger Pizza</div>
+                    <div class="tile-subtitle">15% off all meals</div>
+                    <div class="tile-value">$6.75</div>
+                    <div class="tile-description">Valid for lunch and dinner. Cannot be combined with other offers.</div>
                 </div>
-                <div class="transaction-item" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid #e5e7eb;">
-                    <div>
-                        <h4 style="color: var(--text-dark);">Marina Club</h4>
-                        <p style="color: var(--text-light); font-size: 0.9rem;">Buy one, get one appetizer</p>
-                    </div>
-                    <div style="text-align: right;">
-                        <div style="color: var(--secondary-green); font-weight: 600;">-$12.00</div>
-                        <div style="color: var(--text-light); font-size: 0.9rem;">Sep 12</div>
-                    </div>
-                </div>
-                <div class="transaction-item" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem;">
-                    <div>
-                        <h4 style="color: var(--text-dark);">Seckin Konaklar</h4>
-                        <p style="color: var(--text-light); font-size: 0.9rem;">20% off weekend stays</p>
-                    </div>
-                    <div style="text-align: right;">
-                        <div style="color: var(--secondary-green); font-weight: 600;">-$40.00</div>
-                        <div style="color: var(--text-light); font-size: 0.9rem;">Sep 10</div>
-                    </div>
-                </div>
-            </div>
-        </section>
 
-        <!-- Quick Actions -->
-        <section class="grid grid-2" style="margin: 2rem 0;">
-            <div class="card text-center">
-                <div class="sailing-icon" style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
-                <h3 style="color: var(--text-dark);">Browse Offers</h3>
-                <p>Discover exclusive discounts from local partners</p>
-                <a href="offers.html" class="btn btn-primary" style="margin-top: 1rem;">View All Offers</a>
-            </div>
-            <div class="card text-center">
-                <div class="sailing-icon" style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
-                <h3 style="color: var(--text-dark);">View Savings</h3>
-                <p>Track your savings and transaction history</p>
-                <a href="savings.html" class="btn btn-secondary" style="margin-top: 1rem;">View Savings</a>
-            </div>
-        </section>
+                <div class="tile">
+                    <div class="tile-header">
+                        <div class="tile-icon success">🏨</div>
+                    </div>
+                    <div class="tile-title">Seckin Konaklar</div>
+                    <div class="tile-subtitle">20% off weekend stays</div>
+                    <div class="tile-value">$45.00</div>
+                    <div class="tile-description">Enjoy 20% off your weekend accommodation at Marina Resort.</div>
+                </div>
 
-        <!-- Featured Offers -->
-        <section class="card">
-            <div class="card-header">
-                <h2 style="color: var(--text-dark);">Featured Offers</h2>
-                <p style="color: var(--text-light);">Popular discounts from our partners</p>
-            </div>
-            <div class="grid grid-3">
-                <div class="offer-card" style="background: var(--background-light); border-radius: 16px; padding: 20px; box-shadow: 12px 12px 30px var(--shadow-dark), -12px -12px 30px var(--shadow-light); transition: all 0.3s ease;">
-                    <div class="offer-title" style="color: var(--text-dark); font-weight: 600; margin-bottom: 8px;">15% off all meals</div>
-                    <div class="offer-discount" style="color: var(--primary-blue); font-weight: 600; margin-bottom: 8px;">Sunger Pizza</div>
-                    <div class="offer-description" style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 16px;">Valid for lunch and dinner. Cannot be combined with other offers.</div>
-                    <a href="offers.html" class="btn btn-primary">View Offer</a>
+                <div class="tile">
+                    <div class="tile-header">
+                        <div class="tile-icon warning">🍽️</div>
+                    </div>
+                    <div class="tile-title">Fifi</div>
+                    <div class="tile-subtitle">$10 off dinner for two</div>
+                    <div class="tile-value">$10.00</div>
+                    <div class="tile-description">Save $10 on dinner when dining with a companion.</div>
                 </div>
-                <div class="offer-card" style="background: var(--background-light); border-radius: 16px; padding: 20px; box-shadow: 12px 12px 30px var(--shadow-dark), -12px -12px 30px var(--shadow-light); transition: all 0.3s ease;">
-                    <div class="offer-title" style="color: var(--text-dark); font-weight: 600; margin-bottom: 8px;">20% off weekend stays</div>
-                    <div class="offer-discount" style="color: var(--primary-blue); font-weight: 600; margin-bottom: 8px;">Seckin Konaklar</div>
-                    <div class="offer-description" style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 16px;">Enjoy 20% off your weekend accommodation at Seckin Konaklar.</div>
-                    <a href="offers.html" class="btn btn-primary">View Offer</a>
-                </div>
-                <div class="offer-card" style="background: var(--background-light); border-radius: 16px; padding: 20px; box-shadow: 12px 12px 30px var(--shadow-dark), -12px -12px 30px var(--shadow-light); transition: all 0.3s ease;">
-                    <div class="offer-title" style="color: var(--text-dark); font-weight: 600; margin-bottom: 8px;">10% off boat repairs</div>
-                    <div class="offer-discount" style="color: var(--primary-blue); font-weight: 600; margin-bottom: 8px;">Bodrum Milta Marina</div>
-                    <div class="offer-description" style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 16px;">Save 10% on all marine repair services and maintenance.</div>
-                    <a href="offers.html" class="btn btn-primary">View Offer</a>
-                </div>
-            </div>
-        </section>
-    </main>
 
-    <!-- Footer -->
-    <footer style="background-color: var(--primary-blue); color: var(--white); padding: 2rem 0; margin-top: 4rem;">
-        <div class="container text-center">
-            <p>&copy; 2025 Sailing Club Partnership Platform. All rights reserved.</p>
+                <div class="tile">
+                    <div class="tile-header">
+                        <div class="tile-icon error">⚓</div>
+                    </div>
+                    <div class="tile-title">Marina Club</div>
+                    <div class="tile-subtitle">Free docking</div>
+                    <div class="tile-value">$25.00</div>
+                    <div class="tile-description">Complimentary docking for BAYK members on weekdays.</div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <a href="offers.html" class="action-btn">
+                    <div class="action-icon">📱</div>
+                    <div class="action-text">Generate QR Code</div>
+                </a>
+                <a href="savings.html" class="action-btn">
+                    <div class="action-icon">📊</div>
+                    <div class="action-text">View Savings</div>
+                </a>
+                <a href="offers.html" class="action-btn">
+                    <div class="action-icon">🔍</div>
+                    <div class="action-text">Browse Offers</div>
+                </a>
+                <a href="savings.html" class="action-btn">
+                    <div class="action-icon">📋</div>
+                    <div class="action-text">Transaction History</div>
+                </a>
+            </div>
         </div>
-    </footer>
+    </main>
 
     <script>
         // Logout functionality
@@ -177,12 +503,7 @@
                 const member = data.members.find(m => m.id === 'm001');
                 if (member) {
                     // Update welcome message
-                    document.querySelector('h1').textContent = `Welcome back, ${member.name}!`;
-                    
-                    // Update metrics
-                    document.querySelector('.metric-value').textContent = `$${member.monthly_savings}`;
-                    document.querySelectorAll('.metric-value')[1].textContent = `$${member.total_savings}`;
-                    document.querySelectorAll('.metric-value')[2].textContent = member.transactions_count;
+                    document.querySelector('.page-subtitle').textContent = `Welcome back, ${member.name}! Ready to discover your next savings opportunity?`;
                 }
             } catch (error) {
                 console.error('Error loading member data:', error);
