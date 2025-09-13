@@ -281,6 +281,55 @@
                     // Check what keys are available
                     const allKeys = Object.keys(localStorage).filter(key => key.startsWith('activeQR_'));
                     console.log('Available QR keys:', allKeys);
+                    console.log('Looking for key:', qrKey);
+                    
+                    // Show details of available QR codes for debugging
+                    allKeys.slice(0, 5).forEach(key => {
+                        const data = localStorage.getItem(key);
+                        if (data) {
+                            try {
+                                const parsed = JSON.parse(data);
+                                console.log(`Key: ${key}, Token: ${parsed.token}, Expires: ${new Date(parsed.expires).toLocaleString()}, Used: ${parsed.used}`);
+                            } catch (e) {
+                                console.log(`Key: ${key}, Data: ${data}`);
+                            }
+                        }
+                    });
+                    
+                    // Try to find a matching key (case insensitive or partial match)
+                    const matchingKey = allKeys.find(key => key.toLowerCase().includes(qrObject.token.toLowerCase()));
+                    if (matchingKey) {
+                        console.log('Found matching key:', matchingKey);
+                        const matchingQR = localStorage.getItem(matchingKey);
+                        console.log('Matching QR data:', matchingQR);
+                        
+                        if (matchingQR) {
+                            const qrInfo = JSON.parse(matchingQR);
+                            console.log('Using matching QR data:', qrInfo);
+                            
+                            // Check if QR code has expired
+                            if (Date.now() > qrInfo.expires) {
+                                showValidationResult('QR Code Expired', 'This QR code has expired. Please ask the member to generate a new one.', 'error');
+                                localStorage.removeItem(matchingKey);
+                                return;
+                            }
+                            
+                            // Check if QR code has already been used
+                            if (qrInfo.used) {
+                                showValidationResult('QR Code Already Used', 'This QR code has already been used. Each code can only be used once.', 'error');
+                                return;
+                            }
+                            
+                            // Mark QR code as used
+                            qrInfo.used = true;
+                            localStorage.setItem(matchingKey, JSON.stringify(qrInfo));
+                            
+                            // Process the transaction
+                            processTransaction(qrObject, qrInfo);
+                            return;
+                        }
+                    }
+                    
                     showValidationResult('QR Code Invalid', 'This QR code has expired or is invalid.', 'error');
                     return;
                 }
