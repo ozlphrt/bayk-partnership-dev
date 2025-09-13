@@ -4,23 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Code Scanner - BAYK Partnership</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛵</text></svg>">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <meta name="version" content="v5-20241220-demo">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛵</text></svg>">
-    <link rel="stylesheet" href="../assets/css/styles.css?v=5">
+    <meta name="version" content="v6-20241220-midnight-ocean">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- QR Scanner Libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js?v=3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js?v=4"></script>
     <script>
         // Fallback for jsQR if primary CDN fails
         if (typeof jsQR === 'undefined') {
             console.log('Primary jsQR CDN failed, trying fallback...');
             const script = document.createElement('script');
-            script.src = 'https://unpkg.com/jsqr@1.4.0/dist/jsQR.js?v=2';
+            script.src = 'https://unpkg.com/jsqr@1.4.0/dist/jsQR.js?v=3';
             script.onerror = function() {
                 console.error('All jsQR CDNs failed to load');
                 showError('QR scanning library failed to load. Please use manual entry.');
@@ -28,598 +27,844 @@
             document.head.appendChild(script);
         }
     </script>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --secondary: #1e40af;
+            --accent: #3b82f6;
+            --background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #1e40af 100%);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --text-muted: rgba(255, 255, 255, 0.6);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-weight: 400;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(30, 58, 138, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(30, 64, 175, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(59, 130, 246, 0.2) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            font-size: 16px;
+        }
+
+        .nav {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            color: var(--text-primary);
+        }
+
+        /* Main Content */
+        .main {
+            padding: 40px 0;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            font-size: 16px;
+        }
+
+        /* Glass Cards */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+        }
+
+        /* Scanner Section */
+        .scanner-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            margin-bottom: 32px;
+        }
+
+        .scanner-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scanner-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+        }
+
+        .scanner-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .scanner-video {
+            width: 100%;
+            max-width: 400px;
+            height: 300px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            margin-bottom: 16px;
+            border: 2px solid var(--glass-border);
+        }
+
+        .scanner-canvas {
+            display: none;
+        }
+
+        .scanner-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+            border-color: #2563eb;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            border-color: #dc2626;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+            border-color: #b91c1c;
+        }
+
+        /* Manual Entry Section */
+        .manual-entry {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .manual-entry::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* Demo Section */
+        .demo-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .demo-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+        }
+
+        .demo-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .demo-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-demo {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+        }
+
+        .btn-demo:hover {
+            background: #059669;
+            border-color: #059669;
+        }
+
+        .btn-force {
+            background: #f59e0b;
+            border-color: #f59e0b;
+            color: white;
+            font-weight: 600;
+        }
+
+        .btn-force:hover {
+            background: #d97706;
+            border-color: #d97706;
+        }
+
+        /* Status Messages */
+        .status-message {
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+
+        .status-success {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #10b981;
+        }
+
+        .status-error {
+            background: rgba(220, 38, 38, 0.2);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            color: #dc2626;
+        }
+
+        .status-info {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #3b82f6;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--glass-border);
+            padding: 48px 0;
+            text-align: center;
+            margin-top: 80px;
+        }
+
+        .footer-text {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 16px;
+            }
+
+            .page-title {
+                font-size: 28px;
+            }
+
+            .scanner-section {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .glass-card,
+            .scanner-container,
+            .manual-entry,
+            .demo-section {
+                padding: 20px;
+                /* Mobile: More opaque background for better visibility */
+                background: rgba(30, 58, 138, 0.85) !important;
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.3);
+            }
+
+            .btn {
+                /* Mobile: More opaque button background */
+                background: rgba(59, 130, 246, 0.9) !important;
+                border: 1px solid rgba(255, 255, 255, 0.4);
+            }
+
+            .btn:hover {
+                background: rgba(59, 130, 246, 1) !important;
+            }
+
+            .scanner-buttons,
+            .demo-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            /* Mobile: Stronger background gradient */
+            body::before {
+                background: 
+                    radial-gradient(circle at 20% 80%, rgba(30, 58, 138, 0.7) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(30, 64, 175, 0.7) 0%, transparent 50%),
+                    radial-gradient(circle at 40% 40%, rgba(59, 130, 246, 0.5) 0%, transparent 50%);
+            }
+
+            /* Mobile: Header with stronger background */
+            .header {
+                background: rgba(30, 58, 138, 0.9) !important;
+                backdrop-filter: blur(15px);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            }
+
+            /* Mobile: Footer with stronger background */
+            .footer {
+                background: rgba(30, 58, 138, 0.9) !important;
+                backdrop-filter: blur(15px);
+                border-top: 1px solid rgba(255, 255, 255, 0.3);
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
+    <!-- Header -->
+    <header class="header">
         <div class="container">
-            <a href="../index.html" class="navbar-brand">
-                <svg width="24" height="24" viewBox="0 0 100 100" class="bayk-logo-small">
-                    <rect x="10" y="10" width="80" height="80" fill="none" stroke="currentColor" stroke-width="3"/>
-                    <path d="M15 75 Q50 65 85 75 L85 85 L15 85 Z" fill="#0047AB"/>
-                    <path d="M50 15 L50 70 L35 70 Z" fill="#FF8C00"/>
-                    <path d="M35 70 Q50 75 65 70 L65 75 L35 75 Z" fill="currentColor"/>
-                </svg>
-                BAYK Partnership
-            </a>
-            <ul class="navbar-nav">
-                <li><a href="index.html">Dashboard</a></li>
-                <li><a href="scanner.html" class="active">QR Scanner</a></li>
-                <li><a href="analytics.html">Analytics</a></li>
-                <li><a href="#" onclick="logout()">Logout</a></li>
-            </ul>
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">⛵</div>
+                    BAYK Partnership
+                </div>
+                <nav>
+                    <ul class="nav">
+                        <li><a href="index.html">Dashboard</a></li>
+                        <li><a href="scanner.html" class="active">QR Scanner</a></li>
+                        <li><a href="analytics.html">Analytics</a></li>
+                        <li><a href="#" onclick="logout()">Logout</a></li>
+                    </ul>
+                </nav>
+            </div>
         </div>
-    </nav>
+    </header>
 
     <!-- Main Content -->
-    <main class="container" style="padding: 2rem 0;">
-        <!-- Scanner Section -->
-        <section class="card">
-            <h1 style="color: var(--text-dark);">QR Code Scanner</h1>
-            <p style="color: var(--text-light); font-size: 1.1rem;">
-                Scan member QR codes to validate and process discounts
-            </p>
-            
-            <!-- HTTPS Notice -->
-            <div style="background: var(--background-light); border-radius: 12px; padding: 16px; margin-top: 16px; box-shadow: inset 4px 4px 10px var(--shadow-dark), inset -4px -4px 10px var(--shadow-light);">
-                <h4 style="color: var(--text-dark); margin-bottom: 8px;">📱 Camera Access Requirements:</h4>
-                <ul style="color: var(--text-light); font-size: 0.9rem; margin: 0; padding-left: 20px;">
-                    <li>Camera access requires HTTPS (secure connection)</li>
-                    <li>Allow camera permissions when prompted</li>
-                    <li>If camera fails, use manual entry option below</li>
-                </ul>
-            </div>
-        </section>
+    <main class="main">
+        <div class="container">
+            <h1 class="page-title">QR Code Scanner</h1>
+            <p class="page-subtitle">Scan member QR codes to validate and process discounts</p>
 
-        <!-- QR Scanner Section -->
-        <section class="card">
-            <div class="scanner-container" style="text-align: center;">
-                <video id="qr-video" style="width: 100%; max-width: 400px; border-radius: 12px; display: none;"></video>
-                <canvas id="qr-canvas" style="display: none;"></canvas>
-                <div id="scanner-placeholder" style="width: 100%; max-width: 400px; height: 300px; background: var(--background-light); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto; box-shadow: inset 4px 4px 10px var(--shadow-dark), inset -4px -4px 10px var(--shadow-light);">
-                    <div style="text-align: center; color: var(--text-light);">
-                        <div style="font-size: 3rem; margin-bottom: 1rem;">📱</div>
-                        <p>Camera scanner ready</p>
+            <!-- Scanner Section -->
+            <div class="scanner-section">
+                <div class="scanner-container">
+                    <h3 class="scanner-title">📱 Camera Scanner</h3>
+                    <div id="cameraInfo" class="status-message status-info">
+                        <strong>📱 Camera Access Requirements:</strong><br>
+                        • Camera access requires HTTPS (secure connection)<br>
+                        • Allow camera permissions when prompted<br>
+                        • If camera fails, use manual entry option below
+                    </div>
+                    <video id="video" class="scanner-video" autoplay muted playsinline></video>
+                    <canvas id="canvas" class="scanner-canvas"></canvas>
+                    <div class="scanner-buttons">
+                        <button id="startBtn" class="btn btn-primary">Start QR Scanner</button>
+                        <button id="stopBtn" class="btn btn-danger" style="display: none;">Stop Scanner</button>
                     </div>
                 </div>
-                <div style="margin-top: 1rem;">
-                    <button id="start-scanner" class="btn btn-primary">Start QR Scanner</button>
-                    <button id="stop-scanner" class="btn btn-secondary" style="display: none;">Stop Scanner</button>
-                </div>
-                <div id="scan-status" style="margin-top: 1rem; padding: 1rem; border-radius: 0.5rem; display: none;"></div>
-            </div>
-        </section>
 
-        <!-- Manual Entry Section -->
-        <section class="card">
-            <h3 style="color: var(--text-dark);">Manual QR Code Entry</h3>
-            <p style="color: var(--text-light); margin-bottom: 1rem;">
-                If camera scanning fails, ask the member for their QR code data and enter it below
-            </p>
-            <div class="form-group">
-                <label class="form-label">QR Code Data</label>
-                <textarea id="manual-qr-data" class="form-input" placeholder="Paste QR code data here (JSON format)..." rows="4"></textarea>
+                <div class="manual-entry">
+                    <h3 class="scanner-title">Manual QR Code Entry</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 20px;">
+                        If camera scanning fails, ask the member for their QR code data and enter it below
+                    </p>
+                    <div class="form-group">
+                        <label class="form-label">QR Code Data</label>
+                        <textarea id="manualQR" class="form-input" rows="4" placeholder="Paste QR code data here..."></textarea>
+                    </div>
+                    <button id="validateManual" class="btn btn-primary">Validate QR Code</button>
+                </div>
             </div>
-            <button id="validate-manual" class="btn btn-primary">Validate QR Code</button>
-            
-            <!-- Demo QR Code Data -->
-            <div style="background: var(--background-light); border-radius: 12px; padding: 16px; margin-top: 16px; box-shadow: inset 4px 4px 10px var(--shadow-dark), inset -4px -4px 10px var(--shadow-light);">
-                <h4 style="color: var(--text-dark); margin-bottom: 12px;">Demo QR Code Data (for testing):</h4>
-                <div style="background: white; padding: 12px; border-radius: 8px; font-family: monospace; font-size: 12px; color: var(--text-dark); word-break: break-all; margin-bottom: 12px;">
+
+            <!-- Demo Section -->
+            <div class="demo-section">
+                <h3 class="demo-title">Demo QR Code Data (for testing):</h3>
+                <div style="background: rgba(0, 0, 0, 0.2); padding: 12px; border-radius: 8px; margin-bottom: 16px; font-family: monospace; font-size: 12px; color: var(--text-secondary);">
                     {"memberId":"m001","offerId":"o001","timestamp":1694567890123,"token":"demo123"}
                 </div>
-                <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
-                    <button onclick="fillDemoData()" class="btn btn-outline" style="font-size: 14px;">Use Demo Data</button>
-                    <button onclick="createTestQR()" class="btn btn-outline" style="font-size: 14px;">Create Test QR</button>
-                    <button onclick="createMemberStyleQR()" class="btn btn-outline" style="font-size: 14px;">Create Member QR</button>
-                    <button onclick="clearAllQR()" class="btn btn-outline" style="font-size: 14px;">Clear All QR</button>
-                </div>
-                <div style="margin-bottom: 12px;">
-                    <button onclick="forceDemoSuccess()" class="btn btn-primary" style="font-size: 16px; padding: 12px 20px; background: #28a745; border: none;">
-                        🎯 FORCE DEMO SUCCESS (Board Meeting)
-                    </button>
-                </div>
-                <div id="localStorage-info" style="background: #f0f0f0; padding: 8px; border-radius: 4px; font-size: 11px; color: #666;">
-                    <!-- localStorage info will be displayed here -->
+                <div class="demo-buttons">
+                    <button id="useDemoData" class="btn btn-demo">Use Demo Data</button>
+                    <button id="createTestQR" class="btn btn-demo">Create Test QR</button>
+                    <button id="createMemberQR" class="btn btn-demo">Create Member QR</button>
+                    <button id="clearAllQR" class="btn btn-danger">Clear All QR</button>
+                    <button id="forceDemoSuccess" class="btn btn-force">🎯 FORCE DEMO SUCCESS (Board Meeting)</button>
                 </div>
             </div>
-        </section>
 
-        <!-- Validation Results -->
-        <section id="validation-results" class="card" style="display: none;">
-            <div class="card-header">
-                <h3 style="color: var(--text-dark);">QR Code Validation</h3>
+            <!-- Validation Results -->
+            <div id="validationResults" class="glass-card" style="display: none;">
+                <h3 class="scanner-title">QR Code Validation</h3>
+                <div id="validationContent"></div>
             </div>
-            <div id="validation-content">
-                <!-- Validation results will be displayed here -->
-            </div>
-        </section>
+        </div>
     </main>
 
     <!-- Footer -->
-    <footer style="background: var(--background-light); color: var(--text-light); text-align: center; padding: 2rem 0; margin-top: 3rem; box-shadow: 0 -4px 20px var(--shadow-dark);">
+    <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 BAYK Partnership Platform. All rights reserved.</p>
-            <p style="font-size: 0.9rem; margin-top: 0.5rem;">Bodrum Açıkdeniz Yelken Spor Kulübü - Connecting sailors with local businesses</p>
+            <p class="footer-text">&copy; 2024 BAYK Partnership. All rights reserved.</p>
         </div>
     </footer>
 
     <script>
-        let video = null;
-        let canvas = null;
-        let context = null;
-        let isScanning = false;
-        let scanInterval = null;
+        let video, canvas, ctx, scanning = false;
+        let stream = null;
 
-        // Initialize scanner when page loads
+        // Logout functionality
+        function logout() {
+            localStorage.removeItem('selectedRole');
+            window.location.href = '../index.html';
+        }
+
+        // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in as partner
+            const currentRole = localStorage.getItem('selectedRole');
+            if (currentRole !== 'partner') {
+                window.location.href = '../index.html';
+                return;
+            }
+
             initializeScanner();
             setupEventListeners();
-            updateLocalStorageInfo();
-            console.log('QR Scanner page loaded - Version 5 DEMO MODE with Force Demo Success button');
-            console.log('Available buttons:', document.querySelectorAll('button').length);
-            console.log('DEMO MODE: All QR codes will auto-validate for board meeting');
         });
 
         function initializeScanner() {
-            video = document.getElementById('qr-video');
-            canvas = document.getElementById('qr-canvas');
-            context = canvas.getContext('2d');
-            
-            // Debug: Check if jsQR is loaded
-            console.log('jsQR available:', typeof jsQR !== 'undefined');
-            console.log('QR Scanner initialized successfully');
+            video = document.getElementById('video');
+            canvas = document.getElementById('canvas');
+            ctx = canvas.getContext('2d');
         }
 
         function setupEventListeners() {
-            document.getElementById('start-scanner').addEventListener('click', startScanner);
-            document.getElementById('stop-scanner').addEventListener('click', stopScanner);
-            document.getElementById('validate-manual').addEventListener('click', validateManualQR);
+            document.getElementById('startBtn').addEventListener('click', startScanner);
+            document.getElementById('stopBtn').addEventListener('click', stopScanner);
+            document.getElementById('validateManual').addEventListener('click', validateManualQR);
+            document.getElementById('useDemoData').addEventListener('click', useDemoData);
+            document.getElementById('createTestQR').addEventListener('click', createTestQR);
+            document.getElementById('createMemberQR').addEventListener('click', createMemberQR);
+            document.getElementById('clearAllQR').addEventListener('click', clearAllQR);
+            document.getElementById('forceDemoSuccess').addEventListener('click', forceDemoSuccess);
         }
 
-        function startScanner() {
-            // Check if we're on HTTPS or localhost
-            if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
-                showError('Camera access requires HTTPS. Please use the manual entry option below.');
-                return;
-            }
-
-            // Check if jsQR is loaded
-            if (typeof jsQR === 'undefined') {
-                showError('QR scanning library not loaded. Please refresh the page or use manual entry.');
-                return;
-            }
-
-            navigator.mediaDevices.getUserMedia({ 
-                video: { 
-                    facingMode: 'environment' // Use back camera on mobile
-                } 
-            }).then(stream => {
-                video.srcObject = stream;
-                video.setAttribute('playsinline', true); // Important for iOS
-                video.play();
-                
-                video.addEventListener('loadedmetadata', () => {
-                    canvas.width = video.videoWidth;
-                    canvas.height = video.videoHeight;
-                    
-                    // Show video and hide placeholder
-                    document.getElementById('scanner-placeholder').style.display = 'none';
-                    video.style.display = 'block';
-                    
-                    isScanning = true;
-                    document.getElementById('start-scanner').style.display = 'none';
-                    document.getElementById('stop-scanner').style.display = 'inline-block';
-                    updateScanStatus('Scanner active - Point camera at QR code', 'info');
-                    
-                    // Start scanning loop
-                    scanInterval = setInterval(scanQRCode, 100);
+        async function startScanner() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: 'environment',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    } 
                 });
                 
-            }).catch(err => {
-                console.error('Failed to start camera:', err);
-                let errorMessage = 'Failed to start camera. ';
+                video.srcObject = stream;
+                video.play();
                 
-                if (err.name === 'NotAllowedError') {
-                    errorMessage += 'Camera permission denied. Please allow camera access and try again.';
-                } else if (err.name === 'NotFoundError') {
-                    errorMessage += 'No camera found. Please use the manual entry option below.';
-                } else if (err.name === 'NotSupportedError') {
-                    errorMessage += 'Camera not supported. Please use the manual entry option below.';
-                } else {
-                    errorMessage += 'Please check camera permissions and try again, or use manual entry below.';
-                }
+                document.getElementById('startBtn').style.display = 'none';
+                document.getElementById('stopBtn').style.display = 'inline-flex';
                 
-                showError(errorMessage);
-            });
+                scanning = true;
+                scanFrame();
+                
+                showStatus('Camera scanner ready', 'success');
+            } catch (error) {
+                console.error('Camera access failed:', error);
+                showStatus('Camera access failed. Please use manual entry.', 'error');
+            }
         }
 
         function stopScanner() {
-            if (isScanning) {
-                isScanning = false;
+            scanning = false;
+            
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            
+            video.srcObject = null;
+            document.getElementById('startBtn').style.display = 'inline-flex';
+            document.getElementById('stopBtn').style.display = 'none';
+            
+            showStatus('Scanner stopped', 'info');
+        }
+
+        function scanFrame() {
+            if (!scanning) return;
+            
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
                 
-                if (scanInterval) {
-                    clearInterval(scanInterval);
-                    scanInterval = null;
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const code = jsQR(imageData.data, imageData.width, imageData.height);
+                
+                if (code) {
+                    console.log('QR Code detected:', code.data);
+                    processQRCode(code.data);
+                    stopScanner();
                 }
-                
-                if (video.srcObject) {
-                    const tracks = video.srcObject.getTracks();
-                    tracks.forEach(track => track.stop());
-                    video.srcObject = null;
-                }
-                
-                // Hide video and show placeholder
-                video.style.display = 'none';
-                document.getElementById('scanner-placeholder').style.display = 'flex';
-                
-                document.getElementById('start-scanner').style.display = 'inline-block';
-                document.getElementById('stop-scanner').style.display = 'none';
-                updateScanStatus('Scanner stopped', 'info');
             }
-        }
-
-        function scanQRCode() {
-            if (!isScanning || video.readyState !== video.HAVE_ENOUGH_DATA) {
-                return;
-            }
-
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-            const code = jsQR(imageData.data, imageData.width, imageData.height);
-
-            if (code) {
-                console.log('QR Code detected:', code.data);
-                console.log('QR Code location:', code.location);
-                stopScanner();
-                processQRCode(code.data);
-            }
-        }
-
-        function processQRCode(qrData) {
-            console.log('DEMO MODE: Processing QR code for board meeting - Auto-validation enabled');
-            console.log('QR code data:', qrData);
             
-            try {
-                // Try to parse QR code data
-                const qrObject = JSON.parse(qrData);
-                console.log('Parsed QR object:', qrObject);
-                
-                // DEMO MODE: Always validate successfully
-                const demoTransaction = {
-                    id: 't' + Date.now(),
-                    memberId: qrObject.memberId || 'm001',
-                    offerId: qrObject.offerId || 'o001',
-                    partnerId: 'p001',
-                    amount: 45.00,
-                    discount: 6.75,
-                    timestamp: Date.now(),
-                    status: 'completed'
-                };
-                
-                showValidationResult('✅ QR Code Validated Successfully!', 
-                    `Member: ${demoTransaction.memberId}<br>Offer: ${demoTransaction.offerId}<br>Discount: $${demoTransaction.discount}<br>Amount: $${demoTransaction.amount}`, 
-                    'success', demoTransaction);
-                
-            } catch (error) {
-                console.log('DEMO MODE: Even invalid QR codes get validated for board meeting');
-                
-                // DEMO MODE: Even invalid QR codes get validated
-                const demoTransaction = {
-                    id: 't' + Date.now(),
-                    memberId: 'm001',
-                    offerId: 'o001',
-                    partnerId: 'p001',
-                    amount: 35.00,
-                    discount: 5.25,
-                    timestamp: Date.now(),
-                    status: 'completed'
-                };
-                
-                showValidationResult('✅ QR Code Validated Successfully!', 
-                    `Member: ${demoTransaction.memberId}<br>Offer: ${demoTransaction.offerId}<br>Discount: $${demoTransaction.discount}<br>Amount: $${demoTransaction.amount}<br><small>Demo Mode: Auto-validated for board meeting</small>`, 
-                    'success', demoTransaction);
-            }
-        }
-
-        function processTransaction(qrObject, qrInfo) {
-            // Simulate transaction processing
-            const transaction = {
-                id: 't' + Date.now(),
-                memberId: qrObject.memberId,
-                offerId: qrObject.offerId,
-                partnerId: 'p001', // Sunger Pizza (demo partner)
-                amount: 45.00,
-                discount: 6.75,
-                timestamp: new Date().toISOString(),
-                status: 'completed'
-            };
-            
-            // Store transaction
-            const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
-            transactions.push(transaction);
-            localStorage.setItem('transactions', JSON.stringify(transactions));
-            
-            // Show success message
-            showValidationResult(
-                'Transaction Successful!',
-                `Discount applied successfully. Member saved $${transaction.discount.toFixed(2)}.`,
-                'success',
-                transaction
-            );
+            requestAnimationFrame(scanFrame);
         }
 
         function validateManualQR() {
-            const qrData = document.getElementById('manual-qr-data').value.trim();
-            
+            const qrData = document.getElementById('manualQR').value.trim();
             if (!qrData) {
-                showError('Please enter QR code data');
+                showStatus('Please enter QR code data', 'error');
                 return;
             }
             
             processQRCode(qrData);
         }
 
-        function fillDemoData() {
-            const token = 'demo' + Math.random().toString(36).substr(2, 5);
-            const demoData = JSON.stringify({
-                memberId: 'm001',
-                offerId: 'o001',
-                timestamp: Date.now(),
-                token: token
-            });
+        function processQRCode(qrData) {
+            console.log('Processing QR Code:', qrData);
             
-            document.getElementById('manual-qr-data').value = demoData;
-            
-            // Store demo QR data for validation
-            const qrObject = JSON.parse(demoData);
-            const qrKey = 'activeQR_' + qrObject.token;
-            const qrData = {
-                ...qrObject,
-                expires: Date.now() + 300000, // 5 minutes from now
-                used: false
-            };
-            
-            localStorage.setItem(qrKey, JSON.stringify(qrData));
-            console.log('Demo QR data stored:', qrKey, qrData);
-            
-            updateScanStatus('Demo data filled. Click "Validate QR Code" to test.', 'info');
-            updateLocalStorageInfo();
-        }
-
-        function createTestQR() {
-            const token = 'test' + Date.now();
-            const testData = JSON.stringify({
-                memberId: 'm001',
-                offerId: 'o003',
-                timestamp: Date.now(),
-                token: token
-            });
-            
-            document.getElementById('manual-qr-data').value = testData;
-            
-            // Store test QR data for validation (exactly like member side does)
-            const qrObject = JSON.parse(testData);
-            const qrKey = 'activeQR_' + qrObject.token;
-            const qrData = {
-                ...qrObject,
-                expires: Date.now() + 300000, // 5 minutes from now
-                used: false
-            };
-            
-            localStorage.setItem(qrKey, JSON.stringify(qrData));
-            console.log('Test QR data stored:', qrKey, qrData);
-            
-            updateScanStatus('Test QR data created. Click "Validate QR Code" to test.', 'info');
-            updateLocalStorageInfo();
-        }
-
-        function createMemberStyleQR() {
-            // Create QR code exactly like member side does
-            const timestamp = Date.now();
-            const token = Math.random().toString(36).substr(2, 9); // Same as generateToken()
-            const qrData = {
-                memberId: 'm001',
-                offerId: 'o001',
-                timestamp: timestamp,
-                token: token
-            };
-            
-            const qrString = JSON.stringify(qrData);
-            document.getElementById('manual-qr-data').value = qrString;
-            
-            // Store exactly like member side
-            localStorage.setItem('activeQR_' + qrData.token, JSON.stringify({
-                ...qrData,
-                expires: timestamp + 300000, // 5 minutes from now
-                used: false
-            }));
-            
-            console.log('Member-style QR data stored:', 'activeQR_' + qrData.token, qrData);
-            updateScanStatus('Member-style QR data created. Click "Validate QR Code" to test.', 'info');
-            updateLocalStorageInfo();
-        }
-
-        function forceDemoSuccess() {
-            console.log('FORCE DEMO SUCCESS: Bypassing all validation for board meeting');
-            
-            const demoTransaction = {
-                id: 't' + Date.now(),
-                memberId: 'm001',
-                offerId: 'o001',
-                partnerId: 'p001',
-                amount: 50.00,
-                discount: 7.50,
-                timestamp: Date.now(),
-                status: 'completed'
-            };
-            
-            showValidationResult('🎯 DEMO SUCCESS - Board Meeting Mode!', 
-                `✅ QR Code Validated Successfully!<br><br>Member: ${demoTransaction.memberId}<br>Offer: ${demoTransaction.offerId}<br>Discount: $${demoTransaction.discount}<br>Amount: $${demoTransaction.amount}<br><br><strong>Perfect for board meeting demo!</strong>`, 
-                'success', demoTransaction);
-        }
-
-        function clearAllQR() {
-            const allKeys = Object.keys(localStorage).filter(key => key.startsWith('activeQR_'));
-            allKeys.forEach(key => localStorage.removeItem(key));
-            console.log('Cleared all QR codes:', allKeys.length);
-            updateScanStatus('All QR codes cleared from localStorage.', 'info');
-            updateLocalStorageInfo();
-        }
-
-        function updateLocalStorageInfo() {
-            const allKeys = Object.keys(localStorage).filter(key => key.startsWith('activeQR_'));
-            const info = document.getElementById('localStorage-info');
-            
-            // Show detailed localStorage info
-            let infoText = `QR codes in localStorage: ${allKeys.length}<br>`;
-            if (allKeys.length > 0) {
-                infoText += `Keys: ${allKeys.slice(0, 3).join(', ')}${allKeys.length > 3 ? '...' : ''}<br>`;
+            try {
+                let qrObject;
                 
-                // Show details of first QR code
-                const firstKey = allKeys[0];
-                const firstData = localStorage.getItem(firstKey);
-                if (firstData) {
+                // Try to parse as JSON first
+                try {
+                    qrObject = JSON.parse(qrData);
+                } catch (e) {
+                    // If not JSON, try to find QR data in localStorage
+                    qrObject = findQRDataInStorage(qrData);
+                }
+                
+                if (!qrObject) {
+                    showValidationResult('QR Code Invalid', 'Invalid QR code format. Please check the code and try again.', 'error');
+                    return;
+                }
+                
+                // Validate QR code data
+                if (!qrObject.memberId || !qrObject.offerId || !qrObject.timestamp || !qrObject.token) {
+                    showValidationResult('QR Code Invalid', 'Missing required QR code data. Please check the code and try again.', 'error');
+                    return;
+                }
+                
+                // Check if QR code is expired (5 minutes)
+                const now = Date.now();
+                const qrTime = parseInt(qrObject.timestamp);
+                const timeDiff = (now - qrTime) / 1000 / 60; // minutes
+                
+                if (timeDiff > 5) {
+                    showValidationResult('QR Code Expired', `QR code expired ${Math.round(timeDiff)} minutes ago. Please ask member to generate a new one.`, 'error');
+                    return;
+                }
+                
+                // Check if QR code has been used
+                const usedKey = `usedQR_${qrObject.token}`;
+                if (localStorage.getItem(usedKey)) {
+                    showValidationResult('QR Code Already Used', 'This QR code has already been used. Please ask member to generate a new one.', 'error');
+                    return;
+                }
+                
+                // Mark QR code as used
+                localStorage.setItem(usedKey, JSON.stringify({
+                    usedAt: now,
+                    memberId: qrObject.memberId,
+                    offerId: qrObject.offerId
+                }));
+                
+                // Show success validation
+                showValidationResult('QR Code Valid!', `
+                    <div style="text-align: left;">
+                        <p><strong>Member ID:</strong> ${qrObject.memberId}</p>
+                        <p><strong>Offer ID:</strong> ${qrObject.offerId}</p>
+                        <p><strong>Generated:</strong> ${Math.round(timeDiff)} minutes ago</p>
+                        <p><strong>Status:</strong> Valid and ready for discount application</p>
+                    </div>
+                `, 'success');
+                
+            } catch (error) {
+                console.error('QR processing error:', error);
+                showValidationResult('Processing Error', 'Error processing QR code. Please try again.', 'error');
+            }
+        }
+
+        function findQRDataInStorage(qrData) {
+            // Search through localStorage for matching QR data
+            const keys = Object.keys(localStorage);
+            for (let key of keys) {
+                if (key.startsWith('qrCode_')) {
                     try {
-                        const parsed = JSON.parse(firstData);
-                        infoText += `Sample: ${parsed.memberId} - ${parsed.offerId} - ${parsed.token}`;
+                        const storedData = JSON.parse(localStorage.getItem(key));
+                        if (storedData && storedData.token && qrData.includes(storedData.token)) {
+                            return storedData;
+                        }
                     } catch (e) {
-                        infoText += `Sample: ${firstData.substring(0, 50)}...`;
+                        continue;
                     }
                 }
-            } else {
-                infoText += 'No QR codes found. Generate one from member side first.';
             }
-            
-            info.innerHTML = infoText;
+            return null;
         }
 
-        function showValidationResult(title, message, type, transaction = null) {
-            const resultsSection = document.getElementById('validation-results');
-            const content = document.getElementById('validation-content');
+        function showValidationResult(title, content, type) {
+            const resultsDiv = document.getElementById('validationResults');
+            const contentDiv = document.getElementById('validationContent');
             
-            let statusClass = '';
-            let statusIcon = '';
-            
-            switch (type) {
-                case 'success':
-                    statusClass = 'success';
-                    statusIcon = '✅';
-                    break;
-                case 'error':
-                    statusClass = 'error';
-                    statusIcon = '❌';
-                    break;
-                case 'warning':
-                    statusClass = 'warning';
-                    statusIcon = '⚠️';
-                    break;
-                default:
-                    statusClass = 'info';
-                    statusIcon = 'ℹ️';
-            }
-            
-            let transactionDetails = '';
-            if (transaction) {
-                transactionDetails = `
-                    <div style="background: var(--background-light); border-radius: 12px; padding: 16px; margin-top: 16px; box-shadow: 8px 8px 20px var(--shadow-dark), -8px -8px 20px var(--shadow-light);">
-                        <h4 style="color: var(--text-dark); margin-bottom: 12px;">Transaction Details</h4>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.9rem;">
-                            <div><strong>Transaction ID:</strong> ${transaction.id}</div>
-                            <div><strong>Amount:</strong> $${transaction.amount.toFixed(2)}</div>
-                            <div><strong>Discount:</strong> $${transaction.discount.toFixed(2)}</div>
-                            <div><strong>Time:</strong> ${new Date(transaction.timestamp).toLocaleTimeString()}</div>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            content.innerHTML = `
-                <div style="background: var(--background-light); border-radius: 12px; padding: 20px; box-shadow: 8px 8px 20px var(--shadow-dark), -8px -8px 20px var(--shadow-light);">
-                    <div style="display: flex; align-items: center; margin-bottom: 16px;">
-                        <span style="font-size: 24px; margin-right: 12px;">${statusIcon}</span>
-                        <h3 style="color: var(--text-dark); margin: 0;">${title}</h3>
-                    </div>
-                    <p style="color: var(--text-light); margin-bottom: 16px;">${message}</p>
-                    ${transactionDetails}
-                    <div style="margin-top: 20px;">
-                        <button onclick="resetScanner()" class="btn btn-primary">Scan Another QR Code</button>
-                    </div>
+            contentDiv.innerHTML = `
+                <div class="status-message status-${type}">
+                    <h4>${title}</h4>
+                    ${content}
                 </div>
             `;
             
-            resultsSection.style.display = 'block';
-            resultsSection.scrollIntoView({ behavior: 'smooth' });
+            resultsDiv.style.display = 'block';
+            resultsDiv.scrollIntoView({ behavior: 'smooth' });
         }
 
-        function showError(message) {
-            updateScanStatus(message, 'error');
-        }
-
-        function updateScanStatus(message, type) {
-            const statusDiv = document.getElementById('scan-status');
+        function showStatus(message, type) {
+            const statusDiv = document.createElement('div');
+            statusDiv.className = `status-message status-${type}`;
             statusDiv.textContent = message;
-            statusDiv.style.display = 'block';
             
-            // Remove existing status classes
-            statusDiv.classList.remove('success', 'error', 'warning', 'info');
+            const cameraInfo = document.getElementById('cameraInfo');
+            cameraInfo.parentNode.insertBefore(statusDiv, cameraInfo.nextSibling);
             
-            // Add new status class
-            if (type) {
-                statusDiv.classList.add(type);
-            }
-            
-            // Set background color based on type
-            switch (type) {
-                case 'success':
-                    statusDiv.style.backgroundColor = '#d1fae5';
-                    statusDiv.style.color = '#065f46';
-                    break;
-                case 'error':
-                    statusDiv.style.backgroundColor = '#fee2e2';
-                    statusDiv.style.color = '#991b1b';
-                    break;
-                case 'warning':
-                    statusDiv.style.backgroundColor = '#fef3c7';
-                    statusDiv.style.color = '#92400e';
-                    break;
-                case 'info':
-                    statusDiv.style.backgroundColor = '#dbeafe';
-                    statusDiv.style.color = '#1e40af';
-                    break;
-                default:
-                    statusDiv.style.backgroundColor = 'var(--background-light)';
-                    statusDiv.style.color = 'var(--text-dark)';
-            }
+            setTimeout(() => {
+                statusDiv.remove();
+            }, 5000);
         }
 
-        function resetScanner() {
-            // Hide validation results
-            document.getElementById('validation-results').style.display = 'none';
-            
-            // Clear manual input
-            document.getElementById('manual-qr-data').value = '';
-            
-            // Reset scan status
-            updateScanStatus('Ready to scan QR codes', 'neutral');
+        // Demo functions
+        function useDemoData() {
+            const demoData = '{"memberId":"m001","offerId":"o001","timestamp":1694567890123,"token":"demo123"}';
+            document.getElementById('manualQR').value = demoData;
+            showStatus('Demo data loaded', 'info');
         }
 
-        function logout() {
-            // Stop scanner if running
-            if (qrScanner && isScanning) {
-                qrScanner.stop();
-            }
+        function createTestQR() {
+            const testData = {
+                memberId: 'm001',
+                offerId: 'o001',
+                timestamp: Date.now(),
+                token: 'test_' + Math.random().toString(36).substr(2, 9)
+            };
             
-            // Redirect to main page
-            window.location.href = '../index.html';
+            localStorage.setItem(`qrCode_${testData.token}`, JSON.stringify(testData));
+            document.getElementById('manualQR').value = JSON.stringify(testData);
+            showStatus('Test QR code created and loaded', 'success');
         }
 
-        // Clean up on page unload
-        window.addEventListener('beforeunload', function() {
-            if (isScanning) {
-                stopScanner();
-            }
-        });
+        function createMemberQR() {
+            const memberData = {
+                memberId: 'm001',
+                offerId: 'o002',
+                timestamp: Date.now(),
+                token: 'member_' + Math.random().toString(36).substr(2, 9)
+            };
+            
+            localStorage.setItem(`qrCode_${memberData.token}`, JSON.stringify(memberData));
+            document.getElementById('manualQR').value = JSON.stringify(memberData);
+            showStatus('Member QR code created and loaded', 'success');
+        }
+
+        function clearAllQR() {
+            const keys = Object.keys(localStorage);
+            keys.forEach(key => {
+                if (key.startsWith('qrCode_') || key.startsWith('usedQR_')) {
+                    localStorage.removeItem(key);
+                }
+            });
+            document.getElementById('manualQR').value = '';
+            showStatus('All QR codes cleared', 'info');
+        }
+
+        function forceDemoSuccess() {
+            const demoData = {
+                memberId: 'm001',
+                offerId: 'o001',
+                timestamp: Date.now(),
+                token: 'demo_success_' + Math.random().toString(36).substr(2, 9)
+            };
+            
+            localStorage.setItem(`qrCode_${demoData.token}`, JSON.stringify(demoData));
+            processQRCode(JSON.stringify(demoData));
+            showStatus('🎯 Demo success forced for board meeting!', 'success');
+        }
     </script>
 </body>
 </html>
