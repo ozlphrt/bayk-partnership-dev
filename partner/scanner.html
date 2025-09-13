@@ -8,8 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- QR Code Scanner Library -->
-    <script src="https://cdn.jsdelivr.net/npm/qr-scanner@1.4.2/qr-scanner.umd.min.js"></script>
+    <!-- QR Scanner Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 </head>
 <body>
     <!-- Navigation -->
@@ -56,7 +56,14 @@
         <!-- QR Scanner Section -->
         <section class="card">
             <div class="scanner-container" style="text-align: center;">
-                <div id="qr-reader" style="width: 100%; max-width: 400px; margin: 0 auto;"></div>
+                <video id="qr-video" style="width: 100%; max-width: 400px; border-radius: 12px; display: none;"></video>
+                <canvas id="qr-canvas" style="display: none;"></canvas>
+                <div id="scanner-placeholder" style="width: 100%; max-width: 400px; height: 300px; background: var(--background-light); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto; box-shadow: inset 4px 4px 10px var(--shadow-dark), inset -4px -4px 10px var(--shadow-light);">
+                    <div style="text-align: center; color: var(--text-light);">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">📱</div>
+                        <p>Camera scanner ready</p>
+                    </div>
+                </div>
                 <div style="margin-top: 1rem;">
                     <button id="start-scanner" class="btn btn-primary">Start QR Scanner</button>
                     <button id="stop-scanner" class="btn btn-secondary" style="display: none;">Stop Scanner</button>
@@ -107,8 +114,11 @@
     </footer>
 
     <script>
-        let qrScanner = null;
+        let video = null;
+        let canvas = null;
+        let context = null;
         let isScanning = false;
+        let scanInterval = null;
 
         // Initialize scanner when page loads
         document.addEventListener('DOMContentLoaded', function() {
@@ -117,27 +127,10 @@
         });
 
         function initializeScanner() {
-            const qrReader = document.getElementById('qr-reader');
-            
-            // Check if qr-scanner is available
-            if (typeof QrScanner === 'undefined') {
-                showError('QR Scanner library failed to load. Please refresh the page.');
-                return;
-            }
-
-            // Set up QR scanner
-            qrScanner = new QrScanner(
-                qrReader,
-                result => onScanSuccess(result),
-                {
-                    onDecodeError: error => {
-                        // Silently handle decode errors (normal during scanning)
-                        console.log('Decode error:', error);
-                    },
-                    highlightScanRegion: true,
-                    highlightCodeOutline: true,
-                }
-            );
+            video = document.getElementById('qr-video');
+            canvas = document.getElementById('qr-canvas');
+            context = canvas.getContext('2d');
+            console.log('QR Scanner initialized successfully');
         }
 
         function setupEventListeners() {
@@ -147,24 +140,46 @@
         }
 
         function startScanner() {
-            if (!qrScanner) {
-                showError('QR Scanner not initialized. Please refresh the page.');
-                return;
-            }
-
             // Check if we're on HTTPS or localhost
             if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
                 showError('Camera access requires HTTPS. Please use the manual entry option below.');
                 return;
             }
 
-            qrScanner.start().then(() => {
-                isScanning = true;
-                document.getElementById('start-scanner').style.display = 'none';
-                document.getElementById('stop-scanner').style.display = 'inline-block';
-                updateScanStatus('Scanner active - Point camera at QR code', 'info');
+            // Check if jsQR is loaded
+            if (typeof jsQR === 'undefined') {
+                showError('QR scanning library not loaded. Please refresh the page or use manual entry.');
+                return;
+            }
+
+            navigator.mediaDevices.getUserMedia({ 
+                video: { 
+                    facingMode: 'environment' // Use back camera on mobile
+                } 
+            }).then(stream => {
+                video.srcObject = stream;
+                video.setAttribute('playsinline', true); // Important for iOS
+                video.play();
+                
+                video.addEventListener('loadedmetadata', () => {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    
+                    // Show video and hide placeholder
+                    document.getElementById('scanner-placeholder').style.display = 'none';
+                    video.style.display = 'block';
+                    
+                    isScanning = true;
+                    document.getElementById('start-scanner').style.display = 'none';
+                    document.getElementById('stop-scanner').style.display = 'inline-block';
+                    updateScanStatus('Scanner active - Point camera at QR code', 'info');
+                    
+                    // Start scanning loop
+                    scanInterval = setInterval(scanQRCode, 100);
+                });
+                
             }).catch(err => {
-                console.error('Failed to start scanner:', err);
+                console.error('Failed to start camera:', err);
                 let errorMessage = 'Failed to start camera. ';
                 
                 if (err.name === 'NotAllowedError') {
@@ -182,23 +197,44 @@
         }
 
         function stopScanner() {
-            if (qrScanner && isScanning) {
-                qrScanner.stop();
+            if (isScanning) {
                 isScanning = false;
+                
+                if (scanInterval) {
+                    clearInterval(scanInterval);
+                    scanInterval = null;
+                }
+                
+                if (video.srcObject) {
+                    const tracks = video.srcObject.getTracks();
+                    tracks.forEach(track => track.stop());
+                    video.srcObject = null;
+                }
+                
+                // Hide video and show placeholder
+                video.style.display = 'none';
+                document.getElementById('scanner-placeholder').style.display = 'flex';
+                
                 document.getElementById('start-scanner').style.display = 'inline-block';
                 document.getElementById('stop-scanner').style.display = 'none';
-                updateScanStatus('Scanner stopped', 'neutral');
+                updateScanStatus('Scanner stopped', 'info');
             }
         }
 
-        function onScanSuccess(result) {
-            console.log('QR Code scanned:', result);
-            
-            // Stop scanning after successful scan
-            stopScanner();
-            
-            // Process the QR code data
-            processQRCode(result);
+        function scanQRCode() {
+            if (!isScanning || video.readyState !== video.HAVE_ENOUGH_DATA) {
+                return;
+            }
+
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+            const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+            if (code) {
+                console.log('QR Code detected:', code.data);
+                stopScanner();
+                processQRCode(code.data);
+            }
         }
 
         function processQRCode(qrData) {
@@ -430,4 +466,5 @@
         });
     </script>
 </body>
+</html>
 </html>
