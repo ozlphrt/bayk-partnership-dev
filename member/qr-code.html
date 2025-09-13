@@ -341,31 +341,40 @@
             });
         }
 
-        function loadOfferDetails(offerId) {
-            // Simulate loading offer details
-            const offers = {
-                'demo-offer': {
-                    title: '15% off all meals',
-                    partner: 'Sunger Pizza',
-                    description: 'Valid for lunch and dinner. Cannot be combined with other offers.'
-                },
-                'hotel-offer': {
-                    title: '20% off weekend stays',
-                    partner: 'Seckin Konaklar',
-                    description: 'Enjoy 20% off your weekend accommodation.'
-                },
-                'marina-offer': {
-                    title: '10% off boat repairs',
-                    partner: 'Bodrum Milta Marina',
-                    description: 'Save 10% on all marine repair services and maintenance.'
+        async function loadOfferDetails(offerId) {
+            try {
+                // Load offers and partners data
+                const [offersResponse, partnersResponse] = await Promise.all([
+                    fetch('../assets/data/offers.json'),
+                    fetch('../assets/data/users.json')
+                ]);
+                
+                const offersData = await offersResponse.json();
+                const usersData = await partnersResponse.json();
+                
+                // Find the specific offer
+                const offer = offersData.offers.find(o => o.id === offerId);
+                if (!offer) {
+                    console.error('Offer not found:', offerId);
+                    return;
                 }
-            };
-            
-            const offer = offers[offerId] || offers['demo-offer'];
-            
-            document.getElementById('offer-title').textContent = offer.title;
-            document.getElementById('offer-partner').textContent = `Partner: ${offer.partner}`;
-            document.getElementById('offer-description').textContent = `Description: ${offer.description}`;
+                
+                // Find the partner
+                const partner = usersData.partners.find(p => p.id === offer.partner_id);
+                const partnerName = partner ? partner.business_name : 'Unknown Partner';
+                
+                // Update the UI with the correct offer details
+                document.getElementById('offer-title').textContent = offer.title;
+                document.getElementById('offer-partner').textContent = `Partner: ${partnerName}`;
+                document.getElementById('offer-description').textContent = `Description: ${offer.description}`;
+                
+            } catch (error) {
+                console.error('Error loading offer details:', error);
+                // Fallback to default values
+                document.getElementById('offer-title').textContent = 'Offer Details';
+                document.getElementById('offer-partner').textContent = 'Partner: Loading...';
+                document.getElementById('offer-description').textContent = 'Description: Unable to load offer details.';
+            }
         }
 
         function generateToken() {
