@@ -3,7 +3,7 @@
     {
       "id": "o001",
       "partner_id": "p001",
-      "title": "15% off all meals",
+      "title": "15% off all meals at Sunger Pizza",
       "description": "Valid for lunch and dinner. Cannot be combined with other offers.",
       "discount_type": "percentage",
       "discount_value": 15,
@@ -16,7 +16,7 @@
     {
       "id": "o002",
       "partner_id": "p002",
-      "title": "Buy one, get one appetizer",
+      "title": "Buy one, get one appetizer at Marina Club",
       "description": "Purchase any entree and get a free appetizer of equal or lesser value.",
       "discount_type": "bogo",
       "discount_value": 100,
@@ -28,7 +28,7 @@
     {
       "id": "o003",
       "partner_id": "p003",
-      "title": "$10 off dinner for two",
+      "title": "$10 off dinner for two at Fifi",
       "description": "Save $10 on dinner when dining with a companion.",
       "discount_type": "fixed",
       "discount_value": 10,

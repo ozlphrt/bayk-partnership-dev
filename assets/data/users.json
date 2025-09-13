@@ -2,7 +2,7 @@
   "members": [
     {
       "id": "m001",
-      "name": "Sarah Marina",
+      "name": "Zafer Gunel",
       "email": "sarah@sailclub.com",
       "membership_number": "SC2024001",
       "total_savings": 892.00,
@@ -13,7 +13,7 @@
     },
     {
       "id": "m002",
-      "name": "Captain Mike",
+      "name": "Serdar Bilecen",
       "email": "mike@sailclub.com",
       "membership_number": "SC2024002",
       "total_savings": 654.50,
@@ -24,7 +24,7 @@
     },
     {
       "id": "m003",
-      "name": "Lisa Ocean",
+      "name": "Ozalp Harut",
       "email": "lisa@sailclub.com",
       "membership_number": "SC2024003",
       "total_savings": 423.75,
@@ -35,7 +35,7 @@
     },
     {
       "id": "m004",
-      "name": "Tom Harbor",
+      "name": "Mehmet Ziya Telli",
       "email": "tom@sailclub.com",
       "membership_number": "SC2024004",
       "total_savings": 789.25,
@@ -46,7 +46,7 @@
     },
     {
       "id": "m005",
-      "name": "Emma Sail",
+      "name": "Omer Dirim",
       "email": "emma@sailclub.com",
       "membership_number": "SC2024005",
       "total_savings": 567.80,
@@ -57,7 +57,7 @@
     },
     {
       "id": "m006",
-      "name": "David Wind",
+      "name": "Gamze Celikyilmaz",
       "email": "david@sailclub.com",
       "membership_number": "SC2024006",
       "total_savings": 345.60,
@@ -68,7 +68,7 @@
     },
     {
       "id": "m007",
-      "name": "Rachel Tide",
+      "name": "Ali Korkmaz",
       "email": "rachel@sailclub.com",
       "membership_number": "SC2024007",
       "total_savings": 678.90,
@@ -79,7 +79,7 @@
     },
     {
       "id": "m008",
-      "name": "James Anchor",
+      "name": "Senem Kalaycioglu",
       "email": "james@sailclub.com",
       "membership_number": "SC2024008",
       "total_savings": 512.35,
@@ -90,7 +90,7 @@
     },
     {
       "id": "m009",
-      "name": "Anna Current",
+      "name": "Nazli Aydogan",
       "email": "anna@sailclub.com",
       "membership_number": "SC2024009",
       "total_savings": 456.70,
@@ -101,7 +101,7 @@
     },
     {
       "id": "m010",
-      "name": "Robert Mast",
+      "name": "Omer Karacalar",
       "email": "robert@sailclub.com",
       "membership_number": "SC2024010",
       "total_savings": 723.45,
@@ -114,7 +114,7 @@
   "partners": [
     {
       "id": "p001",
-      "business_name": "Waterfront Bistro",
+      "business_name": "Sunger Pizza",
       "category": "restaurant",
       "contact_email": "manager@waterfrontbistro.com",
       "contact_phone": "(555) 123-4567",
@@ -127,7 +127,7 @@
     },
     {
       "id": "p002",
-      "business_name": "Sailor's Tavern",
+      "business_name": "Marina Club",
       "category": "restaurant",
       "contact_email": "info@sailorstavern.com",
       "contact_phone": "(555) 234-5678",
@@ -140,7 +140,7 @@
     },
     {
       "id": "p003",
-      "business_name": "Harbor Grill",
+      "business_name": "Fifi",
       "category": "restaurant",
       "contact_email": "contact@harborgrill.com",
       "contact_phone": "(555) 345-6789",
@@ -153,7 +153,7 @@
     },
     {
       "id": "p004",
-      "business_name": "Marina Resort",
+      "business_name": "Seckin Konaklar",
       "category": "hotel",
       "contact_email": "reservations@marinaresort.com",
       "contact_phone": "(555) 456-7890",
@@ -166,7 +166,7 @@
     },
     {
       "id": "p005",
-      "business_name": "Coastal Inn",
+      "business_name": "Karia Princess",
       "category": "hotel",
       "contact_email": "bookings@coastalinn.com",
       "contact_phone": "(555) 567-8901",
@@ -179,7 +179,7 @@
     },
     {
       "id": "p006",
-      "business_name": "Bay Marine Services",
+      "business_name": "Bodrum Milta Marina",
       "category": "marina_services",
       "contact_email": "service@baymarine.com",
       "contact_phone": "(555) 678-9012",
@@ -192,7 +192,7 @@
     },
     {
       "id": "p007",
-      "business_name": "Dockside Maintenance",
+      "business_name": "SkyMarine",
       "category": "marina_services",
       "contact_email": "info@docksidemaintenance.com",
       "contact_phone": "(555) 789-0123",
@@ -205,7 +205,7 @@
     },
     {
       "id": "p008",
-      "business_name": "Nautical Supply Co",
+      "business_name": "East Marine",
       "category": "marine_supplies",
       "contact_email": "sales@nauticalsupply.com",
       "contact_phone": "(555) 890-1234",
@@ -218,7 +218,7 @@
     },
     {
       "id": "p009",
-      "business_name": "Boat Gear Plus",
+      "business_name": "Alize",
       "category": "marine_supplies",
       "contact_email": "orders@boatgearplus.com",
       "contact_phone": "(555) 901-2345",
@@ -231,7 +231,7 @@
     },
     {
       "id": "p010",
-      "business_name": "Outdoor Adventures",
+      "business_name": "Sportsworks",
       "category": "retail",
       "contact_email": "store@outdooradventures.com",
       "contact_phone": "(555) 012-3456",
