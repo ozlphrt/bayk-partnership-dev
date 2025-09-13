@@ -347,10 +347,10 @@
             try {
                 console.log('Loading offer details for ID:', offerId);
                 
-                // Load offers and partners data
+                // Load offers and partners data with cache busting
                 const [offersResponse, partnersResponse] = await Promise.all([
-                    fetch('../assets/data/offers.json'),
-                    fetch('../assets/data/users.json')
+                    fetch('../assets/data/offers.json?v=' + Date.now()),
+                    fetch('../assets/data/users.json?v=' + Date.now())
                 ]);
                 
                 const offersData = await offersResponse.json();
@@ -383,10 +383,36 @@
                 
             } catch (error) {
                 console.error('Error loading offer details:', error);
-                // Fallback to default values
-                document.getElementById('offer-title').textContent = 'Offer Details';
-                document.getElementById('offer-partner').textContent = 'Partner: Loading...';
-                document.getElementById('offer-description').textContent = 'Description: Unable to load offer details.';
+                // Fallback to hardcoded data for known offers
+                const fallbackOffers = {
+                    'o003': {
+                        title: '$10 off dinner for two at Fifi',
+                        partner: 'Fifi',
+                        description: 'Save $10 on dinner when dining with a companion.'
+                    },
+                    'o004': {
+                        title: '20% off weekend stays',
+                        partner: 'Seckin Konaklar',
+                        description: 'Enjoy 20% off your weekend accommodation at Marina Resort.'
+                    },
+                    'o001': {
+                        title: '15% off all meals at Sunger Pizza',
+                        partner: 'Sunger Pizza',
+                        description: 'Valid for lunch and dinner. Cannot be combined with other offers.'
+                    }
+                };
+                
+                const fallbackOffer = fallbackOffers[offerId];
+                if (fallbackOffer) {
+                    document.getElementById('offer-title').textContent = fallbackOffer.title;
+                    document.getElementById('offer-partner').textContent = `Partner: ${fallbackOffer.partner}`;
+                    document.getElementById('offer-description').textContent = `Description: ${fallbackOffer.description}`;
+                    console.log('Using fallback data for offer:', offerId);
+                } else {
+                    document.getElementById('offer-title').textContent = 'Offer Details';
+                    document.getElementById('offer-partner').textContent = 'Partner: Loading...';
+                    document.getElementById('offer-description').textContent = 'Description: Unable to load offer details.';
+                }
             }
         }
 
