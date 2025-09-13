@@ -137,9 +137,24 @@
         /* Tile Grid */
         .tile-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 16px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
             margin-bottom: 24px;
+        }
+
+        /* Desktop-specific grid layout */
+        @media (min-width: 1200px) {
+            .tile-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 24px;
+            }
+        }
+
+        @media (min-width: 1600px) {
+            .tile-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 24px;
+            }
         }
 
         .tile {
@@ -209,9 +224,17 @@
         /* Compact Stats */
         .stats-row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 16px;
             margin-bottom: 24px;
+        }
+
+        /* Desktop-specific stats layout */
+        @media (min-width: 1200px) {
+            .stats-row {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 20px;
+            }
         }
 
         .stat-card {
@@ -239,9 +262,17 @@
         /* Quick Actions */
         .quick-actions {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
             margin-bottom: 24px;
+        }
+
+        /* Desktop-specific actions layout */
+        @media (min-width: 1200px) {
+            .quick-actions {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 20px;
+            }
         }
 
         .action-btn {
