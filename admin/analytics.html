@@ -51,6 +51,10 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             margin-bottom: 2rem;
         }
+        .chart-container canvas {
+            max-height: 300px !important;
+            height: 300px !important;
+        }
         .analytics-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -286,6 +290,7 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    aspectRatio: 2,
                     scales: {
                         y: {
                             type: 'linear',
@@ -324,6 +329,7 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    aspectRatio: 1,
                     plugins: {
                         legend: {
                             position: 'bottom'
