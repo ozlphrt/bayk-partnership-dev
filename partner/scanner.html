@@ -41,6 +41,16 @@
             <p style="color: var(--text-light); font-size: 1.1rem;">
                 Scan member QR codes to validate and process discounts
             </p>
+            
+            <!-- HTTPS Notice -->
+            <div style="background: var(--background-light); border-radius: 12px; padding: 16px; margin-top: 16px; box-shadow: inset 4px 4px 10px var(--shadow-dark), inset -4px -4px 10px var(--shadow-light);">
+                <h4 style="color: var(--text-dark); margin-bottom: 8px;">📱 Camera Access Requirements:</h4>
+                <ul style="color: var(--text-light); font-size: 0.9rem; margin: 0; padding-left: 20px;">
+                    <li>Camera access requires HTTPS (secure connection)</li>
+                    <li>Allow camera permissions when prompted</li>
+                    <li>If camera fails, use manual entry option below</li>
+                </ul>
+            </div>
         </section>
 
         <!-- QR Scanner Section -->
@@ -59,13 +69,22 @@
         <section class="card">
             <h3 style="color: var(--text-dark);">Manual QR Code Entry</h3>
             <p style="color: var(--text-light); margin-bottom: 1rem;">
-                If scanning fails, ask the member for their QR code data
+                If camera scanning fails, ask the member for their QR code data and enter it below
             </p>
             <div class="form-group">
                 <label class="form-label">QR Code Data</label>
-                <textarea id="manual-qr-data" class="form-input" placeholder="Paste QR code data here..." rows="3"></textarea>
+                <textarea id="manual-qr-data" class="form-input" placeholder="Paste QR code data here (JSON format)..." rows="4"></textarea>
             </div>
-            <button id="validate-manual" class="btn btn-secondary">Validate QR Code</button>
+            <button id="validate-manual" class="btn btn-primary">Validate QR Code</button>
+            
+            <!-- Demo QR Code Data -->
+            <div style="background: var(--background-light); border-radius: 12px; padding: 16px; margin-top: 16px; box-shadow: inset 4px 4px 10px var(--shadow-dark), inset -4px -4px 10px var(--shadow-light);">
+                <h4 style="color: var(--text-dark); margin-bottom: 12px;">Demo QR Code Data (for testing):</h4>
+                <div style="background: white; padding: 12px; border-radius: 8px; font-family: monospace; font-size: 12px; color: var(--text-dark); word-break: break-all; margin-bottom: 12px;">
+                    {"memberId":"m001","offerId":"demo-offer","timestamp":1694567890123,"token":"demo123"}
+                </div>
+                <button onclick="fillDemoData()" class="btn btn-outline" style="font-size: 14px;">Use Demo Data</button>
+            </div>
         </section>
 
         <!-- Validation Results -->
@@ -133,6 +152,12 @@
                 return;
             }
 
+            // Check if we're on HTTPS or localhost
+            if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+                showError('Camera access requires HTTPS. Please use the manual entry option below.');
+                return;
+            }
+
             qrScanner.start().then(() => {
                 isScanning = true;
                 document.getElementById('start-scanner').style.display = 'none';
@@ -140,7 +165,19 @@
                 updateScanStatus('Scanner active - Point camera at QR code', 'info');
             }).catch(err => {
                 console.error('Failed to start scanner:', err);
-                showError('Failed to start camera. Please check permissions and try again.');
+                let errorMessage = 'Failed to start camera. ';
+                
+                if (err.name === 'NotAllowedError') {
+                    errorMessage += 'Camera permission denied. Please allow camera access and try again.';
+                } else if (err.name === 'NotFoundError') {
+                    errorMessage += 'No camera found. Please use the manual entry option below.';
+                } else if (err.name === 'NotSupportedError') {
+                    errorMessage += 'Camera not supported. Please use the manual entry option below.';
+                } else {
+                    errorMessage += 'Please check camera permissions and try again, or use manual entry below.';
+                }
+                
+                showError(errorMessage);
             });
         }
 
@@ -247,6 +284,22 @@
             }
             
             processQRCode(qrData);
+        }
+
+        function fillDemoData() {
+            const demoData = '{"memberId":"m001","offerId":"demo-offer","timestamp":' + Date.now() + ',"token":"demo' + Math.random().toString(36).substr(2, 5) + '"}';
+            document.getElementById('manual-qr-data').value = demoData;
+            
+            // Store demo QR data for validation
+            const qrObject = JSON.parse(demoData);
+            const qrKey = 'activeQR_' + qrObject.token;
+            localStorage.setItem(qrKey, JSON.stringify({
+                ...qrObject,
+                expires: Date.now() + 300000, // 5 minutes from now
+                used: false
+            }));
+            
+            updateScanStatus('Demo data filled. Click "Validate QR Code" to test.', 'info');
         }
 
         function showValidationResult(title, message, type, transaction = null) {
