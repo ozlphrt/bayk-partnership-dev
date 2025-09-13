@@ -102,9 +102,16 @@
             <div style="background: var(--background-light); border-radius: 12px; padding: 16px; margin-top: 16px; box-shadow: inset 4px 4px 10px var(--shadow-dark), inset -4px -4px 10px var(--shadow-light);">
                 <h4 style="color: var(--text-dark); margin-bottom: 12px;">Demo QR Code Data (for testing):</h4>
                 <div style="background: white; padding: 12px; border-radius: 8px; font-family: monospace; font-size: 12px; color: var(--text-dark); word-break: break-all; margin-bottom: 12px;">
-                    {"memberId":"m001","offerId":"demo-offer","timestamp":1694567890123,"token":"demo123"}
+                    {"memberId":"m001","offerId":"o001","timestamp":1694567890123,"token":"demo123"}
                 </div>
-                <button onclick="fillDemoData()" class="btn btn-outline" style="font-size: 14px;">Use Demo Data</button>
+                <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                    <button onclick="fillDemoData()" class="btn btn-outline" style="font-size: 14px;">Use Demo Data</button>
+                    <button onclick="createTestQR()" class="btn btn-outline" style="font-size: 14px;">Create Test QR</button>
+                    <button onclick="clearAllQR()" class="btn btn-outline" style="font-size: 14px;">Clear All QR</button>
+                </div>
+                <div id="localStorage-info" style="background: #f0f0f0; padding: 8px; border-radius: 4px; font-size: 11px; color: #666;">
+                    <!-- localStorage info will be displayed here -->
+                </div>
             </div>
         </section>
 
@@ -138,6 +145,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             initializeScanner();
             setupEventListeners();
+            updateLocalStorageInfo();
         });
 
         function initializeScanner() {
@@ -475,6 +483,48 @@
             console.log('Demo QR data stored:', qrKey, qrData);
             
             updateScanStatus('Demo data filled. Click "Validate QR Code" to test.', 'info');
+            updateLocalStorageInfo();
+        }
+
+        function createTestQR() {
+            const token = 'test' + Date.now();
+            const testData = JSON.stringify({
+                memberId: 'm001',
+                offerId: 'o003',
+                timestamp: Date.now(),
+                token: token
+            });
+            
+            document.getElementById('manual-qr-data').value = testData;
+            
+            // Store test QR data for validation
+            const qrObject = JSON.parse(testData);
+            const qrKey = 'activeQR_' + qrObject.token;
+            const qrData = {
+                ...qrObject,
+                expires: Date.now() + 300000, // 5 minutes from now
+                used: false
+            };
+            
+            localStorage.setItem(qrKey, JSON.stringify(qrData));
+            console.log('Test QR data stored:', qrKey, qrData);
+            
+            updateScanStatus('Test QR data created. Click "Validate QR Code" to test.', 'info');
+            updateLocalStorageInfo();
+        }
+
+        function clearAllQR() {
+            const allKeys = Object.keys(localStorage).filter(key => key.startsWith('activeQR_'));
+            allKeys.forEach(key => localStorage.removeItem(key));
+            console.log('Cleared all QR codes:', allKeys.length);
+            updateScanStatus('All QR codes cleared from localStorage.', 'info');
+            updateLocalStorageInfo();
+        }
+
+        function updateLocalStorageInfo() {
+            const allKeys = Object.keys(localStorage).filter(key => key.startsWith('activeQR_'));
+            const info = document.getElementById('localStorage-info');
+            info.innerHTML = `QR codes in localStorage: ${allKeys.length}<br>Keys: ${allKeys.slice(0, 3).join(', ')}${allKeys.length > 3 ? '...' : ''}`;
         }
 
         function showValidationResult(title, message, type, transaction = null) {
