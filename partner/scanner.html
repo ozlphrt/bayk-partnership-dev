@@ -249,6 +249,7 @@
 
             if (code) {
                 console.log('QR Code detected:', code.data);
+                console.log('QR Code location:', code.location);
                 stopScanner();
                 processQRCode(code.data);
             }
@@ -256,19 +257,30 @@
 
         function processQRCode(qrData) {
             try {
+                console.log('Processing QR code data:', qrData);
+                
                 // Parse QR code data
                 const qrObject = JSON.parse(qrData);
+                console.log('Parsed QR object:', qrObject);
                 
                 // Validate QR code structure
                 if (!qrObject.memberId || !qrObject.offerId || !qrObject.token) {
+                    console.error('Invalid QR code format - missing required fields');
                     throw new Error('Invalid QR code format');
                 }
                 
                 // Check if QR code is still valid
                 const qrKey = 'activeQR_' + qrObject.token;
+                console.log('Looking for QR key:', qrKey);
+                
                 const storedQR = localStorage.getItem(qrKey);
+                console.log('Stored QR data:', storedQR);
                 
                 if (!storedQR) {
+                    console.error('QR code not found in localStorage');
+                    // Check what keys are available
+                    const allKeys = Object.keys(localStorage).filter(key => key.startsWith('activeQR_'));
+                    console.log('Available QR keys:', allKeys);
                     showValidationResult('QR Code Invalid', 'This QR code has expired or is invalid.', 'error');
                     return;
                 }
@@ -340,17 +352,27 @@
         }
 
         function fillDemoData() {
-            const demoData = '{"memberId":"m001","offerId":"demo-offer","timestamp":' + Date.now() + ',"token":"demo' + Math.random().toString(36).substr(2, 5) + '"}';
+            const token = 'demo' + Math.random().toString(36).substr(2, 5);
+            const demoData = JSON.stringify({
+                memberId: 'm001',
+                offerId: 'o001',
+                timestamp: Date.now(),
+                token: token
+            });
+            
             document.getElementById('manual-qr-data').value = demoData;
             
             // Store demo QR data for validation
             const qrObject = JSON.parse(demoData);
             const qrKey = 'activeQR_' + qrObject.token;
-            localStorage.setItem(qrKey, JSON.stringify({
+            const qrData = {
                 ...qrObject,
                 expires: Date.now() + 300000, // 5 minutes from now
                 used: false
-            }));
+            };
+            
+            localStorage.setItem(qrKey, JSON.stringify(qrData));
+            console.log('Demo QR data stored:', qrKey, qrData);
             
             updateScanStatus('Demo data filled. Click "Validate QR Code" to test.', 'info');
         }
