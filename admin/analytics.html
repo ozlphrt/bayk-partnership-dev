@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - Sailing Club Partnership</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛵</text></svg>">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .admin-header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-green) 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+        .admin-nav {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        .admin-nav ul {
+            display: flex;
+            gap: 1rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .admin-nav a {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .admin-nav a:hover,
+        .admin-nav a.active {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+        .chart-container {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        .partner-table {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .table th,
+        .table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .table th {
+            background-color: #f9fafb;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        .table tr:hover {
+            background-color: #f9fafb;
+        }
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .status-active {
+            background-color: #dcfce7;
+            color: var(--secondary-green);
+        }
+        .status-pending {
+            background-color: #fef3c7;
+            color: #f59e0b;
+        }
+        .metric-highlight {
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+    </style>
+</head>
+<body>
+    <!-- Admin Header -->
+    <header class="admin-header">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1 style="margin: 0; font-size: 2rem;">📊 Analytics Dashboard</h1>
+                    <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Partner Performance & Platform Insights</p>
+                </div>
+                <div style="text-align: right;">
+                    <button onclick="logout()" class="btn btn-outline" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); color: white;">
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Admin Navigation -->
+        <nav class="admin-nav">
+            <ul>
+                <li><a href="index.html">Dashboard</a></li>
+                <li><a href="analytics.html" class="active">Analytics</a></li>
+                <li><a href="partners.html">Partners</a></li>
+                <li><a href="members.html">Members</a></li>
+                <li><a href="transactions.html">Transactions</a></li>
+            </ul>
+        </nav>
+
+        <!-- Key Performance Indicators -->
+        <section class="chart-container">
+            <h3 style="margin-top: 0; margin-bottom: 1.5rem;">Platform Performance Overview</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem;">
+                <div style="text-align: center;">
+                    <div style="font-size: 2rem; font-weight: 700; color: var(--primary-blue);">$8,450</div>
+                    <div style="color: var(--text-light); font-size: 0.9rem;">Total Revenue Impact</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 2rem; font-weight: 700; color: var(--secondary-green);">4.2x</div>
+                    <div style="color: var(--text-light); font-size: 0.9rem;">ROI for Partners</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 2rem; font-weight: 700; color: #f59e0b;">$36.50</div>
+                    <div style="color: var(--text-light); font-size: 0.9rem;">Avg. Transaction Value</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 2rem; font-weight: 700; color: var(--accent-red);">2.1%</div>
+                    <div style="color: var(--text-light); font-size: 0.9rem;">Platform Fee Rate</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Charts Row -->
+        <div class="analytics-grid">
+            <!-- Transaction Volume Chart -->
+            <div class="chart-container">
+                <h3 style="margin-top: 0; margin-bottom: 1.5rem;">Monthly Transaction Volume</h3>
+                <canvas id="volumeChart" width="400" height="300"></canvas>
+            </div>
+
+            <!-- Category Performance Chart -->
+            <div class="chart-container">
+                <h3 style="margin-top: 0; margin-bottom: 1.5rem;">Category Performance</h3>
+                <canvas id="categoryChart" width="400" height="300"></canvas>
+            </div>
+        </div>
+
+        <!-- Partner Performance Table -->
+        <section class="partner-table">
+            <h3 style="margin-top: 0; margin-bottom: 1.5rem;">Partner Performance Metrics</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Partner</th>
+                        <th>Category</th>
+                        <th>Transactions</th>
+                        <th>Revenue Impact</th>
+                        <th>Avg. Discount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="partner-performance-table">
+                    <!-- Partner data will be loaded here -->
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Growth Opportunities -->
+        <section class="chart-container">
+            <h3 style="margin-top: 0; margin-bottom: 1.5rem;">Growth Opportunities</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                <div>
+                    <h4 style="color: var(--primary-blue); margin-bottom: 1rem;">Member Engagement</h4>
+                    <div style="background-color: #f3f4f6; padding: 1rem; border-radius: 0.5rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Active Members:</span>
+                            <span class="metric-highlight">234</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Inactive Members:</span>
+                            <span style="color: var(--accent-red);">156</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Engagement Rate:</span>
+                            <span class="metric-highlight">60%</span>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h4 style="color: var(--secondary-green); margin-bottom: 1rem;">Partner Pipeline</h4>
+                    <div style="background-color: #f3f4f6; padding: 1rem; border-radius: 0.5rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Active Partners:</span>
+                            <span class="metric-highlight">12</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Pending Applications:</span>
+                            <span style="color: #f59e0b;">8</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Approval Rate:</span>
+                            <span class="metric-highlight">85%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer style="background-color: var(--primary-blue); color: var(--white); padding: 2rem 0; margin-top: 4rem;">
+        <div class="container text-center">
+            <p>&copy; 2025 Sailing Club Partnership Platform. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Check admin authentication
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentRole = localStorage.getItem('selectedRole');
+            if (currentRole !== 'admin') {
+                window.location.href = '../index.html';
+                return;
+            }
+
+            // Initialize charts
+            initializeCharts();
+            
+            // Load partner performance data
+            loadPartnerPerformance();
+        });
+
+        function logout() {
+            localStorage.removeItem('selectedRole');
+            window.location.href = '../index.html';
+        }
+
+        function initializeCharts() {
+            // Transaction Volume Chart
+            const volumeCtx = document.getElementById('volumeChart').getContext('2d');
+            new Chart(volumeCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Transactions',
+                        data: [180, 195, 210, 225, 240, 234],
+                        backgroundColor: 'rgba(30, 64, 175, 0.8)',
+                        borderColor: 'rgb(30, 64, 175)',
+                        borderWidth: 1
+                    }, {
+                        label: 'Revenue Impact',
+                        data: [2800, 3100, 3400, 3800, 4200, 3450],
+                        backgroundColor: 'rgba(34, 197, 94, 0.8)',
+                        borderColor: 'rgb(34, 197, 94)',
+                        borderWidth: 1,
+                        yAxisID: 'y1'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            grid: {
+                                drawOnChartArea: false,
+                            },
+                        }
+                    }
+                }
+            });
+
+            // Category Performance Chart
+            const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+            new Chart(categoryCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Restaurants', 'Marina Services', 'Hotels', 'Retail', 'Marine Supplies'],
+                    datasets: [{
+                        data: [35, 25, 20, 12, 8],
+                        backgroundColor: [
+                            'rgb(30, 64, 175)',
+                            'rgb(34, 197, 94)',
+                            'rgb(245, 158, 11)',
+                            'rgb(156, 163, 175)',
+                            'rgb(239, 68, 68)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        function loadPartnerPerformance() {
+            const tableBody = document.getElementById('partner-performance-table');
+            
+            const partners = [
+                {
+                    name: 'Waterfront Bistro',
+                    category: 'Restaurant',
+                    transactions: 45,
+                    revenue: '$2,100',
+                    discount: '15%',
+                    status: 'active'
+                },
+                {
+                    name: 'Marina Supply Co',
+                    category: 'Marine Supplies',
+                    transactions: 23,
+                    revenue: '$1,850',
+                    discount: '20%',
+                    status: 'active'
+                },
+                {
+                    name: 'Harbor Hotel',
+                    category: 'Hotel',
+                    transactions: 18,
+                    revenue: '$1,200',
+                    discount: '10%',
+                    status: 'active'
+                },
+                {
+                    name: 'Coastal Gear Shop',
+                    category: 'Retail',
+                    transactions: 12,
+                    revenue: '$800',
+                    discount: '25%',
+                    status: 'active'
+                },
+                {
+                    name: 'Boat Maintenance Pro',
+                    category: 'Marina Services',
+                    transactions: 8,
+                    revenue: '$600',
+                    discount: '15%',
+                    status: 'pending'
+                }
+            ];
+
+            tableBody.innerHTML = partners.map(partner => `
+                <tr>
+                    <td style="font-weight: 600;">${partner.name}</td>
+                    <td>${partner.category}</td>
+                    <td class="metric-highlight">${partner.transactions}</td>
+                    <td class="metric-highlight">${partner.revenue}</td>
+                    <td>${partner.discount}</td>
+                    <td>
+                        <span class="status-badge status-${partner.status}">
+                            ${partner.status}
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+    </script>
+</body>
+</html>

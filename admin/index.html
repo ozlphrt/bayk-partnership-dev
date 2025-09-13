@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Sailing Club Partnership</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛵</text></svg>">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .admin-header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-green) 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .metric-card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid var(--primary-blue);
+        }
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 0.5rem;
+        }
+        .metric-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .metric-change {
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+        .metric-change.positive {
+            color: var(--secondary-green);
+        }
+        .metric-change.negative {
+            color: var(--accent-red);
+        }
+        .chart-container {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        .admin-nav {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        .admin-nav ul {
+            display: flex;
+            gap: 1rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .admin-nav a {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .admin-nav a:hover,
+        .admin-nav a.active {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+        .recent-activity {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+        .activity-icon.transaction {
+            background-color: #dbeafe;
+            color: var(--primary-blue);
+        }
+        .activity-icon.partner {
+            background-color: #dcfce7;
+            color: var(--secondary-green);
+        }
+        .activity-icon.member {
+            background-color: #fef3c7;
+            color: #f59e0b;
+        }
+    </style>
+</head>
+<body>
+    <!-- Admin Header -->
+    <header class="admin-header">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1 style="margin: 0; font-size: 2rem;">⛵ Admin Dashboard</h1>
+                    <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Sailing Club Partnership Platform</p>
+                </div>
+                <div style="text-align: right;">
+                    <p style="margin: 0; font-size: 0.9rem; opacity: 0.8;">Last updated: <span id="last-updated"></span></p>
+                    <button onclick="logout()" class="btn btn-outline" style="margin-top: 0.5rem; background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); color: white;">
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Admin Navigation -->
+        <nav class="admin-nav">
+            <ul>
+                <li><a href="index.html" class="active">Dashboard</a></li>
+                <li><a href="analytics.html">Analytics</a></li>
+                <li><a href="partners.html">Partners</a></li>
+                <li><a href="members.html">Members</a></li>
+                <li><a href="transactions.html">Transactions</a></li>
+            </ul>
+        </nav>
+
+        <!-- Key Metrics -->
+        <section class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-value">234</div>
+                <div class="metric-label">Transactions This Month</div>
+                <div class="metric-change positive">↗ +12% from last month</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">$3,420</div>
+                <div class="metric-label">Total Member Savings</div>
+                <div class="metric-change positive">↗ +18% from last month</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">12</div>
+                <div class="metric-label">Active Partners</div>
+                <div class="metric-change positive">↗ +2 new this month</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">89%</div>
+                <div class="metric-label">Member Participation</div>
+                <div class="metric-change positive">↗ +5% from last month</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">92%</div>
+                <div class="metric-label">Partner Satisfaction</div>
+                <div class="metric-change positive">↗ +3% from last month</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">156</div>
+                <div class="metric-label">Growth Opportunity</div>
+                <div class="metric-change">Members not yet active</div>
+            </div>
+        </section>
+
+        <!-- Charts Row -->
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+            <!-- Transaction Trends Chart -->
+            <div class="chart-container">
+                <h3 style="margin-top: 0; margin-bottom: 1.5rem;">Transaction Trends</h3>
+                <canvas id="transactionChart" width="400" height="200"></canvas>
+            </div>
+
+            <!-- Partner Performance -->
+            <div class="chart-container">
+                <h3 style="margin-top: 0; margin-bottom: 1.5rem;">Top Partners</h3>
+                <canvas id="partnerChart" width="300" height="200"></canvas>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <section class="recent-activity">
+            <h3 style="margin-top: 0; margin-bottom: 1.5rem;">Recent Activity</h3>
+            <div id="activity-list">
+                <!-- Activity items will be loaded here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer style="background-color: var(--primary-blue); color: var(--white); padding: 2rem 0; margin-top: 4rem;">
+        <div class="container text-center">
+            <p>&copy; 2025 Sailing Club Partnership Platform. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Check admin authentication
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentRole = localStorage.getItem('selectedRole');
+            if (currentRole !== 'admin') {
+                window.location.href = '../index.html';
+                return;
+            }
+
+            // Update last updated time
+            document.getElementById('last-updated').textContent = new Date().toLocaleTimeString();
+            
+            // Initialize charts
+            initializeCharts();
+            
+            // Load recent activity
+            loadRecentActivity();
+        });
+
+        function logout() {
+            localStorage.removeItem('selectedRole');
+            window.location.href = '../index.html';
+        }
+
+        function initializeCharts() {
+            // Transaction Trends Chart
+            const transactionCtx = document.getElementById('transactionChart').getContext('2d');
+            new Chart(transactionCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Transactions',
+                        data: [180, 195, 210, 225, 240, 234],
+                        borderColor: 'rgb(30, 64, 175)',
+                        backgroundColor: 'rgba(30, 64, 175, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Partner Performance Chart
+            const partnerCtx = document.getElementById('partnerChart').getContext('2d');
+            new Chart(partnerCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Waterfront Bistro', 'Marina Supply Co', 'Harbor Hotel', 'Others'],
+                    datasets: [{
+                        data: [45, 23, 18, 14],
+                        backgroundColor: [
+                            'rgb(30, 64, 175)',
+                            'rgb(34, 197, 94)',
+                            'rgb(245, 158, 11)',
+                            'rgb(156, 163, 175)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        function loadRecentActivity() {
+            const activityList = document.getElementById('activity-list');
+            
+            const activities = [
+                {
+                    type: 'transaction',
+                    icon: '💰',
+                    title: 'New Transaction',
+                    description: 'Sarah Marina redeemed 15% discount at Waterfront Bistro',
+                    time: '2 minutes ago',
+                    amount: '$12.50 saved'
+                },
+                {
+                    type: 'partner',
+                    icon: '🏪',
+                    title: 'Partner Added',
+                    description: 'Coastal Gear Shop joined the partnership program',
+                    time: '1 hour ago',
+                    amount: 'New partner'
+                },
+                {
+                    type: 'member',
+                    icon: '👤',
+                    title: 'New Member',
+                    description: 'Mike Johnson registered and activated account',
+                    time: '3 hours ago',
+                    amount: 'Active member'
+                },
+                {
+                    type: 'transaction',
+                    icon: '💰',
+                    title: 'High Value Transaction',
+                    description: 'David Wilson saved $45 at Marina Supply Co',
+                    time: '5 hours ago',
+                    amount: '$45.00 saved'
+                },
+                {
+                    type: 'partner',
+                    icon: '📊',
+                    title: 'Performance Update',
+                    description: 'Harbor Hotel reached 50 transactions milestone',
+                    time: '1 day ago',
+                    amount: 'Milestone reached'
+                }
+            ];
+
+            activityList.innerHTML = activities.map(activity => `
+                <div class="activity-item">
+                    <div class="activity-icon ${activity.type}">
+                        ${activity.icon}
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; margin-bottom: 0.25rem;">${activity.title}</div>
+                        <div style="color: var(--text-light); font-size: 0.9rem;">${activity.description}</div>
+                        <div style="color: var(--text-light); font-size: 0.8rem; margin-top: 0.25rem;">${activity.time}</div>
+                    </div>
+                    <div style="text-align: right; color: var(--secondary-green); font-weight: 600;">
+                        ${activity.amount}
+                    </div>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>

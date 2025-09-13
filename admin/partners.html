@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partner Management - Sailing Club Partnership</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛵</text></svg>">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .admin-header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-green) 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+        .admin-nav {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        .admin-nav ul {
+            display: flex;
+            gap: 1rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .admin-nav a {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .admin-nav a:hover,
+        .admin-nav a.active {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+        .partners-container {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        .partner-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.2s;
+        }
+        .partner-card:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .partner-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+        .partner-info h3 {
+            margin: 0 0 0.5rem 0;
+            color: var(--primary-blue);
+        }
+        .partner-info p {
+            margin: 0;
+            color: var(--text-light);
+        }
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .status-active {
+            background-color: #dcfce7;
+            color: var(--secondary-green);
+        }
+        .status-pending {
+            background-color: #fef3c7;
+            color: #f59e0b;
+        }
+        .status-inactive {
+            background-color: #fee2e2;
+            color: var(--accent-red);
+        }
+        .partner-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .metric {
+            text-align: center;
+            padding: 0.75rem;
+            background-color: #f9fafb;
+            border-radius: 0.5rem;
+        }
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+        .metric-label {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+        }
+        .partner-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .filter-group label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+        .filter-group select,
+        .filter-group input {
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Admin Header -->
+    <header class="admin-header">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1 style="margin: 0; font-size: 2rem;">🏪 Partner Management</h1>
+                    <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Manage Business Partners & Applications</p>
+                </div>
+                <div style="text-align: right;">
+                    <button onclick="logout()" class="btn btn-outline" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); color: white;">
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Admin Navigation -->
+        <nav class="admin-nav">
+            <ul>
+                <li><a href="index.html">Dashboard</a></li>
+                <li><a href="analytics.html">Analytics</a></li>
+                <li><a href="partners.html" class="active">Partners</a></li>
+                <li><a href="members.html">Members</a></li>
+                <li><a href="transactions.html">Transactions</a></li>
+            </ul>
+        </nav>
+
+        <!-- Filters -->
+        <section class="partners-container">
+            <h3 style="margin-top: 0; margin-bottom: 1rem;">Filter Partners</h3>
+            <div class="filters">
+                <div class="filter-group">
+                    <label>Status</label>
+                    <select id="status-filter">
+                        <option value="">All Statuses</option>
+                        <option value="active">Active</option>
+                        <option value="pending">Pending</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Category</label>
+                    <select id="category-filter">
+                        <option value="">All Categories</option>
+                        <option value="restaurant">Restaurant</option>
+                        <option value="hotel">Hotel</option>
+                        <option value="marina-services">Marina Services</option>
+                        <option value="retail">Retail</option>
+                        <option value="marine-supplies">Marine Supplies</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Search</label>
+                    <input type="text" id="search-filter" placeholder="Search partners...">
+                </div>
+            </div>
+        </section>
+
+        <!-- Partners List -->
+        <section class="partners-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h3 style="margin: 0;">Business Partners</h3>
+                <div>
+                    <span style="color: var(--text-light); margin-right: 1rem;">Total: <strong id="partner-count">12</strong></span>
+                    <button class="btn btn-primary btn-sm" onclick="showAddPartnerModal()">
+                        + Add Partner
+                    </button>
+                </div>
+            </div>
+            <div id="partners-list">
+                <!-- Partner cards will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Pending Applications -->
+        <section class="partners-container">
+            <h3 style="margin-top: 0; margin-bottom: 1.5rem;">Pending Applications (8)</h3>
+            <div id="pending-applications">
+                <!-- Pending applications will be loaded here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer style="background-color: var(--primary-blue); color: var(--white); padding: 2rem 0; margin-top: 4rem;">
+        <div class="container text-center">
+            <p>&copy; 2025 Sailing Club Partnership Platform. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Check admin authentication
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentRole = localStorage.getItem('selectedRole');
+            if (currentRole !== 'admin') {
+                window.location.href = '../index.html';
+                return;
+            }
+
+            // Load partners data
+            loadPartners();
+            loadPendingApplications();
+            
+            // Setup filters
+            setupFilters();
+        });
+
+        function logout() {
+            localStorage.removeItem('selectedRole');
+            window.location.href = '../index.html';
+        }
+
+        function loadPartners() {
+            const partnersList = document.getElementById('partners-list');
+            
+            const partners = [
+                {
+                    id: 'p001',
+                    name: 'Waterfront Bistro',
+                    category: 'Restaurant',
+                    contact: 'John Smith',
+                    email: 'john@waterfrontbistro.com',
+                    phone: '(555) 123-4567',
+                    status: 'active',
+                    joinDate: '2024-01-15',
+                    transactions: 45,
+                    revenue: '$2,100',
+                    rating: 4.8,
+                    offers: 3
+                },
+                {
+                    id: 'p002',
+                    name: 'Marina Supply Co',
+                    category: 'Marine Supplies',
+                    contact: 'Sarah Johnson',
+                    email: 'sarah@marinasupply.com',
+                    phone: '(555) 234-5678',
+                    status: 'active',
+                    joinDate: '2024-02-01',
+                    transactions: 23,
+                    revenue: '$1,850',
+                    rating: 4.6,
+                    offers: 2
+                },
+                {
+                    id: 'p003',
+                    name: 'Harbor Hotel',
+                    category: 'Hotel',
+                    contact: 'Mike Davis',
+                    email: 'mike@harborhotel.com',
+                    phone: '(555) 345-6789',
+                    status: 'active',
+                    joinDate: '2024-01-20',
+                    transactions: 18,
+                    revenue: '$1,200',
+                    rating: 4.7,
+                    offers: 1
+                },
+                {
+                    id: 'p004',
+                    name: 'Coastal Gear Shop',
+                    category: 'Retail',
+                    contact: 'Lisa Wilson',
+                    email: 'lisa@coastalgear.com',
+                    phone: '(555) 456-7890',
+                    status: 'active',
+                    joinDate: '2024-03-10',
+                    transactions: 12,
+                    revenue: '$800',
+                    rating: 4.5,
+                    offers: 2
+                },
+                {
+                    id: 'p005',
+                    name: 'Boat Maintenance Pro',
+                    category: 'Marina Services',
+                    contact: 'Tom Brown',
+                    email: 'tom@boatmaintenance.com',
+                    phone: '(555) 567-8901',
+                    status: 'pending',
+                    joinDate: '2024-04-01',
+                    transactions: 8,
+                    revenue: '$600',
+                    rating: 4.9,
+                    offers: 1
+                }
+            ];
+
+            partnersList.innerHTML = partners.map(partner => `
+                <div class="partner-card" data-status="${partner.status}" data-category="${partner.category}">
+                    <div class="partner-header">
+                        <div class="partner-info">
+                            <h3>${partner.name}</h3>
+                            <p>${partner.category} • Contact: ${partner.contact}</p>
+                            <p style="font-size: 0.875rem; color: var(--text-light);">
+                                ${partner.email} • ${partner.phone}
+                            </p>
+                        </div>
+                        <span class="status-badge status-${partner.status}">
+                            ${partner.status}
+                        </span>
+                    </div>
+                    
+                    <div class="partner-metrics">
+                        <div class="metric">
+                            <div class="metric-value">${partner.transactions}</div>
+                            <div class="metric-label">Transactions</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">${partner.revenue}</div>
+                            <div class="metric-label">Revenue Impact</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">${partner.rating}</div>
+                            <div class="metric-label">Rating</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">${partner.offers}</div>
+                            <div class="metric-label">Active Offers</div>
+                        </div>
+                    </div>
+                    
+                    <div class="partner-actions">
+                        <button class="btn btn-primary btn-sm" onclick="viewPartner('${partner.id}')">
+                            View Details
+                        </button>
+                        <button class="btn btn-outline btn-sm" onclick="editPartner('${partner.id}')">
+                            Edit
+                        </button>
+                        ${partner.status === 'pending' ? `
+                            <button class="btn btn-success btn-sm" onclick="approvePartner('${partner.id}')">
+                                Approve
+                            </button>
+                        ` : ''}
+                        <button class="btn btn-danger btn-sm" onclick="deactivatePartner('${partner.id}')">
+                            ${partner.status === 'active' ? 'Deactivate' : 'Activate'}
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadPendingApplications() {
+            const pendingList = document.getElementById('pending-applications');
+            
+            const applications = [
+                {
+                    id: 'app001',
+                    name: 'Sunset Marina Restaurant',
+                    category: 'Restaurant',
+                    contact: 'Jennifer Lee',
+                    email: 'jennifer@sunsetmarina.com',
+                    appliedDate: '2024-04-15',
+                    businessType: 'Fine Dining',
+                    estimatedCustomers: '200/month'
+                },
+                {
+                    id: 'app002',
+                    name: 'Anchor Point Hotel',
+                    category: 'Hotel',
+                    contact: 'Robert Taylor',
+                    email: 'robert@anchorpoint.com',
+                    appliedDate: '2024-04-12',
+                    businessType: 'Boutique Hotel',
+                    estimatedCustomers: '150/month'
+                }
+            ];
+
+            pendingList.innerHTML = applications.map(app => `
+                <div class="partner-card">
+                    <div class="partner-header">
+                        <div class="partner-info">
+                            <h3>${app.name}</h3>
+                            <p>${app.category} • Contact: ${app.contact}</p>
+                            <p style="font-size: 0.875rem; color: var(--text-light);">
+                                ${app.email} • Applied: ${new Date(app.appliedDate).toLocaleDateString()}
+                            </p>
+                            <p style="font-size: 0.875rem; color: var(--text-light);">
+                                Business Type: ${app.businessType} • Est. Customers: ${app.estimatedCustomers}
+                            </p>
+                        </div>
+                        <span class="status-badge status-pending">
+                            Pending Review
+                        </span>
+                    </div>
+                    
+                    <div class="partner-actions">
+                        <button class="btn btn-primary btn-sm" onclick="reviewApplication('${app.id}')">
+                            Review Application
+                        </button>
+                        <button class="btn btn-success btn-sm" onclick="approveApplication('${app.id}')">
+                            Approve
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="rejectApplication('${app.id}')">
+                            Reject
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function setupFilters() {
+            const statusFilter = document.getElementById('status-filter');
+            const categoryFilter = document.getElementById('category-filter');
+            const searchFilter = document.getElementById('search-filter');
+
+            [statusFilter, categoryFilter, searchFilter].forEach(filter => {
+                filter.addEventListener('change', applyFilters);
+            });
+        }
+
+        function applyFilters() {
+            const statusFilter = document.getElementById('status-filter').value;
+            const categoryFilter = document.getElementById('category-filter').value;
+            const searchFilter = document.getElementById('search-filter').value.toLowerCase();
+
+            const partnerCards = document.querySelectorAll('.partner-card');
+            let visibleCount = 0;
+
+            partnerCards.forEach(card => {
+                const status = card.dataset.status;
+                const category = card.dataset.category;
+                const name = card.querySelector('h3').textContent.toLowerCase();
+
+                const statusMatch = !statusFilter || status === statusFilter;
+                const categoryMatch = !categoryFilter || category === categoryFilter;
+                const searchMatch = !searchFilter || name.includes(searchFilter);
+
+                if (statusMatch && categoryMatch && searchMatch) {
+                    card.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            document.getElementById('partner-count').textContent = visibleCount;
+        }
+
+        // Partner management functions
+        function viewPartner(partnerId) {
+            alert(`View details for partner ${partnerId}`);
+        }
+
+        function editPartner(partnerId) {
+            alert(`Edit partner ${partnerId}`);
+        }
+
+        function approvePartner(partnerId) {
+            if (confirm('Approve this partner?')) {
+                alert(`Partner ${partnerId} approved!`);
+                loadPartners(); // Refresh the list
+            }
+        }
+
+        function deactivatePartner(partnerId) {
+            if (confirm('Deactivate this partner?')) {
+                alert(`Partner ${partnerId} deactivated!`);
+                loadPartners(); // Refresh the list
+            }
+        }
+
+        function showAddPartnerModal() {
+            alert('Add new partner modal would open here');
+        }
+
+        function reviewApplication(appId) {
+            alert(`Review application ${appId}`);
+        }
+
+        function approveApplication(appId) {
+            if (confirm('Approve this application?')) {
+                alert(`Application ${appId} approved!`);
+                loadPendingApplications(); // Refresh the list
+            }
+        }
+
+        function rejectApplication(appId) {
+            if (confirm('Reject this application?')) {
+                alert(`Application ${appId} rejected!`);
+                loadPendingApplications(); // Refresh the list
+            }
+        }
+    </script>
+</body>
+</html>
