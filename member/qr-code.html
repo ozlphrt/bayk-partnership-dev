@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Code - Sailing Club Partnership</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛵</text></svg>">
     <link rel="stylesheet" href="../assets/css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,23 +27,32 @@
             const qrText = JSON.stringify(qrData);
             const qrUrl = `https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=${encodeURIComponent(qrText)}`;
             
-            qrCodeElement.innerHTML = `
-                <img src="${qrUrl}" alt="QR Code" style="border: 2px solid var(--primary-blue); border-radius: 0.5rem; max-width: 200px; height: auto;">
-            `;
+            const img = document.createElement('img');
+            img.src = qrUrl;
+            img.alt = 'QR Code';
+            img.style.cssText = 'border: 2px solid var(--primary-blue); border-radius: 0.5rem; max-width: 200px; height: auto;';
             
-            console.log('QR code generated using Google Charts API');
+            img.onload = function() {
+                qrCodeElement.innerHTML = '';
+                qrCodeElement.appendChild(img);
+                console.log('QR code generated successfully using Google Charts API');
+            };
+            
+            img.onerror = function() {
+                console.log('Google Charts API failed, using text fallback');
+                createFallbackQR(qrCodeElement, qrData);
+            };
         }
         
         // Function to load QR library with multiple fallbacks
         function loadQRLibrary() {
             console.log('Loading QR Code library...');
             
-            // Try multiple CDN sources
+            // Try multiple CDN sources (removed problematic ones)
             const cdnSources = [
                 'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js',
                 'https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js',
-                'https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js',
-                'https://cdn.skypack.dev/qrcode@1.5.3/build/qrcode.min.js'
+                'https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js'
             ];
             
             let currentIndex = 0;
