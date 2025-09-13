@@ -34,18 +34,20 @@
     <main class="container">
         <section class="hero text-center" style="padding: 4rem 0;">
             <div class="logo-container" style="margin-bottom: 2rem;">
-                <svg width="120" height="120" viewBox="0 0 100 100" class="bayk-logo" style="margin-bottom: 1rem;">
-                    <rect x="10" y="10" width="80" height="80" fill="none" stroke="#33A02C" stroke-width="3"/>
-                    <path d="M15 75 Q50 65 85 75 L85 85 L15 85 Z" fill="#0047AB"/>
-                    <path d="M50 15 L50 70 L35 70 Z" fill="#FF8C00"/>
-                    <path d="M35 70 Q50 75 65 70 L65 75 L35 75 Z" fill="#33A02C"/>
-                </svg>
+                <div class="logo" style="width: 100px; height: 100px; background: var(--background-light); border-radius: 25px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; box-shadow: 20px 20px 60px var(--shadow-dark), -20px -20px 60px var(--shadow-light);">
+                    <svg width="60" height="60" viewBox="0 0 100 100">
+                        <rect x="10" y="10" width="80" height="80" fill="none" stroke="#0047AB" stroke-width="3"/>
+                        <path d="M15 75 Q50 65 85 75 L85 85 L15 85 Z" fill="#0047AB"/>
+                        <path d="M50 15 L50 70 L35 70 Z" fill="#FF8C00"/>
+                        <path d="M35 70 Q50 75 65 70 L65 75 L35 75 Z" fill="#33A02C"/>
+                    </svg>
+                </div>
                 <div class="club-name">
-                    <h1 style="color: #0047AB; margin: 0; font-size: 3rem; font-weight: 700;">BAYK</h1>
-                    <p class="club-full-name" style="color: #0047AB; margin: 0.5rem 0 0 0; font-size: 1rem; font-weight: 400;">BODRUM AÇIKDENİZ YELKEN SPOR KULÜBÜ</p>
+                    <h1 style="color: var(--text-dark); margin: 0; font-size: 3rem; font-weight: 700;">BAYK</h1>
+                    <p class="club-full-name" style="color: var(--text-light); margin: 0.5rem 0 0 0; font-size: 1rem; font-weight: 400;">BODRUM AÇIKDENİZ YELKEN SPOR KULÜBÜ</p>
                 </div>
             </div>
-            <h2 style="color: var(--primary-blue); margin-bottom: 1rem;">Partnership Platform</h2>
+            <h2 style="color: var(--text-dark); margin-bottom: 1rem;">Partnership Platform</h2>
             <p style="font-size: 1.25rem; color: var(--text-light); margin: 1rem 0 3rem 0;">
                 Connect with local businesses and save money through exclusive member discounts
             </p>
@@ -54,25 +56,25 @@
             <div class="grid grid-3" style="max-width: 900px; margin: 0 auto;">
                 <!-- Member Card -->
                 <div class="card" style="text-align: center; cursor: pointer;" onclick="selectRole('member')">
-                    <div class="sailing-icon" style="font-size: 3rem; margin-bottom: 1rem;">👤</div>
-                    <h3>Club Member</h3>
-                    <p>Browse exclusive offers, generate PIN codes, and track your savings</p>
+                    <div class="role-icon" style="width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 16px; background: var(--background-light); box-shadow: 8px 8px 20px var(--shadow-dark), -8px -8px 20px var(--shadow-light);">👤</div>
+                    <h3 style="color: var(--text-dark); margin-bottom: 8px;">Club Member</h3>
+                    <p style="color: var(--text-light); margin-bottom: 20px;">Browse exclusive offers, generate PIN codes, and track your savings</p>
                     <div class="btn btn-primary" style="margin-top: 1rem;">Enter as Member</div>
                 </div>
 
                 <!-- Partner Card -->
                 <div class="card" style="text-align: center; cursor: pointer;" onclick="selectRole('partner')">
-                    <div class="sailing-icon" style="font-size: 3rem; margin-bottom: 1rem;">🏪</div>
-                    <h3>Business Partner</h3>
-                    <p>Scan PIN codes, process transactions, and view analytics</p>
+                    <div class="role-icon" style="width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 16px; background: var(--background-light); box-shadow: 8px 8px 20px var(--shadow-dark), -8px -8px 20px var(--shadow-light);">🏪</div>
+                    <h3 style="color: var(--text-dark); margin-bottom: 8px;">Business Partner</h3>
+                    <p style="color: var(--text-light); margin-bottom: 20px;">Scan PIN codes, process transactions, and view analytics</p>
                     <div class="btn btn-secondary" style="margin-top: 1rem;">Enter as Partner</div>
                 </div>
 
                 <!-- Admin Card -->
                 <div class="card" style="text-align: center; cursor: pointer;" onclick="selectRole('admin')">
-                    <div class="sailing-icon" style="font-size: 3rem; margin-bottom: 1rem;">⚙️</div>
-                    <h3>Administrator</h3>
-                    <p>Monitor platform activity, manage partners and members</p>
+                    <div class="role-icon" style="width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 16px; background: var(--background-light); box-shadow: 8px 8px 20px var(--shadow-dark), -8px -8px 20px var(--shadow-light);">⚙️</div>
+                    <h3 style="color: var(--text-dark); margin-bottom: 8px;">Administrator</h3>
+                    <p style="color: var(--text-light); margin-bottom: 20px;">Monitor platform activity, manage partners and members</p>
                     <div class="btn btn-outline" style="margin-top: 1rem;">Enter as Admin</div>
                 </div>
             </div>
@@ -102,8 +104,8 @@
         </section>
 
         <!-- Platform Stats -->
-        <section style="padding: 3rem 0; background-color: var(--white); border-radius: 1rem; margin: 2rem 0;">
-            <h2 class="text-center">Platform Impact</h2>
+        <section style="padding: 3rem 0;">
+            <h2 class="text-center" style="color: var(--text-dark); margin-bottom: 2rem;">Platform Impact</h2>
             <div class="grid grid-4" style="margin-top: 2rem;">
                 <div class="metric-card">
                     <div class="metric-value">234</div>
@@ -124,6 +126,9 @@
             </div>
         </section>
 
+        <!-- Accent Line -->
+        <div style="height: 4px; background: linear-gradient(90deg, #0047AB, #33A02C, #FF8C00); border-radius: 2px; margin: 20px 0; box-shadow: 2px 2px 8px var(--shadow-dark), -2px -2px 8px var(--shadow-light);"></div>
+
         <!-- Contact Section -->
         <section id="contact" style="padding: 3rem 0;">
             <div class="wave-pattern"></div>
@@ -141,10 +146,10 @@
     </main>
 
     <!-- Footer -->
-    <footer style="background-color: var(--primary-blue); color: var(--white); padding: 2rem 0; margin-top: 4rem;">
+    <footer style="background-color: var(--background-light); color: var(--text-dark); padding: 2rem 0; margin-top: 4rem; box-shadow: 0 -4px 20px var(--shadow-dark), 0 4px 20px var(--shadow-light);">
         <div class="container text-center">
             <p>&copy; 2025 BAYK Partnership Platform. All rights reserved.</p>
-            <p style="margin-top: 0.5rem; opacity: 0.8;">Bodrum Açıkdeniz Yelken Spor Kulübü - Connecting sailors with local businesses</p>
+            <p style="margin-top: 0.5rem; color: var(--text-light);">Bodrum Açıkdeniz Yelken Spor Kulübü - Connecting sailors with local businesses</p>
         </div>
     </footer>
 
