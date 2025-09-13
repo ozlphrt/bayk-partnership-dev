@@ -169,9 +169,7 @@
         const qrCodeCDNs = [
             'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js',
             'https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js',
-            'https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js',
-            'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.js',
-            'https://unpkg.com/qrcode@1.5.3/build/qrcode.js'
+            'https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js'
         ];
         
         let qrCodeLoaded = false;
@@ -186,6 +184,8 @@
             
             const script = document.createElement('script');
             script.src = qrCodeCDNs[currentCDN];
+            script.type = 'text/javascript'; // Ensure it's treated as regular JS, not module
+            
             script.onload = function() {
                 // Check if QRCode is actually available and working
                 setTimeout(() => {
@@ -201,19 +201,12 @@
                 }, 100);
             };
             
-            // Handle ES module syntax errors
             script.onerror = function() {
                 console.log('CDN', currentCDN + 1, 'failed, trying next...');
                 currentCDN++;
                 loadQRCodeLibrary();
             };
             
-            // Add error event listener for syntax errors
-            script.addEventListener('error', function(e) {
-                console.log('CDN', currentCDN + 1, 'syntax error, trying next...');
-                currentCDN++;
-                loadQRCodeLibrary();
-            });
             document.head.appendChild(script);
         }
         
@@ -420,6 +413,20 @@
             document.getElementById('test-data').style.display = 'none';
             document.getElementById('status').style.display = 'none';
         }
+        
+        // Global error handler for syntax errors
+        window.addEventListener('error', function(e) {
+            if (e.message && e.message.includes('Unexpected token')) {
+                console.log('Syntax error detected, trying next CDN...');
+                if (currentCDN < qrCodeCDNs.length - 1) {
+                    currentCDN++;
+                    loadQRCodeLibrary();
+                } else {
+                    console.log('All CDNs failed, using local fallback');
+                    loadLocalQRCodeFallback();
+                }
+            }
+        });
         
         // Start loading the library when page loads
         document.addEventListener('DOMContentLoaded', function() {
